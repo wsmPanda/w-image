@@ -1,19 +1,31 @@
 <template>
   <div class="hello">
-    <img alt="Vue logo" src="file:///Users/wangsongmao/Downloads/1%20(4).png" />
+    <img v-for="(item, index) of images" :key="index" :src="'file://' + item" />
     <button @click="onClick">select dir</button>
   </div>
 </template>
 
 <script>
-//import { remote } from "electron";
+const { ipcRenderer } = window.require("electron");
 export default {
   name: "HelloWorld",
   props: {
     msg: String
   },
+  data() {
+    return {
+      images: []
+    };
+  },
   methods: {
-    async onClick() {}
+    async onClick() {
+      ipcRenderer.send("open-file-dialog");
+    }
+  },
+  created() {
+    ipcRenderer.on("selected-directory", (event, path) => {
+      this.images = path;
+    });
   }
 };
 </script>
