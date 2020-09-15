@@ -1,4 +1,6 @@
 var fs = require("fs");
+export * from "./directory";
+export * from "./file";
 /*
 ？遍历预估进度
 多进程异步处理
@@ -21,18 +23,38 @@ var fs = require("fs");
 */
 function walkFilesAsync(path, cb) {
   var pa = fs.readdirSync(path);
-  pa.forEach(function(ele, index) {
+  pa.forEach(function(ele) {
     try {
       var info = fs.statSync(path + "/" + ele);
       if (info.isDirectory()) {
-        walkFilesAsync(path + "/" + ele);
+        walkFilesAsync(path + "/" + ele, cb);
       } else {
-        cb && cb(ele);
+        cb && cb(path + "/" + ele);
       }
     } catch (ex) {
       console.log(ex);
     }
   });
 }
+function getDirectryTree(path, name) {
+  let data = {
+    path: name || path,
+    sub: []
+  };
+  var pa = fs.readdirSync(path);
+  pa.forEach(function(ele) {
+    try {
+      var info = fs.statSync(path + "/" + ele);
+      if (info.isDirectory()) {
+        data.sub.push(getDirectryTree(path + "/" + ele, ele));
+      } else {
+        // data.sub.push(ele);
+      }
+    } catch (ex) {
+      console.log(ex);
+    }
+  });
 
-export { walkFilesAsync };
+  return data;
+}
+export { walkFilesAsync, getDirectryTree };
