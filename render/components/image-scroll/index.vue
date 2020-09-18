@@ -1,5 +1,5 @@
 <template>
-  <div class="image-list">
+  <div class="image-scroll">
     <Thumbnail
       class="image-list-item"
       @click.native="active = item"
@@ -26,9 +26,7 @@ export default {
     column: { type: Number, default: 2 },
     data: Array,
     path: String,
-    showName: Boolean,
-    // fall table
-    layout: { type: String, default: "table" }
+    showName: Boolean
   },
   components: { Thumbnail },
   data() {
@@ -38,24 +36,16 @@ export default {
   },
   computed: {
     thumbnailStyle() {
-      return {
-        paddingTop: `${this.padding}px`,
-        paddingLeft: `${this.padding}px`,
-        paddingRight: `${this.padding}px`,
-        marginBottom: `${this.padding}px`,
-        height: `${this.height}px`,
-        width: `${100 / this.column}%`
-      };
+      return {};
     }
   }
 };
 </script>
 
 <style lang="less">
-.image-list {
-  display: flex;
-  flex-wrap: wrap;
+.image-scroll {
   .image-list-item {
+    width: 100%;
     &:hover {
       box-shadow: 0 0 2px #666;
     }

@@ -2,10 +2,11 @@
 
 import { app, protocol, BrowserWindow } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
-import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
+// import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 const isDevelopment = process.env.NODE_ENV !== "production";
 import ProcessCreate from "./create";
 import ProcessReady from "./ready";
+import WindowConfig from "./window";
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
@@ -19,17 +20,7 @@ function createWindow() {
   console.log(process.env.ELECTRON_NODE_INTEGRATION);
   // Create the browser window.
 
-  win = new BrowserWindow({
-    width: 1000,
-    height: 600,
-    webPreferences: {
-      // Use pluginOptions.nodeIntegration, leave this alone
-      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      //nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-      nodeIntegration: true,
-      webSecurity: false
-    }
-  });
+  win = new BrowserWindow(WindowConfig);
   ProcessCreate(win);
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -78,14 +69,14 @@ app.on("activate", () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on("ready", async () => {
-  if (isDevelopment && !process.env.IS_TEST) {
-    // Install Vue Devtools
-    try {
-      await installExtension(VUEJS_DEVTOOLS);
-    } catch (e) {
-      console.error("Vue Devtools failed to install:", e.toString());
-    }
-  }
+  // if (isDevelopment && !process.env.IS_TEST) {
+  //   // Install Vue Devtools
+  //   try {
+  //     await installExtension(VUEJS_DEVTOOLS);
+  //   } catch (e) {
+  //     console.error("Vue Devtools failed to install:", e.toString());
+  //   }
+  // }
   ProcessReady();
   createWindow();
 });

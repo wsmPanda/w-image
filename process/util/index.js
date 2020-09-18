@@ -57,4 +57,26 @@ function getDirectryTree(path, name) {
 
   return data;
 }
-export { walkFilesAsync, getDirectryTree };
+function getDirectryFileTree(path, name) {
+  let data = {
+    path: name || path,
+    sub: [],
+    files: []
+  };
+  var pa = fs.readdirSync(path);
+  pa.forEach(function(ele) {
+    try {
+      var info = fs.statSync(path + "/" + ele);
+      if (info.isDirectory()) {
+        data.sub.push(getDirectryFileTree(path + "/" + ele, ele));
+      } else {
+        data.files.push(ele);
+      }
+    } catch (ex) {
+      console.log(ex);
+    }
+  });
+
+  return data;
+}
+export { walkFilesAsync, getDirectryTree, getDirectryFileTree };

@@ -1,3 +1,7 @@
+const path = require("path");
+function resolve(dir) {
+  return path.join(__dirname, dir);
+}
 module.exports = {
   pages: {
     index: {
@@ -10,5 +14,9 @@ module.exports = {
       mainProcessWatch: ["process/main", "process"],
       mainProcessFile: "process/main"
     }
+  },
+  chainWebpack: (config) => {
+    config.resolve.alias.set("render", resolve("./render"));
+    config.resolve.alias.set("process", resolve("./process"));
   }
 };
