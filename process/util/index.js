@@ -1,3 +1,5 @@
+import { isImage } from "./file";
+
 var fs = require("fs");
 export * from "./directory";
 export * from "./file";
@@ -39,7 +41,7 @@ function walkFilesAsync(path, cb) {
 function getDirectryTree(path, name) {
   let data = {
     path: name || path,
-    sub: []
+    sub: [],
   };
   var pa = fs.readdirSync(path);
   pa.forEach(function(ele) {
@@ -61,7 +63,7 @@ function getDirectryFileTree(path, name) {
   let data = {
     path: name || path,
     sub: [],
-    files: []
+    files: [],
   };
   var pa = fs.readdirSync(path);
   pa.forEach(function(ele) {
@@ -69,7 +71,7 @@ function getDirectryFileTree(path, name) {
       var info = fs.statSync(path + "/" + ele);
       if (info.isDirectory()) {
         data.sub.push(getDirectryFileTree(path + "/" + ele, ele));
-      } else {
+      } else if (isImage(ele)) {
         data.files.push(ele);
       }
     } catch (ex) {

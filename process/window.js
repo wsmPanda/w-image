@@ -1,5 +1,5 @@
 export default {
-  width: 1000,
+  width: 1600,
   height: 600,
   webPreferences: {
     // Use pluginOptions.nodeIntegration, leave this alone

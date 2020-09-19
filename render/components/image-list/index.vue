@@ -22,18 +22,18 @@ export default {
   props: {
     margin: { type: Number, default: 4 },
     padding: { type: Number, default: 4 },
-    height: { type: Number, default: 100 },
-    column: { type: Number, default: 2 },
+    height: { type: Number, default: 200 },
+    column: { type: Number, default: 3 },
     data: Array,
     path: String,
     showName: Boolean,
     // fall table
-    layout: { type: String, default: "table" }
+    layout: { type: String, default: "table" },
   },
   components: { Thumbnail },
   data() {
     return {
-      active: null
+      active: null,
     };
   },
   computed: {
@@ -44,10 +44,10 @@ export default {
         paddingRight: `${this.padding}px`,
         marginBottom: `${this.padding}px`,
         height: `${this.height}px`,
-        width: `${100 / this.column}%`
+        width: `${100 / this.column}%`,
       };
-    }
-  }
+    },
+  },
 };
 </script>
 

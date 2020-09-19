@@ -1,36 +1,41 @@
 const { ipcRenderer } = window.require("electron");
 //import { ipcRenderer } from "electron";
 console.log(ipcRenderer);
+let eventWatcher = {};
 let _id = 0;
 function getConnectId() {
   return _id++;
 }
+ipcRenderer.on("promiseConnectRequest", (event, { id, data }) => {
+  if (eventWatcher[id]) {
+    eventWatcher[id](data);
+    eventWatcher[id] = null;
+  }
+});
 function pormiseConnect(event, payload) {
   let connectId = getConnectId();
-  ipcRenderer.send(event, Object.assign({}, payload, { id: connectId }));
+  ipcRenderer.send(
+    "promiseConnectRespnose",
+    Object.assign({}, payload, { id: connectId, type: event })
+  );
   return new Promise((resolve) => {
-    let watcher = (event, { id, payload }) => {
-      if (id === connectId) {
-        ipcRenderer.off("get-tree", watcher);
-        resolve(payload);
-      }
-    };
-    ipcRenderer.on("get-tree", watcher);
+    eventWatcher[connectId] = resolve;
   });
 }
 export default {
   getTree() {
-    return pormiseConnect("get-tree", {});
-  }
+    return pormiseConnect("getTree", {});
+  },
+  getTreeFiles(e) {
+    return pormiseConnect("getTreeFiles", e);
+  },
+  selectDictiry(e) {
+    return pormiseConnect("selectDictiry", e);
+  },
+  addDictiry(e) {
+    return pormiseConnect("addDictiry", e);
+  },
+  getDictory(e) {
+    return pormiseConnect("getDictory", e);
+  },
 };
-/*
-ipcRenderer.on("get-tree-files", (event, path) => {
-      console.log(path);
-      this.images = path;
-    });
- ipcRenderer.on("selected-directory", (event, path) => {
-      this.images = path;
-    });
-    
-
-*/

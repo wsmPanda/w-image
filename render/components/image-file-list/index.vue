@@ -1,41 +1,42 @@
 <template>
   <div class="image-file-list">
     <div class="image-file-list-title">
-      <Icon
-        @click.native="open = !open"
-        :type="open ? 'ios-arrow-up' : 'ios-arrow-forward'"
-      ></Icon>
+      <Icon @click.native="open = !open" :type="open ? 'ios-arrow-up' : 'ios-arrow-forward'"></Icon>
       {{ data.path }}
     </div>
     <div v-if="data.files && data.files.length" v-show="open">
-      <ImageList :data="data.files" :path="data.path"></ImageList>
+      <ImageList :data="data.files" :path="filePath"></ImageList>
     </div>
     <div v-if="data.sub && data.sub.length" v-show="open">
-      <imageFileList
-        v-for="item of data.sub"
-        :key="item.path"
-        :data="item"
-        :path="data.path"
-      ></imageFileList>
+      <imageFileList v-for="item of data.sub" :key="item.path" :data="item" :path="filePath"></imageFileList>
     </div>
   </div>
 </template>
 
 <script>
-import ImageList from "render/components/image-scroll";
+import ImageList from "render/components/image-list";
 import { Icon } from "iview";
 export default {
   name: "imageFileList",
   components: { ImageList, Icon },
   props: {
     data: {},
-    path: String
+    path: String,
+  },
+  computed: {
+    filePath() {
+      let res = this.path
+        ? `${this.path}/${this.data.path}`
+        : `${this.data.path}`;
+      return res;
+    },
   },
   data() {
     return {
-      open: true
+      open: true,
     };
-  }
+  },
+  methods: {},
 };
 </script>
 

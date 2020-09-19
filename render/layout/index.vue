@@ -1,6 +1,6 @@
 <template>
   <div class="layout">
-    <div class="layout-slot">
+    <div class="layout-slot layout-slot-left">
       <slot name="left"></slot>
     </div>
 
@@ -38,5 +38,8 @@ export default {
 }
 .layout-slot {
   overflow: auto;
+}
+.layout-slot-left{
+  width: 30%;
 }
 </style>
