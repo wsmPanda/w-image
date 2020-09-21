@@ -1,6 +1,8 @@
 import fs from "fs";
 import schema from "./schema";
 import { tablePath } from "./util";
+import { writeJson, readJson } from "./util";
+
 function path(p) {
   return `${__dirname}/${p}`;
 }
@@ -25,9 +27,12 @@ export function initDB() {
   checkDictory("data/store");
   checkDictory("data/backup");
   checkFile(path("data/meta.json"), "{}");
+  checkFile(path("data/table.json"), "[]");
+  let TableList = readJson("data/table");
   for (let item of schema) {
     if (item && item.name) {
       checkFile(tablePath(item.name), item === "object" ? "{}" : "[]");
     }
   }
+  writeJson("data/table", TableList);
 }
