@@ -38,19 +38,24 @@ function walkFilesAsync(path, cb) {
     }
   });
 }
-function getDirectryTree(path, name) {
+function getDirectryTree(path, name, single) {
   let data = {
     path: name || path,
-    sub: [],
+    sub: []
   };
   var pa = fs.readdirSync(path);
   pa.forEach(function(ele) {
     try {
       var info = fs.statSync(path + "/" + ele);
       if (info.isDirectory()) {
-        data.sub.push(getDirectryTree(path + "/" + ele, ele));
-      } else {
-        // data.sub.push(ele);
+        if (single) {
+          data.sub.push({
+            path: path + "/" + ele,
+            name: ele
+          });
+        } else {
+          data.sub.push(getDirectryTree(path + "/" + ele, ele));
+        }
       }
     } catch (ex) {
       console.log(ex);
@@ -63,7 +68,7 @@ function getDirectryFileTree(path, name) {
   let data = {
     path: name || path,
     sub: [],
-    files: [],
+    files: []
   };
   var pa = fs.readdirSync(path);
   pa.forEach(function(ele) {

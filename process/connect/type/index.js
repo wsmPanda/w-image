@@ -2,7 +2,7 @@ import {
   walkFilesAsync,
   isImage,
   getDirectryTree,
-  getDirectryFileTree,
+  getDirectryFileTree
 } from "../../util";
 import { selectTable } from "../../db";
 import { dialog } from "electron";
@@ -10,7 +10,7 @@ export default {
   selectDictiry() {
     return dialog
       .showOpenDialog({
-        properties: ["openFile", "openDirectory"],
+        properties: ["openFile", "openDirectory"]
       })
       .then((files) => {
         return files.filePaths[0];
@@ -37,4 +37,7 @@ export default {
   getTreeFiles({ path }) {
     return getDirectryFileTree(path);
   },
+  getDictoryFolder({ path }) {
+    return getDirectryTree(path, null, true);
+  }
 };

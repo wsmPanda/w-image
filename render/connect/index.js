@@ -38,4 +38,7 @@ export default {
   getDictory(e) {
     return pormiseConnect("getDictory", e);
   },
+  getDictoryFolder(e) {
+    return pormiseConnect("getDictoryFolder", e);
+  }
 };

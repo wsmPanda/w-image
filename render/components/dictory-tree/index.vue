@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import TreeItem from "./item";
+import TreeItem from "./dictory-item";
 export default {
   provide() {
     return {
