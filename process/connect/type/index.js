@@ -17,7 +17,7 @@ export default {
       });
   },
   addDictiry({ path }) {
-    return selectTable("dictory").add({ path });
+    return selectTable("dictory").add({ path, name: path.split("/").pop() });
   },
   getDictory() {
     return selectTable("dictory").get();

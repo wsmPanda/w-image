@@ -28,12 +28,12 @@ export default {
     path: String,
     showName: Boolean,
     // fall table
-    layout: { type: String, default: "table" },
+    layout: { type: String, default: "table" }
   },
   components: { Thumbnail },
   data() {
     return {
-      active: null,
+      active: null
     };
   },
   computed: {
@@ -44,10 +44,10 @@ export default {
         paddingRight: `${this.padding}px`,
         marginBottom: `${this.padding}px`,
         height: `${this.height}px`,
-        width: `${100 / this.column}%`,
+        width: `${100 / this.column}%`
       };
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -60,7 +60,8 @@ export default {
       box-shadow: 0 0 2px #666;
     }
     &.active {
-      outline: 1px solid #2955c6;
+      //outline: 1px solid #2955c6;
+      background: #eff5ff;
     }
   }
 }

@@ -11,36 +11,38 @@
       <i v-if="loading" class="ivu-load-loop ivu-icon ivu-icon-ios-loading"></i>
       <Icon
         v-else-if="!hasLoad || (subList && subList.length)"
-        @click.native="onOpen"
+        @click.native.stop="onOpen"
         :type="open ? 'ios-arrow-up' : 'ios-arrow-forward'"
       ></Icon
       ><span
-        ><Icon class="icon-fold icon-dictory" type="md-folder" />{{
-          data.path
-        }}</span
+        ><Icon
+          class="icon-fold"
+          :class="{ 'icon-dictory': isDictory }"
+          type="md-folder"
+        />{{ data.name || data.path }}</span
       >
     </div>
     <div v-if="subList && subList.length" v-show="open" class="tree-item-sub">
-      <TreeItem
+      <TreeDictoryItem
         v-for="(item, index) of subList"
         :data="item"
         :key="index"
-      ></TreeItem>
+      ></TreeDictoryItem>
     </div>
   </div>
 </template>
 
 <script>
-import TreeItem from "./item.vue";
+//import TreeItem from "./item.vue";
 import { Icon } from "iview";
 export default {
   name: "TreeDictoryItem",
   inject: ["$treeRoot"],
-  components: { Icon, TreeItem },
-  props: { data: {}, path: {} },
+  components: { Icon },
+  props: { data: {}, path: {}, isDictory: Boolean },
   data() {
     return {
-      open: true,
+      open: false,
       subData: null,
       hasLoad: false,
       loading: false
@@ -58,7 +60,9 @@ export default {
   methods: {
     onOpen() {
       if (!this.hasLoad) {
-        this.getSubData();
+        this.getSubData().then(() => {
+          this.open = true;
+        });
       } else {
         this.open = !this.open;
       }
@@ -75,8 +79,8 @@ export default {
       }
     },
     onClick() {
-      // this.$emit("on-click");
-      // this.$treeRoot.onItemClick({ data: this.data, path: this.path });
+      this.$emit("on-click");
+      this.$treeRoot.onItemClick({ data: this.data, path: this.data.path });
     }
   }
 };

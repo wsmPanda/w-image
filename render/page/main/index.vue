@@ -6,7 +6,11 @@
         <Tree @on-active="onTreeActive" :data="dictory"></Tree>
       </template>
       <template slot="center">
-        <ImageList class="main-image-list" :data="images"></ImageList>
+        <ImageList
+          ref="imageList"
+          class="main-image-list"
+          :height="listHeight"
+        ></ImageList>
       </template>
     </Layout>
   </div>
@@ -14,13 +18,14 @@
 
 <script>
 import Tree from "render/components/dictory-tree";
-import ImageList from "render/components/image-file-list";
+import ImageList from "render/components/big-image-list";
 import Layout from "render/layout";
 import Connect from "render/connect";
 export default {
   components: { ImageList, Layout, Tree },
   data() {
     return {
+      listHeight: 300,
       dictory: [],
       tools: [
         { name: "添加目录" },
@@ -28,12 +33,12 @@ export default {
         { name: "全部打开/全部关闭" },
         {
           name: "显示模式",
-          list: [{ name: "列表" }, { name: "详情" }, { name: "图标" }],
-        },
+          list: [{ name: "列表" }, { name: "详情" }, { name: "图标" }]
+        }
       ],
 
       images: [],
-      tree: [],
+      tree: []
     };
   },
   methods: {
@@ -47,14 +52,30 @@ export default {
     },
     onTreeActive({ path }) {
       Connect.getTreeFiles({ path }).then((res) => {
-        this.images = res;
-        console.log(res);
+        this.$refs.imageList.setData(this.floaFileTree(res));
       });
     },
+    floaFileTree(data, path) {
+      let list = data.files.map((p) => (path || data.path) + "/" + p);
+      if (data.sub) {
+        data.sub.forEach((item) => {
+          let subPath = (path || data.path) + "/" + item.path;
+          list.push({
+            path: subPath,
+            name: item.path
+          });
+          list = list.concat(this.floaFileTree(item, subPath));
+        });
+      }
+      return list;
+    }
+  },
+  mounted() {
+    this.listHeight = this.$el.clientHeight;
   },
   created() {
     this.updateDictory();
-  },
+  }
 };
 </script>
 <style lang="less">
@@ -64,6 +85,10 @@ export default {
   overflow: hidden;
   .main-image-list {
     padding: 4px;
+  }
+  .layout-center {
+    height: 100%;
+    overflow: hidden;
   }
 }
 </style>

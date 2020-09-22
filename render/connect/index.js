@@ -1,6 +1,5 @@
 const { ipcRenderer } = window.require("electron");
 //import { ipcRenderer } from "electron";
-console.log(ipcRenderer);
 let eventWatcher = {};
 let _id = 0;
 function getConnectId() {
