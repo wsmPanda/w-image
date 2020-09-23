@@ -45,5 +45,11 @@ export default {
   },
   getConfig(e) {
     return pormiseConnect("getConfig", e);
+  },
+  setStorage(e) {
+    return pormiseConnect("setStorage", e);
+  },
+  getStorage(e) {
+    return pormiseConnect("getStorage", e);
   }
 };

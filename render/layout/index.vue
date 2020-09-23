@@ -35,11 +35,14 @@ export default {
 }
 .layout-center {
   flex: 1;
+  position: relative;
 }
 .layout-slot {
   overflow: auto;
+  position: relative;
 }
-.layout-slot-left{
+.layout-slot-left {
   width: 30%;
+  position: relative;
 }
 </style>

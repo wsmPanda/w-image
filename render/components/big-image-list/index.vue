@@ -105,17 +105,24 @@ export default {
         paddingTop: `${this.imageSetting.padding}px`,
         paddingLeft: `${this.imageSetting.padding}px`,
         paddingRight: `${this.imageSetting.padding}px`,
-        marginBottom: `${this.imageSetting.padding}px`,
+        marginBottom: `${this.imageSetting.margin}px`,
         height: `${this.imageSetting.height}px`,
         minHeight: `${this.imageSetting.height}px`,
         width: `${100 / this.imageSetting.column}%`
       };
     },
     dictoryHeight() {
-      return this.dictirySetting.height;
+      return Number(this.dictirySetting.height);
     },
     imageHeight() {
-      return this.imageSetting.height + this.imageSetting.margin;
+      return (
+        Number(this.imageSetting.height) + Number(this.imageSetting.margin)
+      );
+    }
+  },
+  watch: {
+    imageSetting() {
+      this.updateHeightList();
     }
   },
   methods: {
@@ -124,7 +131,6 @@ export default {
       if (!end || end > this.data.length - 1) {
         end = this.data.length - 1;
       }
-      console.warn(height, start, end);
       while (start < end) {
         let mid = Math.floor((start + end) / 2);
         if (mid === start || mid === 0 || mid === end) {
@@ -141,8 +147,15 @@ export default {
       return start;
     },
     setData(data) {
-      this.heightList = [];
       this.data = data;
+      if (this.$refs.listWrapper) {
+        this.$refs.listWrapper.scrollTop = 0;
+      }
+      this.updateHeightList();
+      this.updateList();
+    },
+    updateHeightList() {
+      this.heightList = [];
       // 生成元素高度位置的单向数列
       let count = 0;
       let columnCount = 0;
@@ -163,7 +176,6 @@ export default {
         this.heightList.push(count);
       });
       this.listHeight = this.heightList[this.heightList.length - 1];
-      this.updateList();
     },
     async updateList() {
       this.listHeight = this.heightList[this.heightList.length - 1];
@@ -172,6 +184,14 @@ export default {
     },
     async pageChange() {
       this.currentIndex = this.findIndex(this.scrollTop);
+      let dictoryIndex = this.currentIndex;
+      while (dictoryIndex > 0 && typeof this.data[dictoryIndex] === "string") {
+        dictoryIndex = dictoryIndex - 1;
+      }
+      if (dictoryIndex !== this.dictoryIndex) {
+        this.dictoryIndex = dictoryIndex;
+        this.$emit("dictoryChange", this.data[dictoryIndex]);
+      }
       this.startIndex = this.findIndex(
         Math.max(this.scrollTop - this.height * this.preloadPage, 0),
         0,
@@ -199,7 +219,6 @@ export default {
       ) {
         this.endIndex = this.endIndex + 1;
       }
-      console.info(this.startIndex, this.currentIndex, this.endIndex);
       this.viewData = this.data.slice(this.startIndex, this.endIndex);
     },
     onScroll() {
@@ -208,19 +227,29 @@ export default {
           clearTimeout(this.scrollTimer);
         }
         this.scrollTimer = setTimeout(async () => {
-          this.scrollTop = this.$refs.listWrapper.scrollTop || 0;
-          // 当前位置与错位位置大于一个视图位时进行视图更新
-          if (
-            Math.abs(
-              Math.max(0, this.transformTop - this.height * this.preloadPage) -
-                this.scrollTop
-            ) > this.height
-          ) {
-            await this.pageChange();
-            this.$forceUpdate();
-          }
+          this.$emit("scroll", this.$refs.listWrapper.scrollTop || 0);
+          this.checkPosition();
         }, 30);
       }
+    },
+    async checkPosition() {
+      this.scrollTop = this.$refs.listWrapper.scrollTop || 0;
+      // 当前位置与错位位置大于一个视图位时进行视图更新
+      if (
+        Math.abs(
+          Math.max(0, this.transformTop - this.height * this.preloadPage) -
+            this.scrollTop
+        ) > this.height
+      ) {
+        await this.pageChange();
+        this.$forceUpdate();
+      }
+    },
+    setScroll(v) {
+      this.$refs.listWrapper && (this.$refs.listWrapper.scrollTop = v);
+      this.scrollTop = v;
+      this.checkPosition();
+      this.$forceUpdate();
     }
   },
   created() {

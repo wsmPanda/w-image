@@ -16,11 +16,16 @@
         <Tree @on-active="onTreeActive" :data="dictory"></Tree>
       </template>
       <template slot="center">
+        <div class="image-list-header" v-if="activeListDictory">
+          {{ activeListDictory.name || activeListDictory.path }}
+        </div>
         <ImageList
-          :imageSetting="config && config.image"
+          :imageSetting="(config && config.image) || undefined"
           ref="imageList"
           class="main-image-list"
           :height="listHeight"
+          @scroll="onListScroll"
+          @dictoryChange="onDictoryChange"
         ></ImageList>
       </template>
     </Layout>
@@ -46,10 +51,12 @@ export default {
   },
   data() {
     return {
+      storage: {},
       configShow: false,
       listHeight: 300,
       config: null,
       dictory: [],
+      activeListDictory: null,
       tools: [
         { name: "添加目录" },
         { name: "管理模式" },
@@ -74,8 +81,10 @@ export default {
     async updateDictory() {
       this.dictory = await Connect.getDictory();
     },
-    onTreeActive({ path }) {
-      Connect.getTreeFiles({ path }).then((res) => {
+    onTreeActive(e) {
+      this.$set(this.storage, "activeTree", e);
+      return Connect.getTreeFiles(e).then((res) => {
+        this.activeListDictory = e;
         this.$refs.imageList.setData(this.floaFileTree(res));
       });
     },
@@ -95,12 +104,34 @@ export default {
     },
     onResize() {
       this.listHeight = this.$refs.layout && this.$refs.layout.$el.clientHeight;
+    },
+    onDictoryChange(e) {
+      this.activeListDictory = e;
+    },
+    onListScroll(v) {
+      this.$set(this.storage, "listScroll", v);
     }
   },
   mounted() {
     this.onResize();
   },
-  created() {
+  async created() {
+    this.storage = await Connect.getStorage();
+    if (this.storage.activeTree) {
+      this.onTreeActive(this.storage.activeTree).then(() => {
+        setTimeout(() => {
+          if (this.storage.listScroll) {
+            this.$refs.imageList.setScroll(this.storage.listScroll);
+          }
+        });
+      });
+    }
+    this.$watch("storage", {
+      deep: true,
+      handler(v) {
+        Connect.setStorage({ data: v });
+      }
+    });
     Connect.getConfig().then((res) => {
       if (!res.image) {
         res.image = { image: {} };
@@ -109,11 +140,11 @@ export default {
       this.$watch("config", {
         deep: true,
         handler(v) {
-          console.log("????");
           Connect.setConfig({ data: v });
         }
       });
     });
+
     this.updateDictory();
     window.addEventListener("resize", () => {
       this.onResize();
@@ -134,6 +165,17 @@ export default {
   .page-content {
     flex: 1;
     overflow: hidden;
+    background: #fafafa;
+  }
+  .image-list-header {
+    position: absolute;
+    z-index: 1000;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    left: 0;
+    top: 0;
+    right: 15px;
+    padding: 4px 8px;
   }
   .main-image-list {
     height: 100%;

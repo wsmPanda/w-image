@@ -28,6 +28,12 @@ export default {
   getConfig() {
     return selectTable("config").get();
   },
+  getStorage() {
+    return selectTable("storage").get();
+  },
+  setStorage({ data }) {
+    return selectTable("storage").set(data);
+  },
   selectFile({ path }) {
     let list = [];
     walkFilesAsync(path, (x) => {

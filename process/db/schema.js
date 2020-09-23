@@ -18,7 +18,8 @@ export default [
   },
 
   {
-    name: "storage"
+    name: "storage",
+    type: "object"
   },
   {
     name: "collect"
