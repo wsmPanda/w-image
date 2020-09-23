@@ -35,6 +35,6 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   direction: rtl;
-  text-align: left;
+  text-align: center;
 }
 </style>

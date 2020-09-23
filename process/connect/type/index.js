@@ -22,6 +22,12 @@ export default {
   getDictory() {
     return selectTable("dictory").get();
   },
+  setConfig({ data }) {
+    return selectTable("config").set(data);
+  },
+  getConfig() {
+    return selectTable("config").get();
+  },
   selectFile({ path }) {
     let list = [];
     walkFilesAsync(path, (x) => {

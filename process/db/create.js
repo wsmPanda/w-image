@@ -31,7 +31,11 @@ export function initDB() {
   let TableList = readJson("data/table");
   for (let item of schema) {
     if (item && item.name) {
-      checkFile(tablePath(item.name), item === "object" ? "{}" : "[]");
+      let init = item.type === "object" ? "{}" : "[]";
+      if (item.init) {
+        init = JSON.stringify(item.init);
+      }
+      checkFile(tablePath(item.name), init);
     }
   }
   writeJson("data/table", TableList);

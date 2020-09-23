@@ -39,5 +39,11 @@ export default {
   },
   getDictoryFolder(e) {
     return pormiseConnect("getDictoryFolder", e);
+  },
+  setConfig(e) {
+    return pormiseConnect("setConfig", e);
+  },
+  getConfig(e) {
+    return pormiseConnect("getConfig", e);
   }
 };

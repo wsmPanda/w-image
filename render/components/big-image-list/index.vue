@@ -3,6 +3,9 @@ import Thumbnail from "../thumbnail";
 export default {
   render() {
     this.transformTop = Math.max(0, this.heightList[this.startIndex - 1]) || 0;
+    if (this.startIndex === 0) {
+      this.transformTop = 0;
+    }
     return (
       <div class="image-bigtable">
         <div
@@ -27,7 +30,12 @@ export default {
                 if (row && row.path) {
                   return (
                     <div
-                      class="dictiry-list-item"
+                      class={{
+                        "dictiry-list-item": true,
+                        start: index === 0,
+                        current: index + this.startIndex === this.currentIndex,
+                        end: index === this.viewData.length - 1
+                      }}
                       key={index + this.startIndex}
                     >
                       {row.path}
@@ -36,7 +44,12 @@ export default {
                 } else {
                   return (
                     <Thumbnail
-                      class="image-list-item"
+                      class={{
+                        "image-list-item": true,
+                        start: index === 0,
+                        current: index + this.startIndex === this.currentIndex,
+                        end: index === this.viewData.length - 1
+                      }}
                       key={index + this.startIndex}
                       src={row}
                       style={this.thumbnailStyle}
@@ -80,7 +93,7 @@ export default {
     },
     preloadPage: {
       type: Number,
-      default: 1
+      default: 3
     }
   },
   data() {
@@ -239,6 +252,15 @@ export default {
 .image-bigtable-list-inner {
   display: flex;
   flex-wrap: wrap;
+  .start {
+    background: red;
+  }
+  .current {
+    background: green;
+  }
+  .end {
+    background: blue;
+  }
   .image-list-item {
     &:hover {
       box-shadow: 0 0 2px #666;

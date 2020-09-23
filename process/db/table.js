@@ -12,5 +12,8 @@ export function selectTable(name) {
       list.push(data);
       return writeTable(name, list);
     },
+    async set(data) {
+      return writeTable(name, data);
+    }
   };
 }

@@ -1,0 +1,66 @@
+<template>
+  <div class="config-view">
+    <h3>图片列表</h3>
+    <Form v-model="data.image" :model="model.image"></Form>
+  </div>
+</template>
+
+<script>
+import Form from "render/components/form";
+export default {
+  components: { Form },
+  props: {
+    data: Object
+  },
+  data() {
+    return {
+      show: false,
+      model: {
+        image: {
+          fields: [
+            {
+              key: "padding",
+              type: "number"
+            },
+            {
+              key: "margin",
+              type: "number"
+            },
+            {
+              key: "column",
+              type: "number"
+            },
+            {
+              key: "height",
+              type: "number"
+            }
+          ]
+        }
+      }
+    };
+  },
+  watch: {
+    value(v) {
+      if (v !== this.show) {
+        this.show = v;
+      }
+    },
+    show(v) {
+      if (v !== this.value) {
+        this.$emit("input", v);
+      }
+    }
+  },
+  methods: {
+    onSubmit() {
+      this.$emit("change", this.data);
+    }
+  }
+};
+</script>
+
+<style lang="less">
+.config-view {
+  padding: 16px;
+}
+</style>
