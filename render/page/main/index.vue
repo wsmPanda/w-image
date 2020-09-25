@@ -1,5 +1,5 @@
 <template>
-  <div class="page-view">
+  <div class="page-view" v-if="config">
     <div class="page-header">
       <Dropdown trigger="click">
         <a href="javascript:void(0)">
@@ -10,7 +10,7 @@
         </DropdownMenu>
       </Dropdown>
     </div>
-    <Layout class="page-content" ref="layout">
+    <Layout class="page-content" ref="layout" :config="config.mainLayout">
       <template slot="left">
         <Button @click="onClick" icon="md-add-circle" size="small"></Button>
         <Tree @on-active="onTreeActive" :data="dictory"></Tree>
@@ -26,7 +26,11 @@
           :height="listHeight"
           @scroll="onListScroll"
           @dictoryChange="onDictoryChange"
+          @activeImageChange="onActiveImageChange"
         ></ImageList>
+      </template>
+      <template slot="right">
+        <ImageViewer class="main-image-viewer" :data="viewImage"></ImageViewer>
       </template>
     </Layout>
   </div>
@@ -37,6 +41,7 @@ import Tree from "render/components/dictory-tree";
 import ImageList from "render/components/big-image-list";
 import Layout from "render/layout";
 import Connect from "render/connect";
+import ImageViewer from "render/components/image-viewer";
 import { Dropdown, DropdownMenu, Button } from "iview";
 import Config from "../config";
 export default {
@@ -47,10 +52,12 @@ export default {
     Button,
     Dropdown,
     Config,
-    DropdownMenu
+    DropdownMenu,
+    ImageViewer
   },
   data() {
     return {
+      viewImage: null,
       storage: {},
       configShow: false,
       listHeight: 300,
@@ -73,6 +80,9 @@ export default {
   },
   watch: {},
   methods: {
+    onActiveImageChange(v) {
+      this.viewImage = v;
+    },
     async onClick() {
       let path = await Connect.selectDictiry();
       await Connect.addDictiry({ path });
@@ -116,6 +126,13 @@ export default {
     this.onResize();
   },
   async created() {
+    this.config = await Connect.getConfig();
+    this.$watch("config", {
+      deep: true,
+      handler(v) {
+        Connect.setConfig({ data: v });
+      }
+    });
     this.storage = await Connect.getStorage();
     if (this.storage.activeTree) {
       this.onTreeActive(this.storage.activeTree).then(() => {
@@ -131,18 +148,6 @@ export default {
       handler(v) {
         Connect.setStorage({ data: v });
       }
-    });
-    Connect.getConfig().then((res) => {
-      if (!res.image) {
-        res.image = { image: {} };
-      }
-      this.config = res;
-      this.$watch("config", {
-        deep: true,
-        handler(v) {
-          Connect.setConfig({ data: v });
-        }
-      });
     });
 
     this.updateDictory();
@@ -161,6 +166,10 @@ export default {
   flex-direction: column;
   .page-header {
     padding: 8px;
+  }
+  .main-image-viewer {
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   .page-content {
     flex: 1;

@@ -19,8 +19,12 @@ export * from "./file";
 记录文件读取缓存，缓存完整读取的目录，防止重复读取（可通过配置关闭）
 ？后台运行目录读取
 
+*/
 
+/*
 
+文件异步查询方法-通过count计数，通过标记位续查询？
+  成批数据加载
 
 */
 function walkFilesAsync(path, cb) {

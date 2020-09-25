@@ -46,9 +46,13 @@ export default {
                     <Thumbnail
                       class={{
                         "image-list-item": true,
+                        active: this.activeImage === row,
                         start: index === 0,
                         current: index + this.startIndex === this.currentIndex,
                         end: index === this.viewData.length - 1
+                      }}
+                      nativeOn={{
+                        click: () => this.onClick(row)
                       }}
                       key={index + this.startIndex}
                       src={row}
@@ -97,7 +101,9 @@ export default {
     }
   },
   data() {
-    return {};
+    return {
+      activeImage: null
+    };
   },
   computed: {
     thumbnailStyle() {
@@ -126,6 +132,10 @@ export default {
     }
   },
   methods: {
+    onClick(v) {
+      this.activeImage = v;
+      this.$emit("activeImageChange", v);
+    },
     // 二分法查找当前的目标元素
     findIndex(height, start = 0, end) {
       if (!end || end > this.data.length - 1) {

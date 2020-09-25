@@ -24,7 +24,6 @@ export default {
 }
 .thumbnail-img {
   object-fit: contain;
-  object-fit: contain;
   height: 100%;
   width: 100%;
   margin-bottom: 30px;
