@@ -7,6 +7,7 @@
 
 <script>
 import Form from "render/components/form";
+import { Switch } from "iview";
 export default {
   components: { Form },
   props: {
@@ -33,6 +34,16 @@ export default {
             {
               key: "height",
               type: "number"
+            },
+            {
+              label: "展示空目录",
+              key: "showEmptyFolder",
+              component: Switch
+            },
+            {
+              label: "显示文件名",
+              key: "showFileName",
+              component: Switch
             }
           ]
         }

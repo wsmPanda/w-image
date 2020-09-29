@@ -1,5 +1,6 @@
 <script>
 import Thumbnail from "../thumbnail";
+import { Icon } from "iview";
 export default {
   render() {
     this.transformTop = Math.max(0, this.heightList[this.startIndex - 1]) || 0;
@@ -38,7 +39,8 @@ export default {
                       }}
                       key={index + this.startIndex}
                     >
-                      {row.path}
+                      <Icon class="icon-fold" type="md-folder" />
+                      {row.name || row.path}
                     </div>
                   );
                 } else {
@@ -54,6 +56,7 @@ export default {
                       nativeOn={{
                         click: () => this.onClick(row)
                       }}
+                      showName={this.imageSetting.showFileName}
                       key={index + this.startIndex}
                       src={row}
                       style={this.thumbnailStyle}

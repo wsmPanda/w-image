@@ -7,9 +7,22 @@
       :key="field.key"
     >
       <Input
+        v-if="!field.component"
         :value="value[field.key]"
         :type="field.type"
-        @input="$set(value, field.key, $event)"/></FormItem
+        @input="$set(value, field.key, $event)"
+        :v-bind="field.attr"
+        :v-on="field.on"
+      />
+      <component
+        v-else
+        :is="field.component"
+        :value="value[field.key]"
+        :type="field.type"
+        @input="$set(value, field.key, $event)"
+        :v-bind="field.attr"
+        :v-on="field.on"
+      ></component> </FormItem
   ></Form>
 </template>
 

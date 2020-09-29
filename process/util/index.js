@@ -1,4 +1,5 @@
 import { isImage } from "./file";
+const util = require("util");
 
 var fs = require("fs");
 export * from "./directory";
@@ -68,25 +69,25 @@ function getDirectryTree(path, name, single) {
 
   return data;
 }
-function getDirectryFileTree(path, name) {
+async function getDirectryFileTree(path, name) {
   let data = {
     path: name || path,
     sub: [],
     files: []
   };
-  var pa = fs.readdirSync(path);
-  pa.forEach(function(ele) {
+  var pa = await util.promisify(fs.readdir)(path);
+  for (let ele of pa) {
     try {
-      var info = fs.statSync(path + "/" + ele);
+      var info = await util.promisify(fs.stat)(path + "/" + ele);
       if (info.isDirectory()) {
-        data.sub.push(getDirectryFileTree(path + "/" + ele, ele));
+        data.sub.push(await getDirectryFileTree(path + "/" + ele, ele));
       } else if (isImage(ele)) {
         data.files.push(ele);
       }
     } catch (ex) {
       console.log(ex);
     }
-  });
+  }
 
   return data;
 }

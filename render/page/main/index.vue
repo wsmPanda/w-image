@@ -17,6 +17,7 @@
       </template>
       <template slot="center">
         <div class="image-list-header" v-if="activeListDictory">
+          <Icon class="icon-fold" type="md-folder" />
           {{ activeListDictory.name || activeListDictory.path }}
         </div>
         <ImageList
@@ -30,7 +31,12 @@
         ></ImageList>
       </template>
       <template slot="right">
-        <ImageViewer class="main-image-viewer" :data="viewImage"></ImageViewer>
+        <ImageViewer
+          v-if="viewImage"
+          class="main-image-viewer"
+          :data="viewImage"
+        ></ImageViewer>
+        <div v-else>空</div>
       </template>
     </Layout>
   </div>
@@ -42,11 +48,12 @@ import ImageList from "render/components/big-image-list";
 import Layout from "render/layout";
 import Connect from "render/connect";
 import ImageViewer from "render/components/image-viewer";
-import { Dropdown, DropdownMenu, Button } from "iview";
+import { Dropdown, DropdownMenu, Button, Icon } from "iview";
 import Config from "../config";
 export default {
   components: {
     ImageList,
+    Icon,
     Layout,
     Tree,
     Button,
@@ -95,21 +102,29 @@ export default {
       this.$set(this.storage, "activeTree", e);
       return Connect.getTreeFiles(e).then((res) => {
         this.activeListDictory = e;
-        this.$refs.imageList.setData(this.floaFileTree(res));
+        console.log(this.config.image);
+        this.$refs.imageList.setData(
+          this.floaFileTree(res),
+          this.config.image.showEmptyFolder
+        );
       });
     },
-    floaFileTree(data, path) {
+    floaFileTree(data, path, showEmptyFolder) {
       let list = data.files.map((p) => (path || data.path) + "/" + p);
       if (data.sub) {
         data.sub.forEach((item) => {
           let subPath = (path || data.path) + "/" + item.path;
-          list.push({
-            path: subPath,
-            name: item.path
-          });
-          list = list.concat(this.floaFileTree(item, subPath));
+          let subList = this.floaFileTree(item, subPath, showEmptyFolder);
+          if (subList.length || showEmptyFolder) {
+            list.push({
+              path: subPath,
+              name: item.path
+            });
+            list = list.concat(subList);
+          }
         });
       }
+
       return list;
     },
     onResize() {
@@ -163,6 +178,9 @@ export default {
   width: 100%;
   overflow: hidden;
   display: flex;
+  .icon-fold {
+    color: #fbc776;
+  }
   flex-direction: column;
   .page-header {
     padding: 8px;

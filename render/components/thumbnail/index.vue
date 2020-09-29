@@ -1,13 +1,13 @@
 <template>
   <div class="thumbnail">
     <img class="thumbnail-img" :src="'file://' + src" />
-    <div class="thumbnail-name">{{ name }}</div>
+    <div v-if="showName" class="thumbnail-name">{{ name }}</div>
   </div>
 </template>
 
 <script>
 export default {
-  props: { src: String },
+  props: { src: String, showName: { type: Boolean, default: true } },
   computed: {
     name() {
       return this.src && this.src.split("/").pop();
