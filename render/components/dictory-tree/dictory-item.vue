@@ -112,6 +112,7 @@ export default {
     }
   }
   .tree-item-name {
+    word-break: break-all;
     padding: 2px 4px;
     &:hover {
       background: #ebf1fa;

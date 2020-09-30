@@ -33,9 +33,9 @@ export default {
                     <div
                       class={{
                         "dictiry-list-item": true,
-                        start: index === 0,
-                        current: index + this.startIndex === this.currentIndex,
-                        end: index === this.viewData.length - 1
+                        // start: index === 0,
+                        // current: index + this.startIndex === this.currentIndex,
+                        // end: index === this.viewData.length - 1
                       }}
                       key={index + this.startIndex}
                     >

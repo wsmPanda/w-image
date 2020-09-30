@@ -1,18 +1,35 @@
 <template>
   <div class="page-view" v-if="config">
     <div class="page-header">
-      <Dropdown trigger="click">
-        <a href="javascript:void(0)">
-          <Button icon="md-settings"></Button>
-        </a>
-        <DropdownMenu slot="list">
-          <Config v-if="config" :data="config"></Config>
-        </DropdownMenu>
-      </Dropdown>
+      <div class="page-header-left">
+        <Dropdown trigger="click">
+          <a href="javascript:void(0)">
+            <Button size="small" icon="md-settings"></Button>
+          </a>
+          <DropdownMenu slot="list">
+            <Config v-if="config" :data="config"></Config>
+          </DropdownMenu>
+        </Dropdown>
+
+        <Button icon="md-cart" size="small" />
+        <Button icon="md-bookmark" size="small" />
+        <Button icon="md-pricetags" size="small" />
+        <Button size="small">
+          <Icon type="ios-apps" /> <Icon type="md-arrow-dropdown" />
+        </Button>
+      </div>
+      <RadioGroup v-model="storage.viewType" type="button" size="small">
+        <Radio label="book"> <Icon type="md-book" /> </Radio>
+        <Radio label="grid"><Icon type="md-grid"/></Radio>
+        <Radio label="scroll"><Icon type="md-more"/></Radio>
+      </RadioGroup>
     </div>
     <Layout class="page-content" ref="layout" :config="config.mainLayout">
       <template slot="left">
-        <Button @click="onClick" icon="md-add-circle" size="small"></Button>
+        <div class="tree-header">
+          <Button @click="onClick" icon="md-add-circle" size="small"></Button>
+          <Button @click="onTreeEdit" icon="md-create" size="small"></Button>
+        </div>
         <Tree @on-active="onTreeActive" :data="dictory"></Tree>
       </template>
       <template slot="center">
@@ -20,7 +37,8 @@
           <Icon class="icon-fold" type="md-folder" />
           {{ activeListDictory.name || activeListDictory.path }}
         </div>
-        <ImageList
+        <component
+          :is="viewComponent"
           :imageSetting="(config && config.image) || undefined"
           ref="imageList"
           class="main-image-list"
@@ -28,7 +46,7 @@
           @scroll="onListScroll"
           @dictoryChange="onDictoryChange"
           @activeImageChange="onActiveImageChange"
-        ></ImageList>
+        ></component>
       </template>
       <template slot="right">
         <ImageViewer
@@ -45,11 +63,18 @@
 <script>
 import Tree from "render/components/dictory-tree";
 import ImageList from "render/components/big-image-list";
+import ImageScroll from "render/components/big-image-list/scroll";
+import PageViewer from "render/components/page-viewer";
 import Layout from "render/layout";
 import Connect from "render/connect";
 import ImageViewer from "render/components/image-viewer";
 import { Dropdown, DropdownMenu, Button, Icon } from "iview";
 import Config from "../config";
+const ViewType = {
+  scroll: ImageScroll,
+  grid: ImageList,
+  page: PageViewer
+};
 export default {
   components: {
     ImageList,
@@ -65,28 +90,29 @@ export default {
   data() {
     return {
       viewImage: null,
-      storage: {},
+      storage: {
+        viewType: "grid"
+      },
+      treeEdit: false,
       configShow: false,
       listHeight: 300,
       config: null,
       dictory: [],
       activeListDictory: null,
-      tools: [
-        { name: "添加目录" },
-        { name: "管理模式" },
-        { name: "全部打开/全部关闭" },
-        {
-          name: "显示模式",
-          list: [{ name: "列表" }, { name: "详情" }, { name: "图标" }]
-        }
-      ],
-
       images: [],
       tree: []
     };
   },
+  computed: {
+    viewComponent() {
+      return ViewType[this.storage.viewType || "grid"];
+    }
+  },
   watch: {},
   methods: {
+    onTreeEdit() {
+      this.treeEdit = true;
+    },
     onActiveImageChange(v) {
       this.viewImage = v;
     },
@@ -102,7 +128,7 @@ export default {
       this.$set(this.storage, "activeTree", e);
       return Connect.getTreeFiles(e).then((res) => {
         this.activeListDictory = e;
-        console.log(this.config.image);
+        console.log(this.$refs);
         this.$refs.imageList.setData(
           this.floaFileTree(res),
           this.config.image.showEmptyFolder
@@ -181,9 +207,16 @@ export default {
   .icon-fold {
     color: #fbc776;
   }
+  .ivu-btn {
+    margin-right: 4px;
+  }
   flex-direction: column;
   .page-header {
     padding: 8px;
+    display: flex;
+  }
+  .page-header-left {
+    flex: 1;
   }
   .main-image-viewer {
     overflow-x: hidden;
@@ -193,6 +226,9 @@ export default {
     flex: 1;
     overflow: hidden;
     background: #fafafa;
+  }
+  .tree-header {
+    padding: 8px;
   }
   .image-list-header {
     position: absolute;
