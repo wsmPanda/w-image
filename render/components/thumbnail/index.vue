@@ -1,7 +1,7 @@
 <template>
   <div class="thumbnail">
     <img class="thumbnail-img" :src="'file://' + src" />
-    <div v-if="showName" class="thumbnail-name">{{ name }}</div>
+    <div v-if="showName" class="thumbnail-name" :title="name">{{ name }}</div>
   </div>
 </template>
 

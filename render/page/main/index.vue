@@ -128,29 +128,47 @@ export default {
       this.$set(this.storage, "activeTree", e);
       return Connect.getTreeFiles(e).then((res) => {
         this.activeListDictory = e;
-        console.log(this.$refs);
-        this.$refs.imageList.setData(
-          this.floaFileTree(res),
+        let list = this.floaFileTree(
+          res,
+          null,
           this.config.image.showEmptyFolder
         );
+        //list.shift();
+        this.$refs.imageList.setData(list);
       });
     },
     floaFileTree(data, path, showEmptyFolder) {
-      let list = data.files.map((p) => (path || data.path) + "/" + p);
-      if (data.sub) {
+      let list = [
+        {
+          path: (path || "") + "/" + data.path,
+          name: data.path
+        }
+      ];
+      list = list.concat(data.files.map((p) => (path || data.path) + "/" + p));
+      if (data.sub && data.sub.length) {
+        let totalList = [];
+        let subCount = 0;
         data.sub.forEach((item) => {
           let subPath = (path || data.path) + "/" + item.path;
           let subList = this.floaFileTree(item, subPath, showEmptyFolder);
           if (subList.length || showEmptyFolder) {
-            list.push({
-              path: subPath,
-              name: item.path
-            });
-            list = list.concat(subList);
+            subCount++;
+            totalList = totalList.concat(subList);
           }
         });
+        if (
+          (!data.files || !data.files.length) &&
+          subCount === 1 &&
+          totalList.length
+        ) {
+          totalList[0].name = `${list[0].name}/${totalList[0].name}`;
+          list = [];
+        }
+        list = list.concat(totalList);
       }
-
+      if (list.length <= 1 && !showEmptyFolder) {
+        list = [];
+      }
       return list;
     },
     onResize() {
@@ -239,6 +257,7 @@ export default {
     top: 0;
     right: 15px;
     padding: 4px 8px;
+    font-size: 14px;
   }
   .main-image-list {
     height: 100%;

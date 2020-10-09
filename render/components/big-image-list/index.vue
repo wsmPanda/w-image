@@ -32,13 +32,16 @@ export default {
                   return (
                     <div
                       class={{
-                        "dictiry-list-item": true,
+                        "dictiry-list-item": true
                         // start: index === 0,
                         // current: index + this.startIndex === this.currentIndex,
                         // end: index === this.viewData.length - 1
                       }}
                       key={index + this.startIndex}
                     >
+                      <Icon
+                        type={!this.open ? "ios-arrow-up" : "ios-arrow-forward"}
+                      ></Icon>
                       <Icon class="icon-fold" type="md-folder" />
                       {row.name || row.path}
                     </div>
@@ -86,7 +89,7 @@ export default {
       type: Object,
       default() {
         return {
-          height: 30
+          height: 34
         };
       }
     },
@@ -146,17 +149,19 @@ export default {
       }
       while (start < end) {
         let mid = Math.floor((start + end) / 2);
+        console.log(start, end, mid);
         if (mid === start || mid === 0 || mid === end) {
           break;
         } else if (this.heightList[mid] > height) {
           end = mid;
         } else if (this.heightList[mid] < height) {
-          start = mid;
+          start = mid + 1;
         } else {
           start = mid;
           break;
         }
       }
+      console.log(start);
       return start;
     },
     setData(data) {
@@ -183,7 +188,7 @@ export default {
           count += this.imageHeight;
         }
         // 清空行元素计数
-        if (columnCount === this.imageSetting.column) {
+        if (columnCount === Number(this.imageSetting.column)) {
           columnCount = 0;
         }
         this.heightList.push(count);
@@ -232,6 +237,15 @@ export default {
       ) {
         this.endIndex = this.endIndex + 1;
       }
+      this.endIndex = this.endIndex + 1;
+      console.log(
+        this.heightList,
+        this.endIndex,
+        Math.min(
+          Math.max(this.scrollTop + this.height * (this.preloadPage + 1)),
+          this.listHeight
+        )
+      );
       this.viewData = this.data.slice(this.startIndex, this.endIndex);
     },
     onScroll() {
