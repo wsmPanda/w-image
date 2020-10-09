@@ -38,6 +38,9 @@ export default {
                         // end: index === this.viewData.length - 1
                       }}
                       key={index + this.startIndex}
+                      on={{
+                        click: () => this.onDictoryClick(row)
+                      }}
                     >
                       <Icon
                         type={!this.open ? "ios-arrow-up" : "ios-arrow-forward"}
@@ -138,6 +141,9 @@ export default {
     }
   },
   methods: {
+    onDictoryClick(v) {
+      this.$emit("dictoryClick", v);
+    },
     onClick(v) {
       this.activeImage = v;
       this.$emit("activeImageChange", v);

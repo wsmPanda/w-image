@@ -41,6 +41,11 @@ export default {
               component: Switch
             },
             {
+              label: "显示非图片文件",
+              key: "showAllFile",
+              component: Switch
+            },
+            {
               label: "显示文件名",
               key: "showFileName",
               component: Switch

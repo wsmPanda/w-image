@@ -1,3 +1,10 @@
+const IMAGE_REGEXP = /\.(jpeg|jpg|gif|png|svg|webp|jfif|bmp|dpg)/i;
+export function getSuffix(name) {
+  return name && name.split(".").pop();
+}
+export function isImage(name) {
+  return IMAGE_REGEXP.test(name);
+}
 export function cloneJson(obj) {
   if (obj && typeof obj === "object") {
     return JSON.parse(JSON.stringify(obj));

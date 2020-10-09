@@ -46,6 +46,7 @@
           @scroll="onListScroll"
           @dictoryChange="onDictoryChange"
           @activeImageChange="onActiveImageChange"
+          @dictoryClick="onDictoryClick"
         ></component>
       </template>
       <template slot="right">
@@ -116,6 +117,9 @@ export default {
     onActiveImageChange(v) {
       this.viewImage = v;
     },
+    onDictoryClick(v) {
+      console.log(v);
+    },
     async onClick() {
       let path = await Connect.selectDictiry();
       await Connect.addDictiry({ path });
@@ -131,7 +135,7 @@ export default {
         let list = this.floaFileTree(
           res,
           null,
-          this.config.image.showEmptyFolder
+          this.config.image && this.config.image.showEmptyFolder
         );
         //list.shift();
         this.$refs.imageList.setData(list);
