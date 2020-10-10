@@ -28,14 +28,17 @@ export default {
   getTreeFiles(e) {
     return pormiseConnect("getTreeFiles", e);
   },
-  selectDictiry(e) {
-    return pormiseConnect("selectDictiry", e);
+  selectDictory(e) {
+    return pormiseConnect("selectDictory", e);
   },
-  addDictiry(e) {
-    return pormiseConnect("addDictiry", e);
+  addDictory(e) {
+    return pormiseConnect("addDictory", e);
   },
   getDictory(e) {
     return pormiseConnect("getDictory", e);
+  },
+  openDictory(e) {
+    return pormiseConnect("openDictory", e);
   },
   getDictoryFolder(e) {
     return pormiseConnect("getDictoryFolder", e);

@@ -5,9 +5,11 @@ import {
   getDirectryFileTree
 } from "../../util";
 import { selectTable } from "../../db";
-import { dialog } from "electron";
+import { dialog, shell } from "electron";
+const os = require("os");
+
 export default {
-  selectDictiry() {
+  selectDictory() {
     return dialog
       .showOpenDialog({
         properties: ["openFile", "openDirectory"]
@@ -16,8 +18,12 @@ export default {
         return files.filePaths[0];
       });
   },
-  addDictiry({ path }) {
+  addDictory({ path }) {
     return selectTable("dictory").add({ path, name: path.split("/").pop() });
+  },
+  openDictory({ path }) {
+    console.log("????", os.homedir(), path);
+    return shell.showItemInFolder(path);
   },
   getDictory() {
     return selectTable("dictory").get();

@@ -32,21 +32,24 @@ export default {
                   return (
                     <div
                       class={{
-                        "dictiry-list-item": true
+                        "dictory-list-item": true
                         // start: index === 0,
                         // current: index + this.startIndex === this.currentIndex,
                         // end: index === this.viewData.length - 1
                       }}
                       key={index + this.startIndex}
-                      on={{
-                        click: () => this.onDictoryClick(row)
-                      }}
                     >
                       <Icon
                         type={!this.open ? "ios-arrow-up" : "ios-arrow-forward"}
                       ></Icon>
                       <Icon class="icon-fold" type="md-folder" />
-                      {row.name || row.path}
+                      <a
+                        on={{
+                          click: () => this.onDictoryClick(row)
+                        }}
+                      >
+                        {row.name || row.path}
+                      </a>
                     </div>
                   );
                 } else {
@@ -88,7 +91,7 @@ export default {
         };
       }
     },
-    dictirySetting: {
+    dictorySetting: {
       type: Object,
       default() {
         return {
@@ -127,7 +130,7 @@ export default {
       };
     },
     dictoryHeight() {
-      return Number(this.dictirySetting.height);
+      return Number(this.dictorySetting.height);
     },
     imageHeight() {
       return (
@@ -332,7 +335,7 @@ export default {
       background: #eff5ff;
     }
   }
-  .dictiry-list-item {
+  .dictory-list-item {
     padding: 2px 0;
     margin: 4px 0;
     font-size: 14px;
@@ -340,6 +343,9 @@ export default {
     white-space: nowrap;
     text-overflow: ellipsis;
     width: 100%;
+    a {
+      margin-left: 4px;
+    }
   }
 }
 </style>

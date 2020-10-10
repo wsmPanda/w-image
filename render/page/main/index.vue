@@ -118,11 +118,11 @@ export default {
       this.viewImage = v;
     },
     onDictoryClick(v) {
-      console.log(v);
+      Connect.openDictory(v);
     },
     async onClick() {
-      let path = await Connect.selectDictiry();
-      await Connect.addDictiry({ path });
+      let path = await Connect.selectDictory();
+      await Connect.addDictory({ path });
       this.updateDictory();
     },
     async updateDictory() {
@@ -144,7 +144,7 @@ export default {
     floaFileTree(data, path, showEmptyFolder) {
       let list = [
         {
-          path: (path || "") + "/" + data.path,
+          path: path || data.path,
           name: data.path
         }
       ];
