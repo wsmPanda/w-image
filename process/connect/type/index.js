@@ -6,8 +6,6 @@ import {
 } from "../../util";
 import { selectTable } from "../../db";
 import { dialog, shell } from "electron";
-const os = require("os");
-
 export default {
   selectDictory() {
     return dialog
@@ -22,7 +20,6 @@ export default {
     return selectTable("dictory").add({ path, name: path.split("/").pop() });
   },
   openDictory({ path }) {
-    console.log("????", os.homedir(), path);
     return shell.showItemInFolder(path);
   },
   getDictory() {

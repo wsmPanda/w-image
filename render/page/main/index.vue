@@ -1,5 +1,8 @@
 <template>
   <div class="page-view" v-if="config">
+    <video class="video" controls height="300">
+      <source src="file:///" type="video/mp4" />
+    </video>
     <div class="page-header">
       <div class="page-header-left">
         <Dropdown trigger="click">

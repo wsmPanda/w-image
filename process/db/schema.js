@@ -1,4 +1,5 @@
 export default [
+  // 界面配置表
   {
     name: "config",
     type: "object",
@@ -24,6 +25,7 @@ export default [
       }
     }
   },
+  // 模式配置表
   {
     name: "config_mode",
     init: []
@@ -32,20 +34,35 @@ export default [
     name: "setting",
     type: "object"
   },
+  // 目录表
   {
     name: "dictory",
     type: "array"
   },
+  // 目录树
   {
     name: "dictory_tree",
     type: "array"
   },
-
+  // 状态缓存
   {
     name: "storage",
     type: "object"
   },
+  // 收藏
   {
     name: "collect"
+  },
+  // 标签
+  {
+    name: "tag"
+  },
+  // 缓存数据
+  {
+    name: "cache"
+  },
+  // 图片状态记录
+  {
+    name: "images"
   }
 ];
