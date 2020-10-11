@@ -1,8 +1,5 @@
 <template>
   <div class="page-view" v-if="config">
-    <video class="video" controls height="300">
-      <source src="file:///" type="video/mp4" />
-    </video>
     <div class="page-header">
       <div class="page-header-left">
         <Dropdown trigger="click">
@@ -23,8 +20,8 @@
       </div>
       <RadioGroup v-model="storage.viewType" type="button" size="small">
         <Radio label="book"> <Icon type="md-book" /> </Radio>
-        <Radio label="grid"><Icon type="md-grid"/></Radio>
-        <Radio label="scroll"><Icon type="md-more"/></Radio>
+        <Radio label="grid"><Icon type="md-grid" /></Radio>
+        <Radio label="scroll"><Icon type="md-more" /></Radio>
       </RadioGroup>
     </div>
     <Layout class="page-content" ref="layout" :config="config.mainLayout">
@@ -77,7 +74,7 @@ import Config from "../config";
 const ViewType = {
   scroll: ImageScroll,
   grid: ImageList,
-  page: PageViewer
+  page: PageViewer,
 };
 export default {
   components: {
@@ -89,13 +86,13 @@ export default {
     Dropdown,
     Config,
     DropdownMenu,
-    ImageViewer
+    ImageViewer,
   },
   data() {
     return {
       viewImage: null,
       storage: {
-        viewType: "grid"
+        viewType: "grid",
       },
       treeEdit: false,
       configShow: false,
@@ -104,13 +101,13 @@ export default {
       dictory: [],
       activeListDictory: null,
       images: [],
-      tree: []
+      tree: [],
     };
   },
   computed: {
     viewComponent() {
       return ViewType[this.storage.viewType || "grid"];
-    }
+    },
   },
   watch: {},
   methods: {
@@ -148,8 +145,8 @@ export default {
       let list = [
         {
           path: path || data.path,
-          name: data.path
-        }
+          name: data.path,
+        },
       ];
       list = list.concat(data.files.map((p) => (path || data.path) + "/" + p));
       if (data.sub && data.sub.length) {
@@ -186,7 +183,7 @@ export default {
     },
     onListScroll(v) {
       this.$set(this.storage, "listScroll", v);
-    }
+    },
   },
   mounted() {
     this.onResize();
@@ -197,7 +194,7 @@ export default {
       deep: true,
       handler(v) {
         Connect.setConfig({ data: v });
-      }
+      },
     });
     this.storage = await Connect.getStorage();
     if (this.storage.activeTree) {
@@ -213,14 +210,17 @@ export default {
       deep: true,
       handler(v) {
         Connect.setStorage({ data: v });
-      }
+      },
     });
 
     this.updateDictory();
+    setTimeout(() => {
+      this.onResize();
+    });
     window.addEventListener("resize", () => {
       this.onResize();
     });
-  }
+  },
 };
 </script>
 <style lang="less">

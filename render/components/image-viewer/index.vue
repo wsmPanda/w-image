@@ -1,15 +1,25 @@
 <template>
   <div class="image-viewer">
-    <img class="image-viewer-img" :src="'file://' + data" />
+    <img v-if="isImage" class="image-viewer-img" :src="'file://' + data" />
+    <VideoViewer v-else :key="data" :data="data"></VideoViewer>
     <div>{{ data }}</div>
   </div>
 </template>
 
 <script>
+import { isImage } from "render/util";
+import VideoViewer from "../video-viewer";
 export default {
+  components: { VideoViewer },
   props: {
-    data: {}
-  }
+    data: {},
+  },
+  computed: {
+    isImage() {
+      return isImage(this.data);
+    },
+  },
+  methods: {},
 };
 </script>
 

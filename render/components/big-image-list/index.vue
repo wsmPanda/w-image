@@ -58,9 +58,9 @@ export default {
                       class={{
                         "image-list-item": true,
                         active: this.activeImage === row,
-                        start: index === 0,
-                        current: index + this.startIndex === this.currentIndex,
-                        end: index === this.viewData.length - 1
+                        // start: index === 0,
+                        // current: index + this.startIndex === this.currentIndex,
+                        // end: index === this.viewData.length - 1
                       }}
                       nativeOn={{
                         click: () => this.onClick(row)
@@ -158,7 +158,6 @@ export default {
       }
       while (start < end) {
         let mid = Math.floor((start + end) / 2);
-        console.log(start, end, mid);
         if (mid === start || mid === 0 || mid === end) {
           break;
         } else if (this.heightList[mid] > height) {
@@ -170,7 +169,6 @@ export default {
           break;
         }
       }
-      console.log(start);
       return start;
     },
     setData(data) {
@@ -247,14 +245,6 @@ export default {
         this.endIndex = this.endIndex + 1;
       }
       this.endIndex = this.endIndex + 1;
-      console.log(
-        this.heightList,
-        this.endIndex,
-        Math.min(
-          Math.max(this.scrollTop + this.height * (this.preloadPage + 1)),
-          this.listHeight
-        )
-      );
       this.viewData = this.data.slice(this.startIndex, this.endIndex);
     },
     onScroll() {

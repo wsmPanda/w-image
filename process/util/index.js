@@ -1,4 +1,4 @@
-import { isImage } from "./file";
+import { isImage, isVideo } from "./file";
 const util = require("util");
 
 var fs = require("fs");
@@ -46,7 +46,7 @@ function walkFilesAsync(path, cb) {
 function getDirectryTree(path, name, single) {
   let data = {
     path: name || path,
-    sub: []
+    sub: [],
   };
   var pa = fs.readdirSync(path);
   pa.forEach(function(ele) {
@@ -56,7 +56,7 @@ function getDirectryTree(path, name, single) {
         if (single) {
           data.sub.push({
             path: path + "/" + ele,
-            name: ele
+            name: ele,
           });
         } else {
           data.sub.push(getDirectryTree(path + "/" + ele, ele));
@@ -73,7 +73,7 @@ async function getDirectryFileTree(path, name) {
   let data = {
     path: name || path,
     sub: [],
-    files: []
+    files: [],
   };
   var pa = await util.promisify(fs.readdir)(path);
   for (let ele of pa) {
@@ -81,7 +81,7 @@ async function getDirectryFileTree(path, name) {
       var info = await util.promisify(fs.stat)(path + "/" + ele);
       if (info.isDirectory()) {
         data.sub.push(await getDirectryFileTree(path + "/" + ele, ele));
-      } else if (isImage(ele)) {
+      } else if (isImage(ele) || isVideo(ele)) {
         data.files.push(ele);
       }
     } catch (ex) {
