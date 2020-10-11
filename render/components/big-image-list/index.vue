@@ -18,13 +18,13 @@ export default {
           <div
             class="image-bigtable-list"
             style={{
-              height: this.listHeight + "px"
+              height: this.listHeight + "px",
             }}
           >
             <div
               class="image-bigtable-list-inner"
               style={{
-                transform: `translateY(${this.transformTop}px)`
+                transform: `translateY(${this.transformTop}px)`,
               }}
             >
               {this.viewData.map((row, index) => {
@@ -32,7 +32,7 @@ export default {
                   return (
                     <div
                       class={{
-                        "dictory-list-item": true
+                        "dictory-list-item": true,
                         // start: index === 0,
                         // current: index + this.startIndex === this.currentIndex,
                         // end: index === this.viewData.length - 1
@@ -45,7 +45,7 @@ export default {
                       <Icon class="icon-fold" type="md-folder" />
                       <a
                         on={{
-                          click: () => this.onDictoryClick(row)
+                          click: () => this.onDictoryClick(row),
                         }}
                       >
                         {row.name || row.path}
@@ -63,10 +63,11 @@ export default {
                         // end: index === this.viewData.length - 1
                       }}
                       nativeOn={{
-                        click: () => this.onClick(row)
+                        click: () => this.onClick(row),
                       }}
                       showName={this.imageSetting.showFileName}
-                      key={index + this.startIndex}
+                      //key={index + this.startIndex}
+                      key={row}
                       src={row}
                       style={this.thumbnailStyle}
                     ></Thumbnail>
@@ -87,34 +88,34 @@ export default {
           padding: 4,
           margin: 4,
           column: 3,
-          height: 80
+          height: 80,
         };
-      }
+      },
     },
     dictorySetting: {
       type: Object,
       default() {
         return {
-          height: 34
+          height: 34,
         };
-      }
+      },
     },
     loading: {
       type: Boolean,
-      default: false
+      default: false,
     },
     height: {
       type: Number,
-      default: 600
+      default: 600,
     },
     preloadPage: {
       type: Number,
-      default: 3
-    }
+      default: 3,
+    },
   },
   data() {
     return {
-      activeImage: null
+      activeImage: null,
     };
   },
   computed: {
@@ -126,7 +127,7 @@ export default {
         marginBottom: `${this.imageSetting.margin}px`,
         height: `${this.imageSetting.height}px`,
         minHeight: `${this.imageSetting.height}px`,
-        width: `${100 / this.imageSetting.column}%`
+        width: `${100 / this.imageSetting.column}%`,
       };
     },
     dictoryHeight() {
@@ -136,12 +137,12 @@ export default {
       return (
         Number(this.imageSetting.height) + Number(this.imageSetting.margin)
       );
-    }
+    },
   },
   watch: {
     imageSetting() {
       this.updateHeightList();
-    }
+    },
   },
   methods: {
     onDictoryClick(v) {
@@ -276,7 +277,7 @@ export default {
       this.scrollTop = v;
       this.checkPosition();
       this.$forceUpdate();
-    }
+    },
   },
   created() {
     this.heightList = [];
@@ -287,7 +288,7 @@ export default {
     this.currentIndex = 0;
     this.scrollTop = 0;
     this.updateList();
-  }
+  },
 };
 </script>
 

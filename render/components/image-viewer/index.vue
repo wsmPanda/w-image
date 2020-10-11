@@ -1,7 +1,11 @@
 <template>
   <div class="image-viewer">
-    <img v-if="isImage" class="image-viewer-img" :src="'file://' + data" />
-    <VideoViewer v-else :key="data" :data="data"></VideoViewer>
+    <img
+      v-if="isImage"
+      class="image-viewer-img"
+      :src="'file://' + data"
+    />
+    <VideoViewer v-else :data="data"></VideoViewer>
     <div>{{ data }}</div>
   </div>
 </template>
