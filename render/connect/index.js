@@ -37,11 +37,14 @@ export default {
   getDictory(e) {
     return pormiseConnect("getDictory", e);
   },
+  getFileInfo(e) {
+    return pormiseConnect("getFileInfo", e);
+  },
   openDictory(e) {
     return pormiseConnect("openDictory", e);
   },
-  openFileDelete(e) {
-    return pormiseConnect("openFileDelete", e);
+  deleteFile(e) {
+    return pormiseConnect("deleteFile", e);
   },
   getDictoryFolder(e) {
     return pormiseConnect("getDictoryFolder", e);

@@ -51,6 +51,7 @@
       </template>
       <template slot="right">
         <ImageViewer
+          :key="viewImage"
           v-if="viewImage"
           class="main-image-viewer"
           :data="viewImage"

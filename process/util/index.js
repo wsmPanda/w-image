@@ -82,6 +82,8 @@ async function getDirectryFileTree(path, name) {
       if (info.isDirectory()) {
         data.sub.push(await getDirectryFileTree(path + "/" + ele, ele));
       } else if (isImage(ele) || isVideo(ele)) {
+        
+        console.log(info);
         data.files.push(ele);
       }
     } catch (ex) {

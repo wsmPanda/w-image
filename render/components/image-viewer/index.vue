@@ -5,6 +5,7 @@
     <div>
       <a @click="onNameClick">{{ data }}</a>
       <Icon @click.native="onDeleteClick" type="md-trash"></Icon>
+      <div v-if="info">{{sizeText}}</div>
     </div>
   </div>
 </template>
@@ -17,9 +18,28 @@ export default {
   props: {
     data: {},
   },
+  data() {
+    return { info: null };
+  },
   computed: {
     isImage() {
       return isImage(this.data);
+    },
+    sizeText() {
+      let text = "";
+      let size = (this.info && this.info.size) || 0;
+      let number = size;
+      if (size <= 1024 * 1024) {
+        number = size / 1024;
+        text = "K";
+      } else if (size <= 1024 * 1024 * 1024) {
+        number = size / (1024 * 1024);
+        text = "M";
+      } else {
+        number = size / (1024 * 1024 * 1024);
+        text = "G";
+      }
+      return number.toFixed(2) + text;
     },
   },
   methods: {
@@ -29,8 +49,13 @@ export default {
     onDeleteClick() {
       let path = this.data;
       this.data = null;
-      this.$connect.openFileDelete({ path });
+      this.$connect.deleteFile({ path });
     },
+  },
+  created() {
+    this.$connect.getFileInfo({ path: this.data }).then((res) => {
+      this.info = res;
+    });
   },
 };
 </script>

@@ -7,6 +7,7 @@ import {
 import { selectTable } from "../../db";
 import { dialog, shell } from "electron";
 import fs from "fs";
+import util from "util";
 export default {
   selectDictory() {
     return dialog
@@ -25,9 +26,13 @@ export default {
     path = path.replace(/\//g, "\\");
     return shell.showItemInFolder(path);
   },
-  openFileDelete({ path }) {
+  deleteFile({ path }) {
     path = path.replace(/\//g, "\\");
     fs.unlinkSync(path);
+  },
+  async getFileInfo({ path }) {
+    let info = await util.promisify(fs.stat)(path);
+    return info;
   },
   getDictory() {
     return selectTable("dictory").get();
