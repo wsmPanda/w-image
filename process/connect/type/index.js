@@ -6,6 +6,7 @@ import {
 } from "../../util";
 import { selectTable } from "../../db";
 import { dialog, shell } from "electron";
+import fs from "fs";
 export default {
   selectDictory() {
     return dialog
@@ -23,6 +24,10 @@ export default {
     shell.openItem;
     path = path.replace(/\//g, "\\");
     return shell.showItemInFolder(path);
+  },
+  openFileDelete({ path }) {
+    path = path.replace(/\//g, "\\");
+    fs.unlinkSync(path);
   },
   getDictory() {
     return selectTable("dictory").get();

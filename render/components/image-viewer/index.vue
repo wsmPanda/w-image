@@ -1,12 +1,11 @@
 <template>
   <div class="image-viewer">
-    <img
-      v-if="isImage"
-      class="image-viewer-img"
-      :src="'file://' + data"
-    />
-    <VideoViewer v-else :data="data"></VideoViewer>
-    <div>{{ data }}</div>
+    <img v-if="isImage" class="image-viewer-img" :src="'file://' + data" />
+    <VideoViewer v-else :key="data" :data="data"></VideoViewer>
+    <div>
+      <a @click="onNameClick">{{ data }}</a>
+      <Icon @click.native="onDeleteClick" type="md-trash"></Icon>
+    </div>
   </div>
 </template>
 
@@ -23,7 +22,16 @@ export default {
       return isImage(this.data);
     },
   },
-  methods: {},
+  methods: {
+    onNameClick() {
+      this.$connect.openDictory({ path: this.data });
+    },
+    onDeleteClick() {
+      let path = this.data;
+      this.data = null;
+      this.$connect.openFileDelete({ path });
+    },
+  },
 };
 </script>
 

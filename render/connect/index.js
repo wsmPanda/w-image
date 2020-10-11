@@ -40,6 +40,9 @@ export default {
   openDictory(e) {
     return pormiseConnect("openDictory", e);
   },
+  openFileDelete(e) {
+    return pormiseConnect("openFileDelete", e);
+  },
   getDictoryFolder(e) {
     return pormiseConnect("getDictoryFolder", e);
   },
@@ -54,5 +57,5 @@ export default {
   },
   getStorage(e) {
     return pormiseConnect("getStorage", e);
-  }
+  },
 };
