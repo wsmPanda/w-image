@@ -12,6 +12,14 @@ export function selectTable(name) {
       list.push(data);
       return writeTable(name, list);
     },
+    async delete(func) {
+      let list = await readTable(name);
+      let index = list.findIndex(func);
+      if (index >= 0) {
+        list.splice(index, 1);
+      }
+      return writeTable(name, list);
+    },
     async set(data) {
       return writeTable(name, data);
     }

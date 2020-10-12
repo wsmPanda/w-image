@@ -39,6 +39,11 @@ export default [
     name: "dictory",
     type: "array"
   },
+  // 缓存数据
+  {
+    name: "dictory_cache",
+    type: "array"
+  },
   // 目录树
   {
     name: "dictory_tree",

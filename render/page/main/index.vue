@@ -10,6 +10,20 @@
             <Config v-if="config" :data="config"></Config>
           </DropdownMenu>
         </Dropdown>
+        <Input
+          v-if="config.image"
+          icon="md-barcode"
+          size="small"
+          style="width:60px"
+          v-model="config.image.column"
+        />
+        <Input
+          v-if="config.image"
+          icon="md-resize"
+          size="small"
+          style="width:70px"
+          v-model="config.image.height"
+        />
 
         <Button icon="md-cart" size="small" />
         <Button icon="md-bookmark" size="small" />
@@ -20,20 +34,45 @@
       </div>
       <RadioGroup v-model="storage.viewType" type="button" size="small">
         <Radio label="book"> <Icon type="md-book" /> </Radio>
-        <Radio label="grid"><Icon type="md-grid" /></Radio>
-        <Radio label="scroll"><Icon type="md-more" /></Radio>
+        <Radio label="grid"><Icon type="md-grid"/></Radio>
+        <Radio label="scroll"><Icon type="md-more"/></Radio>
       </RadioGroup>
     </div>
     <Layout class="page-content" ref="layout" :config="config.mainLayout">
       <template slot="left">
-        <div class="tree-header">
-          <Button @click="onClick" icon="md-add-circle" size="small"></Button>
-          <Button @click="onTreeEdit" icon="md-create" size="small"></Button>
+        <div class="main-tree">
+          <div class="tree-header">
+            <Button @click="onClick" icon="md-add-circle" size="small"></Button>
+            <Button
+              @click="onTreeEdit"
+              icon="md-create"
+              :type="treeEditing ? 'primary' : 'default'"
+              :ghost="treeEditing"
+              size="small"
+            ></Button>
+          </div>
+          <Tree
+            ref="tree"
+            class="tree-body"
+            @on-active="onTreeActive"
+            :data="dictory"
+            :edit="treeEditing"
+          ></Tree>
         </div>
-        <Tree @on-active="onTreeActive" :data="dictory"></Tree>
       </template>
       <template slot="center">
-        <div class="image-list-header" v-if="activeListDictory">
+        <div class="loading-mask" v-if="imageLoading">
+          <Spin fix>
+            <Icon type="ios-loading" size="18" class="spin-icon-load"></Icon>
+            <div>Loading</div>
+          </Spin>
+        </div>
+
+        <div
+          class="image-list-header"
+          v-if="activeListDictory"
+          @click="onDictoryClick(activeListDictory)"
+        >
           <Icon class="icon-fold" type="md-folder" />
           {{ activeListDictory.name || activeListDictory.path }}
         </div>
@@ -72,10 +111,11 @@ import Connect from "render/connect";
 import ImageViewer from "render/components/image-viewer";
 import { Dropdown, DropdownMenu, Button, Icon } from "iview";
 import Config from "../config";
+import { functionDebounce } from "render/util";
 const ViewType = {
   scroll: ImageScroll,
   grid: ImageList,
-  page: PageViewer,
+  page: PageViewer
 };
 export default {
   components: {
@@ -87,33 +127,34 @@ export default {
     Dropdown,
     Config,
     DropdownMenu,
-    ImageViewer,
+    ImageViewer
   },
   data() {
     return {
       viewImage: null,
       storage: {
-        viewType: "grid",
+        viewType: "grid"
       },
-      treeEdit: false,
       configShow: false,
+      imageLoading: false,
       listHeight: 300,
       config: null,
       dictory: [],
       activeListDictory: null,
+      treeEditing: false,
       images: [],
-      tree: [],
+      tree: []
     };
   },
   computed: {
     viewComponent() {
       return ViewType[this.storage.viewType || "grid"];
-    },
+    }
   },
   watch: {},
   methods: {
     onTreeEdit() {
-      this.treeEdit = true;
+      this.treeEditing = !this.treeEditing;
     },
     onActiveImageChange(v) {
       this.viewImage = v;
@@ -121,16 +162,28 @@ export default {
     onDictoryClick(v) {
       Connect.openDictory(v);
     },
+    async updateDictoryCache() {
+      try {
+        this.dictory = await this.$connect.getDictoryCache();
+        console.log(this.dictory);
+      } catch (ex) {
+        console.error(ex);
+      }
+      if (!this.dictory || !this.dictory.length) {
+        this.updateDictory();
+      }
+    },
     async onClick() {
       let path = await Connect.selectDictory();
       await Connect.addDictory({ path });
-      this.updateDictory();
+      this.dictory.push({ path });
     },
     async updateDictory() {
       this.dictory = await Connect.getDictory();
     },
     onTreeActive(e) {
       this.$set(this.storage, "activeTree", e);
+      this.imageLoading = true;
       return Connect.getTreeFiles(e).then((res) => {
         this.activeListDictory = e;
         let list = this.floaFileTree(
@@ -140,14 +193,15 @@ export default {
         );
         //list.shift();
         this.$refs.imageList.setData(list);
+        this.imageLoading = false;
       });
     },
     floaFileTree(data, path, showEmptyFolder) {
       let list = [
         {
           path: path || data.path,
-          name: data.path,
-        },
+          name: data.path
+        }
       ];
       list = list.concat(data.files.map((p) => (path || data.path) + "/" + p));
       if (data.sub && data.sub.length) {
@@ -184,44 +238,56 @@ export default {
     },
     onListScroll(v) {
       this.$set(this.storage, "listScroll", v);
-    },
+    }
   },
   mounted() {
     this.onResize();
   },
   async created() {
+    this.onTreeChange = functionDebounce(() => {
+      this.$connect.saveDictoryCache({ data: this.dictory });
+    });
     this.config = await Connect.getConfig();
+    let setConfig = functionDebounce(Connect.setConfig);
     this.$watch("config", {
       deep: true,
       handler(v) {
-        Connect.setConfig({ data: v });
-      },
+        setConfig({ data: v });
+      }
     });
     this.storage = await Connect.getStorage();
-    if (this.storage.activeTree) {
-      this.onTreeActive(this.storage.activeTree).then(() => {
-        setTimeout(() => {
-          if (this.storage.listScroll) {
-            this.$refs.imageList.setScroll(this.storage.listScroll);
-          }
-        });
-      });
-    }
+
     this.$watch("storage", {
       deep: true,
       handler(v) {
         Connect.setStorage({ data: v });
-      },
+      }
     });
-
-    this.updateDictory();
     setTimeout(() => {
       this.onResize();
     });
     window.addEventListener("resize", () => {
       this.onResize();
     });
-  },
+
+    await this.updateDictoryCache();
+    this.$watch("dictory", {
+      deep: true,
+      handler() {
+        this.onTreeChange();
+      }
+    });
+    if (this.storage.activeTree) {
+      this.onTreeActive(this.storage.activeTree).then(() => {
+        setTimeout(() => {
+          this.$refs.tree.setActive(this.storage.activeTree);
+          if (this.storage.listScroll) {
+            this.$refs.imageList.setScroll(this.storage.listScroll);
+          }
+        });
+      });
+    }
+  }
 };
 </script>
 <style lang="less">
@@ -230,6 +296,24 @@ export default {
   width: 100%;
   overflow: hidden;
   display: flex;
+  .spin-icon-load {
+    animation: icon-load-spin 1s linear infinite;
+  }
+  .ivu-spin {
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.6);
+  }
+  @keyframes icon-load-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    50% {
+      transform: rotate(180deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
   .icon-fold {
     color: #fbc776;
   }
@@ -243,6 +327,13 @@ export default {
   }
   .page-header-left {
     flex: 1;
+    .ivu-input-wrapper {
+      display: inline-block;
+      width: 60px;
+      margin-left: 4px;
+    }
+    .ivu-input {
+    }
   }
   .main-image-viewer {
     overflow-x: hidden;
@@ -253,8 +344,19 @@ export default {
     overflow: hidden;
     background: #fafafa;
   }
-  .tree-header {
-    padding: 8px;
+
+  .main-tree {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    .tree-header {
+      padding: 8px;
+    }
+    .tree-body {
+      flex: 1;
+      overflow: auto;
+    }
   }
   .image-list-header {
     position: absolute;

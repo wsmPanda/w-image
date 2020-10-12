@@ -43,6 +43,9 @@ export default {
   openDictory(e) {
     return pormiseConnect("openDictory", e);
   },
+  deleteDictory(e) {
+    return pormiseConnect("deleteDictory", e);
+  },
   deleteFile(e) {
     return pormiseConnect("deleteFile", e);
   },
@@ -61,4 +64,10 @@ export default {
   getStorage(e) {
     return pormiseConnect("getStorage", e);
   },
+  saveDictoryCache(e) {
+    return pormiseConnect("saveDictoryCache", e);
+  },
+  getDictoryCache(e) {
+    return pormiseConnect("getDictoryCache", e);
+  }
 };

@@ -91,8 +91,53 @@ async function getDirectryFileTree(path, name) {
 
   return data;
 }
-// 是否为windows
-function isWindows() {
-  return /^win/.test(process.platform);
+/**
+ 文件过滤条件
+ filter:Function
+ 限制遍历层数
+ deep:Number
+ 包括文件遍历
+ file：false
+ 一阶段步长
+ step:null
+ 数据附带info对象
+ info:false
+ */
+
+class FileIterator {
+  constructor(path, options) {
+    this.path = path;
+    this.options = options;
+    this.id = FileIterator.getId();
+    FileIterator.map[this.id] = this;
+    this.fileCount = 0;
+    this.setpCount = 0;
+    this.setState("ready");
+  }
+  async run() {
+    this.setState("run");
+    let res = await this.walkFiles(this.path);
+    this.setState("finish");
+    FileIterator.map[this.id] = null;
+    return res;
+  }
+  walkFiles() {}
+  async stop() {
+    this.setState("stop");
+  }
+  async next() {
+    this.setState("run");
+    this.setState("stop");
+  }
+  setState(v) {
+    this.state = v;
+  }
 }
-export { walkFilesAsync, getDirectryTree, getDirectryFileTree, isWindows };
+FileIterator.idCounter = 0;
+FileIterator.getId = function() {
+  FileIterator.idCounter++;
+  return FileIterator.idCounter;
+};
+FileIterator.map = {};
+
+export { walkFilesAsync, getDirectryTree, getDirectryFileTree };

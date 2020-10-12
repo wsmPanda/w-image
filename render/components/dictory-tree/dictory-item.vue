@@ -3,7 +3,7 @@
     class="tree-item"
     v-if="data"
     :class="{
-      active: data === $treeRoot.active,
+      active: $treeRoot.active && data.path === $treeRoot.active.path,
       single: !loading && hasLoad && (!subList || !subList.length)
     }"
   >
@@ -12,21 +12,30 @@
       <Icon
         v-else-if="!hasLoad || (subList && subList.length)"
         @click.native.stop="onOpen"
-        :type="open ? 'ios-arrow-up' : 'ios-arrow-forward'"
+        :type="data.open ? 'ios-arrow-up' : 'ios-arrow-forward'"
       ></Icon
-      ><span
+      ><span class="tree-item-name-text"
         ><Icon
           class="icon-fold"
           :class="{ 'icon-dictory': isDictory }"
           type="md-folder"
         />{{ data.name || data.path }}</span
       >
+      <div class="tree-item-name-edit" v-if="$treeRoot.edit" @click="onDelete">
+        <Icon type="md-close"></Icon>
+      </div>
     </div>
-    <div v-if="subList && subList.length" v-show="open" class="tree-item-sub">
+    <div
+      v-if="subList && subList.length"
+      v-show="data.open"
+      class="tree-item-sub"
+    >
       <TreeDictoryItem
         v-for="(item, index) of subList"
         :data="item"
-        :key="index"
+        :key="item.path"
+        :index="index"
+        @on-delete="onDelete"
       ></TreeDictoryItem>
     </div>
   </div>
@@ -39,7 +48,7 @@ export default {
   name: "TreeDictoryItem",
   inject: ["$treeRoot"],
   components: { Icon },
-  props: { data: {}, path: {}, isDictory: Boolean },
+  props: { data: {}, path: {}, isDictory: Boolean, index: Number },
   data() {
     return {
       open: false,
@@ -61,10 +70,15 @@ export default {
     onOpen() {
       if (!this.hasLoad) {
         this.getSubData().then(() => {
-          this.open = true;
+          this.$set(this.data, "open", true);
         });
       } else {
-        this.open = !this.open;
+        this.$set(this.data, "open", !this.data.open);
+      }
+    },
+    onClose() {
+      if (this.data.open) {
+        this.$set(this.data, "open", false);
       }
     },
     async getSubData() {
@@ -73,15 +87,30 @@ export default {
         this.subData = [];
         let data = await this.$connect.getDictoryFolder(this.data);
         this.subData = data.sub || [];
+        this.$set(this.data, "sub", this.subData);
       } finally {
         this.loading = false;
         this.hasLoad = true;
       }
     },
     onClick() {
-      this.$emit("on-click");
+      this.$emit("on-click", this.index);
       this.$treeRoot.onItemClick({ data: this.data, path: this.data.path });
+    },
+    onDelete() {
+      this.$emit("on-delete", this.index);
+      this.$treeRoot.onDictoryDelete({
+        data: this.data,
+        path: this.data.path,
+        index: this.index
+      });
     }
+  },
+  created() {
+    this.$treeRoot.initItem(this);
+  },
+  beforeDestroy() {
+    this.$treeRoot.cleanItem(this);
   }
 };
 </script>
@@ -113,10 +142,14 @@ export default {
   }
   .tree-item-name {
     word-break: break-all;
+    display: flex;
     padding: 2px 4px;
     &:hover {
       background: #ebf1fa;
     }
+  }
+  .tree-item-name-text {
+    flex: 1;
   }
   .ivu-icon {
     cursor: pointer;

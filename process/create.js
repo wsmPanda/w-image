@@ -5,7 +5,6 @@ export default async function(win) {
   Connect();
   let resizeTimmer;
   let storage = selectTable("storage").get();
-
   win.on("resize", () => {
     if (resizeTimmer) {
       clearTimeout(resizeTimmer);

@@ -79,3 +79,17 @@ export function compareObject(a, b) {
 export function uniqArray(arr = []) {
   return Array.from(new Set(arr));
 }
+
+export function functionDebounce(func, t = 300) {
+  let timer;
+  return function(...arg) {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    console.log(arg);
+    timer = setTimeout(() => {
+      timer = null;
+      return func(...(arg || {}));
+    }, t);
+  };
+}
