@@ -63,7 +63,8 @@ export default {
                         // end: index === this.viewData.length - 1
                       }}
                       nativeOn={{
-                        click: () => this.onClick(row)
+                        click: () => this.onClick(row),
+                        dblclick: () => this.onDbClick(row)
                       }}
                       showName={this.imageSetting.showFileName}
                       //key={index + this.startIndex}
@@ -151,6 +152,9 @@ export default {
     onClick(v) {
       this.activeImage = v;
       this.$emit("activeImageChange", v);
+    },
+    onDbClick(v) {
+      this.$emit("imageDbClick", v);
     },
     // 二分法查找当前的目标元素
     findIndex(height, start = 0, end) {

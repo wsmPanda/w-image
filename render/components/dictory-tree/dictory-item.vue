@@ -8,13 +8,16 @@
     }"
   >
     <div @click="onClick" class="tree-item-name">
-      <i v-if="loading" class="ivu-load-loop ivu-icon ivu-icon-ios-loading"></i>
-      <Icon
-        v-else-if="!hasLoad || (subList && subList.length)"
-        @click.native.stop="onOpen"
-        :type="data.open ? 'ios-arrow-up' : 'ios-arrow-forward'"
-      ></Icon
-      ><span class="tree-item-name-text"
+      <span class="tree-item-name-text" :title="data.name || data.path"
+        ><i
+          v-if="loading"
+          class="ivu-load-loop ivu-icon ivu-icon-ios-loading"
+        ></i>
+        <Icon
+          v-else-if="!hasLoad || (subList && subList.length)"
+          @click.native.stop="onOpen"
+          :type="data.open ? 'ios-arrow-up' : 'ios-arrow-forward'"
+        ></Icon
         ><Icon
           class="icon-fold"
           :class="{ 'icon-dictory': isDictory }"
@@ -150,6 +153,9 @@ export default {
   }
   .tree-item-name-text {
     flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .ivu-icon {
     cursor: pointer;

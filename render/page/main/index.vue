@@ -86,6 +86,7 @@
           @dictoryChange="onDictoryChange"
           @activeImageChange="onActiveImageChange"
           @dictoryClick="onDictoryClick"
+          @imageDbClick="onImageDbClick"
         ></component>
       </template>
       <template slot="right">
@@ -112,6 +113,8 @@ import ImageViewer from "render/components/image-viewer";
 import { Dropdown, DropdownMenu, Button, Icon } from "iview";
 import Config from "../config";
 import { functionDebounce } from "render/util";
+const { shell } = window.require("electron").remote;
+console.log(shell);
 const ViewType = {
   scroll: ImageScroll,
   grid: ImageList,
@@ -153,6 +156,49 @@ export default {
   },
   watch: {},
   methods: {
+    dictoryParse(data) {
+      let list = [];
+      for (let dictory of data) {
+        let path = dictory.path.split("/");
+        if (path[0] === "") {
+          path.splice(0, 1);
+        }
+        let node = list;
+        let pathText = "";
+        path.forEach((item, index) => {
+          let folder = node.find((i) => i.name === item);
+          pathText += "/" + item;
+          if (!folder) {
+            folder = {
+              open: index !== path.length - 1,
+              name: item,
+              path: pathText,
+              sub: []
+            };
+            node.push(folder);
+          }
+          node = folder.sub;
+        });
+      }
+      return this.mergeDictoryList(list);
+    },
+    mergeDictoryList(list) {
+      let res = [];
+      if (list.length) {
+        for (let item of list) {
+          let sub = this.mergeDictoryList(item.sub);
+          if (sub.length === 1) {
+            res.push({ ...sub[0], name: `${item.name}/${sub[0].name}` });
+          } else {
+            res.push({ ...item, sub });
+          }
+        }
+      }
+      return res;
+    },
+    onImageDbClick(v) {
+      shell.openPath(v);
+    },
     onTreeEdit() {
       this.treeEditing = !this.treeEditing;
     },
@@ -169,6 +215,7 @@ export default {
       } catch (ex) {
         console.error(ex);
       }
+      this.dictory = null;
       if (!this.dictory || !this.dictory.length) {
         this.updateDictory();
       }
@@ -179,7 +226,8 @@ export default {
       this.dictory.push({ path });
     },
     async updateDictory() {
-      this.dictory = await Connect.getDictory();
+      let dictoryList = await Connect.getDictory();
+      this.dictory = this.dictoryParse(dictoryList);
     },
     onTreeActive(e) {
       this.$set(this.storage, "activeTree", e);
