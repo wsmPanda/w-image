@@ -50,6 +50,11 @@
               :ghost="treeEditing"
               size="small"
             ></Button>
+            <Button
+              @click="updateDictory"
+              icon="md-refresh"
+              size="small"
+            ></Button>
           </div>
           <Tree
             ref="tree"
@@ -114,7 +119,6 @@ import { Dropdown, DropdownMenu, Button, Icon } from "iview";
 import Config from "../config";
 import { functionDebounce } from "render/util";
 const { shell } = window.require("electron").remote;
-console.log(shell);
 const ViewType = {
   scroll: ImageScroll,
   grid: ImageList,
@@ -173,6 +177,7 @@ export default {
               open: index !== path.length - 1,
               name: item,
               path: pathText,
+              type: index !== path.length - 1 ? "set" : "dictory",
               sub: []
             };
             node.push(folder);
@@ -211,11 +216,10 @@ export default {
     async updateDictoryCache() {
       try {
         this.dictory = await this.$connect.getDictoryCache();
-        console.log(this.dictory);
+        console.log("updateDictoryCache", this.dictory);
       } catch (ex) {
         console.error(ex);
       }
-      this.dictory = null;
       if (!this.dictory || !this.dictory.length) {
         this.updateDictory();
       }
@@ -230,6 +234,9 @@ export default {
       this.dictory = this.dictoryParse(dictoryList);
     },
     onTreeActive(e) {
+      if (e.type === "set") {
+        return;
+      }
       this.$set(this.storage, "activeTree", e);
       this.imageLoading = true;
       return Connect.getTreeFiles(e).then((res) => {
@@ -248,7 +255,7 @@ export default {
       let list = [
         {
           path: path || data.path,
-          name: data.path
+          name: data.path.split(/\\|\//).pop()
         }
       ];
       list = list.concat(data.files.map((p) => (path || data.path) + "/" + p));
@@ -257,6 +264,8 @@ export default {
         let subCount = 0;
         data.sub.forEach((item) => {
           let subPath = (path || data.path) + "/" + item.path;
+          // 临时处理
+          subPath = item.name;
           let subList = this.floaFileTree(item, subPath, showEmptyFolder);
           if (subList.length || showEmptyFolder) {
             subCount++;
@@ -293,6 +302,7 @@ export default {
   },
   async created() {
     this.onTreeChange = functionDebounce(() => {
+      console.log("saveDictoryCache", this.dictory);
       this.$connect.saveDictoryCache({ data: this.dictory });
     });
     this.config = await Connect.getConfig();
@@ -319,12 +329,15 @@ export default {
     });
 
     await this.updateDictoryCache();
-    this.$watch("dictory", {
-      deep: true,
-      handler() {
-        this.onTreeChange();
-      }
+    setTimeout(() => {
+      this.$watch("dictory", {
+        deep: true,
+        handler() {
+          this.onTreeChange();
+        }
+      });
     });
+
     if (this.storage.activeTree) {
       this.onTreeActive(this.storage.activeTree).then(() => {
         setTimeout(() => {

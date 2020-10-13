@@ -4,7 +4,7 @@
     v-if="data"
     :class="{
       active: $treeRoot.active && data.path === $treeRoot.active.path,
-      single: !loading && hasLoad && (!subList || !subList.length)
+      single: !loading && data.hasRead && (!subList || !subList.length)
     }"
   >
     <div @click="onClick" class="tree-item-name">
@@ -14,15 +14,19 @@
           class="ivu-load-loop ivu-icon ivu-icon-ios-loading"
         ></i>
         <Icon
-          v-else-if="!hasLoad || (subList && subList.length)"
+          v-else-if="!data.hasRead || (subList && subList.length)"
           @click.native.stop="onOpen"
           :type="data.open ? 'ios-arrow-up' : 'ios-arrow-forward'"
         ></Icon
         ><Icon
           class="icon-fold"
-          :class="{ 'icon-dictory': isDictory }"
+          :class="{
+            'icon-dictory': data.type === 'dictory',
+            'icon-set': data.type === 'set'
+          }"
           type="md-folder"
-        />{{ data.name || data.path }}</span
+        />
+        {{ itemName }}</span
       >
       <div class="tree-item-name-edit" v-if="$treeRoot.edit" @click="onDelete">
         <Icon type="md-close"></Icon>
@@ -51,12 +55,11 @@ export default {
   name: "TreeDictoryItem",
   inject: ["$treeRoot"],
   components: { Icon },
-  props: { data: {}, path: {}, isDictory: Boolean, index: Number },
+  props: { data: {}, path: {}, index: Number },
   data() {
     return {
       open: false,
       subData: null,
-      hasLoad: false,
       loading: false
     };
   },
@@ -67,11 +70,18 @@ export default {
       } else {
         return (this.data && this.data.sub) || [];
       }
+    },
+    itemName() {
+      if (this.data.type) {
+        return this.data.name || this.data.path;
+      } else {
+        return this.data.path.split(/\\|\//).pop();
+      }
     }
   },
   methods: {
     onOpen() {
-      if (!this.hasLoad) {
+      if (!this.data.hasRead) {
         this.getSubData().then(() => {
           this.$set(this.data, "open", true);
         });
@@ -88,12 +98,16 @@ export default {
       this.loading = true;
       try {
         this.subData = [];
-        let data = await this.$connect.getDictoryFolder(this.data);
+        let data = await this.$connect.getDictoryFolder({
+          path: this.data.path,
+          deep: 2
+        });
+        console.log(data);
         this.subData = data.sub || [];
         this.$set(this.data, "sub", this.subData);
       } finally {
         this.loading = false;
-        this.hasLoad = true;
+        this.data.hasRead = true;
       }
     },
     onClick() {
@@ -111,6 +125,9 @@ export default {
   },
   created() {
     this.$treeRoot.initItem(this);
+    if (this.data.hasRead === undefined) {
+      this.$set(this.data, "hasRead", false);
+    }
   },
   beforeDestroy() {
     this.$treeRoot.cleanItem(this);
@@ -123,6 +140,16 @@ export default {
   font-size: 12px;
   margin: 0 4px;
   user-select: none;
+  .icon-fold {
+    color: #fbc776;
+    &.icon-dictory {
+      color: #76a4fb;
+    }
+    &.icon-set {
+      color: #cddfff;
+    }
+  }
+
   .tree-item-sub {
     padding-left: 12px;
     position: relative;
@@ -156,17 +183,13 @@ export default {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    min-width: 80px;
   }
   .ivu-icon {
     cursor: pointer;
     margin-right: 2px;
   }
-  .icon-fold {
-    color: #fbc776;
-  }
-  .icon-dictory {
-    color: #76a4fb;
-  }
+
   &.single {
     > .tree-item-name {
       padding-left: 16px;

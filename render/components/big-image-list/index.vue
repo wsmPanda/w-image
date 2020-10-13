@@ -184,24 +184,49 @@ export default {
       this.updateHeightList();
       this.updateList();
     },
-    updateHeightList() {
-      this.heightList = [];
-      // 生成元素高度位置的单向数列
-      let count = 0;
-      let columnCount = 0;
-      this.data.forEach((row) => {
-        columnCount++;
+    appendData(data) {
+      this.appendHeightList(data);
+      this.data = this.concat(data);
+      this.updateList();
+    },
+    appendHeightList(data) {
+      let count = this.heightList[this.data.length - 1] || 0;
+      data.forEach((row) => {
+        this.columnCount++;
         if (row && row.path) {
           count += this.dictoryHeight;
           // 目录元素清空行元素计数
-          columnCount = 0;
-        } else if (columnCount === 1) {
+          this.columnCount = 0;
+        } else if (this.columnCount === 1) {
           // 对于图片元素只有首行才增加高度
           count += this.imageHeight;
         }
         // 清空行元素计数
-        if (columnCount === Number(this.imageSetting.column)) {
-          columnCount = 0;
+        if (this.columnCount === Number(this.imageSetting.column)) {
+          this.columnCount = 0;
+        }
+        this.heightList.push(count);
+      });
+      this.listHeight = this.heightList[this.heightList.length - 1];
+    },
+    updateHeightList() {
+      this.heightList = [];
+      // 生成元素高度位置的单向数列
+      let count = 0;
+      this.columnCount = 0;
+      this.data.forEach((row) => {
+        this.columnCount++;
+        if (row && row.path) {
+          count += this.dictoryHeight;
+          // 目录元素清空行元素计数
+          this.columnCount = 0;
+        } else if (this.columnCount === 1) {
+          // 对于图片元素只有首行才增加高度
+          count += this.imageHeight;
+        }
+        // 清空行元素计数
+        if (this.columnCount === Number(this.imageSetting.column)) {
+          this.columnCount = 0;
         }
         this.heightList.push(count);
       });

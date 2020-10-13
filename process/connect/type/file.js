@@ -1,14 +1,9 @@
-import {
-  walkFilesAsync,
-  isImage,
-  getDirectryTree,
-  getDirectryFileTree,
-  isWindows
-} from "../../util";
+import { walkFilesAsync, isImage, isVideo, isWindows } from "../../util";
 import { selectTable } from "../../db";
 import { dialog, shell } from "electron";
 import fs from "fs";
 import util from "util";
+import Iterator from "../../util/iterator";
 export default {
   selectDictory() {
     return dialog
@@ -61,12 +56,22 @@ export default {
     return list;
   },
   getTree({ path }) {
-    return getDirectryTree(path);
+    return new Iterator(path, {
+      file: false
+    }).run();
   },
   getTreeFiles({ path }) {
-    return getDirectryFileTree(path);
+    return new Iterator(path, {
+      file: true,
+      filter(name) {
+        return isImage(name) || isVideo(name);
+      }
+    }).run();
   },
-  getDictoryFolder({ path }) {
-    return getDirectryTree(path, null, true);
+  getDictoryFolder({ path, deep }) {
+    return new Iterator(path, {
+      file: false,
+      deep
+    }).run();
   }
 };
