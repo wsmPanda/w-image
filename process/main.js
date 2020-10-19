@@ -13,7 +13,7 @@ let win;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
-  { scheme: "app", privileges: { secure: true, standard: true } },
+  { scheme: "app", privileges: { secure: true, standard: true } }
 ]);
 
 function createWindow() {
@@ -79,7 +79,9 @@ app.on("ready", async () => {
   // }
   ProcessReady();
   createWindow();
-  Menu.setApplicationMenu(null);
+  if (0) {
+    Menu.setApplicationMenu(null);
+  }
 });
 
 // Exit cleanly on request from parent process in development mode.

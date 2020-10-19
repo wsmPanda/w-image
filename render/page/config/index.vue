@@ -49,6 +49,20 @@ export default {
               label: "显示文件名",
               key: "showFileName",
               component: Switch
+            },
+            {
+              label: "目录读取长度",
+              key: "readStep",
+              type: "number"
+            }
+          ]
+        },
+        video: {
+          fields: [
+            {
+              label: "自动播放",
+              key: "autoPlay",
+              component: Switch
             }
           ]
         }

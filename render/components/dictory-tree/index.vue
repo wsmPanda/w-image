@@ -45,7 +45,7 @@ export default {
     },
     onDictoryDelete({ data, path }) {
       this.$emit("on-delete", { data, path });
-      this.$connect.deleteDictory(data);
+      this.$connect.run("deleteDictory", data);
     },
     initItem(item) {
       this.items[item.data.path] = item;

@@ -25,7 +25,17 @@
           v-model="config.image.height"
         />
 
-        <Button icon="md-cart" size="small" />
+        <Dropdown trigger="click">
+          <a href="javascript:void(0)">
+            <Button icon="md-cart" size="small">
+              <Icon type="md-arrow-dropdown" />
+            </Button>
+          </a>
+          <DropdownMenu slot="list">
+            <Config v-if="config" :data="config"></Config>
+          </DropdownMenu>
+        </Dropdown>
+
         <Button icon="md-bookmark" size="small" />
         <Button icon="md-pricetags" size="small" />
         <Button size="small">
@@ -87,11 +97,13 @@
           ref="imageList"
           class="main-image-list"
           :height="listHeight"
+          :finish="listLoadFinish"
           @scroll="onListScroll"
           @dictoryChange="onDictoryChange"
           @activeImageChange="onActiveImageChange"
           @dictoryClick="onDictoryClick"
           @imageDbClick="onImageDbClick"
+          @loadMore="onListLoadMore"
         ></component>
       </template>
       <template slot="right">
@@ -125,6 +137,11 @@ const ViewType = {
   page: PageViewer
 };
 export default {
+  provide() {
+    return {
+      $main: this
+    };
+  },
   components: {
     ImageList,
     Icon,
@@ -138,6 +155,7 @@ export default {
   },
   data() {
     return {
+      listLoadFinish: false,
       viewImage: null,
       storage: {
         viewType: "grid"
@@ -150,7 +168,8 @@ export default {
       activeListDictory: null,
       treeEditing: false,
       images: [],
-      tree: []
+      tree: [],
+      cartData: []
     };
   },
   computed: {
@@ -160,6 +179,10 @@ export default {
   },
   watch: {},
   methods: {
+    onListLoadMore() {},
+    cartAdd(data) {
+      this.cartData.push(data);
+    },
     dictoryParse(data) {
       let list = [];
       for (let dictory of data) {
@@ -211,11 +234,11 @@ export default {
       this.viewImage = v;
     },
     onDictoryClick(v) {
-      Connect.openDictory(v);
+      Connect.run("openDictory", v);
     },
     async updateDictoryCache() {
       try {
-        this.dictory = await this.$connect.getDictoryCache();
+        this.dictory = await this.$connect.run("getDictoryCache");
         console.log("updateDictoryCache", this.dictory);
       } catch (ex) {
         console.error(ex);
@@ -225,21 +248,22 @@ export default {
       }
     },
     async onClick() {
-      let path = await Connect.selectDictory();
-      await Connect.addDictory({ path });
+      let path = await Connect.run("selectDictory");
+      await Connect.run("addDictory", { path });
       this.dictory.push({ path });
     },
     async updateDictory() {
-      let dictoryList = await Connect.getDictory();
+      let dictoryList = await Connect.run("getDictory");
       this.dictory = this.dictoryParse(dictoryList);
     },
-    onTreeActive(e) {
+    async onTreeActive(e) {
       if (e.type === "set") {
         return;
       }
       this.$set(this.storage, "activeTree", e);
       this.imageLoading = true;
-      return Connect.getTreeFiles(e).then((res) => {
+      await Connect.run("cleanIterator");
+      return Connect.run("getTreeFiles", e).then((res) => {
         this.activeListDictory = e;
         let list = this.floaFileTree(
           res,
@@ -247,6 +271,7 @@ export default {
           this.config.image && this.config.image.showEmptyFolder
         );
         //list.shift();
+        console.log(list);
         this.$refs.imageList.setData(list);
         this.imageLoading = false;
       });
@@ -303,9 +328,9 @@ export default {
   async created() {
     this.onTreeChange = functionDebounce(() => {
       console.log("saveDictoryCache", this.dictory);
-      this.$connect.saveDictoryCache({ data: this.dictory });
+      this.$connect.run("saveDictoryCache", { data: this.dictory });
     });
-    this.config = await Connect.getConfig();
+    this.config = await Connect.run("getConfig");
     let setConfig = functionDebounce(Connect.setConfig);
     this.$watch("config", {
       deep: true,
@@ -313,12 +338,12 @@ export default {
         setConfig({ data: v });
       }
     });
-    this.storage = await Connect.getStorage();
+    this.storage = await Connect.run("getStorage");
 
     this.$watch("storage", {
       deep: true,
       handler(v) {
-        Connect.setStorage({ data: v });
+        Connect.run("setStorage", { data: v });
       }
     });
     setTimeout(() => {

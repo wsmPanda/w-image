@@ -247,11 +247,15 @@ export default {
         this.dictoryIndex = dictoryIndex;
         this.$emit("dictoryChange", this.data[dictoryIndex]);
       }
-      this.startIndex = this.findIndex(
-        Math.max(this.scrollTop - this.height * this.preloadPage, 0),
-        0,
-        this.currentIndex
+      let topHeight = Math.max(
+        this.scrollTop - this.height * this.preloadPage,
+        0
       );
+      if (topHeight <= 0) {
+        this.startIndex = this.findIndex(topHeight, 0, this.currentIndex);
+      } else {
+        this.startIndex = 0;
+      }
       // 向前找到同行的首个元素
       while (
         this.startIndex > 0 &&
@@ -260,13 +264,15 @@ export default {
       ) {
         this.startIndex = this.startIndex - 1;
       }
-      this.endIndex = this.findIndex(
-        Math.min(
-          Math.max(this.scrollTop + this.height * (this.preloadPage + 1)),
-          this.listHeight
-        ),
-        this.currentIndex
+      let bottomHeight = Math.min(
+        this.scrollTop + this.height * (this.preloadPage + 1),
+        this.listHeight
       );
+      if (bottomHeight <= this.listHeight) {
+        this.endIndex = this.data.length;
+      } else {
+        this.endIndex = this.findIndex(bottomHeight, this.currentIndex);
+      }
       // 向前找到同行的首个元素
       while (
         this.endIndex < this.data.length + 1 &&
@@ -341,12 +347,12 @@ export default {
     this.scrollTop = 0;
     window.addEventListener("keyup", (e) => {
       let code = e.keyCode;
-      console.log(code);
       if (code === 37) {
         this.pageUp();
       } else if (code === 39) {
         this.pageDown();
       }
+      return true;
     });
     this.updateList();
   }

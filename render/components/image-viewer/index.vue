@@ -4,8 +4,16 @@
     <VideoViewer v-else :key="data" :data="data"></VideoViewer>
     <div>
       <a @click="onNameClick">{{ data }}</a>
-      <Icon @click.native="onDeleteClick" type="md-trash"></Icon>
-      <div v-if="info">{{sizeText}}</div>
+      <div>
+        <Button @click="$main.cartAdd(data)">
+          <Icon type="ios-add"/><Icon type="md-cart"
+        /></Button>
+        <Button @click.native="onDeleteClick">
+          <Icon type="md-trash"></Icon>
+        </Button>
+      </div>
+
+      <div v-if="info">{{ sizeText }}</div>
     </div>
   </div>
 </template>
@@ -14,9 +22,10 @@
 import { isImage } from "render/util";
 import VideoViewer from "../video-viewer";
 export default {
+  inject: ["$main"],
   components: { VideoViewer },
   props: {
-    data: {},
+    data: {}
   },
   data() {
     return { info: null };
@@ -40,23 +49,23 @@ export default {
         text = "G";
       }
       return number.toFixed(2) + text;
-    },
+    }
   },
   methods: {
     onNameClick() {
-      this.$connect.openDictory({ path: this.data });
+      this.$connect.run("openDictory", { path: this.data });
     },
     onDeleteClick() {
       let path = this.data;
       this.data = null;
-      this.$connect.deleteFile({ path });
-    },
+      this.$connect.run("deleteFile", { path });
+    }
   },
   created() {
-    this.$connect.getFileInfo({ path: this.data }).then((res) => {
+    this.$connect.run("getFileInfo", { path: this.data }).then((res) => {
       this.info = res;
     });
-  },
+  }
 };
 </script>
 

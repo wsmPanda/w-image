@@ -98,7 +98,7 @@ export default {
       this.loading = true;
       try {
         this.subData = [];
-        let data = await this.$connect.getDictoryFolder({
+        let data = await this.$connect.run("getDictoryFolder", {
           path: this.data.path,
           deep: 2
         });

@@ -73,5 +73,8 @@ export default {
       file: false,
       deep
     }).run();
+  },
+  cleanIterator({ type }) {
+    return Iterator.clean({ type });
   }
 };
