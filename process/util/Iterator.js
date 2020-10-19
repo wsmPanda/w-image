@@ -54,6 +54,9 @@ class FileIterator extends EventEmitter {
     this.endStartTime = +new Date();
     this.setState("finish");
     FileIterator.map[this.id] = null;
+    if (this.setState === "stop") {
+      data = null;
+    }
     return data;
   }
   async setp(cb) {
@@ -75,7 +78,7 @@ class FileIterator extends EventEmitter {
       path: path,
       sub: [],
       files: [],
-      finish: false
+      finish: false,
     };
     if (!deep) {
       this.runData = data;
@@ -117,7 +120,7 @@ class FileIterator extends EventEmitter {
       data: this.tempData,
       finish: this.tempData.finish,
       total: this.totalCount,
-      setp: this.setpPage
+      setp: this.setpPage,
     });
   }
   runGrard() {

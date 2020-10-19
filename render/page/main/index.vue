@@ -14,14 +14,14 @@
           v-if="config.image"
           icon="md-barcode"
           size="small"
-          style="width:60px"
+          style="width: 60px"
           v-model="config.image.column"
         />
         <Input
           v-if="config.image"
           icon="md-resize"
           size="small"
-          style="width:70px"
+          style="width: 70px"
           v-model="config.image.height"
         />
 
@@ -44,8 +44,8 @@
       </div>
       <RadioGroup v-model="storage.viewType" type="button" size="small">
         <Radio label="book"> <Icon type="md-book" /> </Radio>
-        <Radio label="grid"><Icon type="md-grid"/></Radio>
-        <Radio label="scroll"><Icon type="md-more"/></Radio>
+        <Radio label="grid"><Icon type="md-grid" /></Radio>
+        <Radio label="scroll"><Icon type="md-more" /></Radio>
       </RadioGroup>
     </div>
     <Layout class="page-content" ref="layout" :config="config.mainLayout">
@@ -134,12 +134,12 @@ const { shell } = window.require("electron").remote;
 const ViewType = {
   scroll: ImageScroll,
   grid: ImageList,
-  page: PageViewer
+  page: PageViewer,
 };
 export default {
   provide() {
     return {
-      $main: this
+      $main: this,
     };
   },
   components: {
@@ -151,14 +151,14 @@ export default {
     Dropdown,
     Config,
     DropdownMenu,
-    ImageViewer
+    ImageViewer,
   },
   data() {
     return {
       listLoadFinish: false,
       viewImage: null,
       storage: {
-        viewType: "grid"
+        viewType: "grid",
       },
       configShow: false,
       imageLoading: false,
@@ -169,13 +169,13 @@ export default {
       treeEditing: false,
       images: [],
       tree: [],
-      cartData: []
+      cartData: [],
     };
   },
   computed: {
     viewComponent() {
       return ViewType[this.storage.viewType || "grid"];
-    }
+    },
   },
   watch: {},
   methods: {
@@ -186,22 +186,23 @@ export default {
     dictoryParse(data) {
       let list = [];
       for (let dictory of data) {
-        let path = dictory.path.split("/");
+        let path = dictory.path.split(/\\|\//);
         if (path[0] === "") {
           path.splice(0, 1);
         }
         let node = list;
         let pathText = "";
+        console.log(path);
         path.forEach((item, index) => {
           let folder = node.find((i) => i.name === item);
-          pathText += "/" + item;
+          pathText += (pathText ? "/" : "") + item;
           if (!folder) {
             folder = {
               open: index !== path.length - 1,
               name: item,
               path: pathText,
               type: index !== path.length - 1 ? "set" : "dictory",
-              sub: []
+              sub: [],
             };
             node.push(folder);
           }
@@ -264,6 +265,9 @@ export default {
       this.imageLoading = true;
       await Connect.run("cleanIterator");
       return Connect.run("getTreeFiles", e).then((res) => {
+        if (!res) {
+          return;
+        }
         this.activeListDictory = e;
         let list = this.floaFileTree(
           res,
@@ -271,7 +275,6 @@ export default {
           this.config.image && this.config.image.showEmptyFolder
         );
         //list.shift();
-        console.log(list);
         this.$refs.imageList.setData(list);
         this.imageLoading = false;
       });
@@ -280,8 +283,8 @@ export default {
       let list = [
         {
           path: path || data.path,
-          name: data.path.split(/\\|\//).pop()
-        }
+          name: data.path.split(/\\|\//).pop(),
+        },
       ];
       list = list.concat(data.files.map((p) => (path || data.path) + "/" + p));
       if (data.sub && data.sub.length) {
@@ -320,7 +323,7 @@ export default {
     },
     onListScroll(v) {
       this.$set(this.storage, "listScroll", v);
-    }
+    },
   },
   mounted() {
     this.onResize();
@@ -331,12 +334,12 @@ export default {
       this.$connect.run("saveDictoryCache", { data: this.dictory });
     });
     this.config = await Connect.run("getConfig");
-    let setConfig = functionDebounce(Connect.setConfig);
+    let setConfig = functionDebounce((data) => Connect.run("setConfig", data));
     this.$watch("config", {
       deep: true,
       handler(v) {
         setConfig({ data: v });
-      }
+      },
     });
     this.storage = await Connect.run("getStorage");
 
@@ -344,7 +347,7 @@ export default {
       deep: true,
       handler(v) {
         Connect.run("setStorage", { data: v });
-      }
+      },
     });
     setTimeout(() => {
       this.onResize();
@@ -359,7 +362,7 @@ export default {
         deep: true,
         handler() {
           this.onTreeChange();
-        }
+        },
       });
     });
 
@@ -373,7 +376,7 @@ export default {
         });
       });
     }
-  }
+  },
 };
 </script>
 <style lang="less">
