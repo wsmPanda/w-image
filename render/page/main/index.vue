@@ -191,7 +191,6 @@ export default {
         }
         let node = list;
         let pathText = "";
-        console.log(path);
         path.forEach((item, index) => {
           let folder = node.find((i) => i.name === item);
           pathText += (pathText ? "/" : "") + item;
@@ -239,7 +238,6 @@ export default {
     async updateDictoryCache() {
       try {
         this.dictory = await this.$connect.run("getDictoryCache");
-        console.log("updateDictoryCache", this.dictory);
       } catch (ex) {
         console.error(ex);
       }
@@ -288,7 +286,7 @@ export default {
       }
       this.fileStream = Connect.stream("fileListStream", {
         path: e.path,
-        setp: this.config.image.readStep,
+        step: this.config.image.readStep,
       });
     },
     onListLoadMore() {
@@ -298,7 +296,10 @@ export default {
         !this.fileStream.loading
       ) {
         this.fileStream.next().then((res) => {
-          this.$refs.imageList.appendData(res);
+          console.log("next", res);
+          if (res) {
+            this.$refs.imageList.appendData(res);
+          }
         });
       }
     },
@@ -353,7 +354,6 @@ export default {
   },
   async created() {
     this.onTreeChange = functionDebounce(() => {
-      console.log("saveDictoryCache", this.dictory);
       this.$connect.run("saveDictoryCache", { data: this.dictory });
     });
     this.config = await Connect.run("getConfig");

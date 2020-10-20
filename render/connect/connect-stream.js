@@ -1,7 +1,6 @@
 import promise from "./promise";
 export default class ConnectStream {
   constructor(event, payload, options) {
-    console.log(event, "!!!");
     this.event = event;
     this.payload = payload;
     this.options = options;
@@ -13,9 +12,8 @@ export default class ConnectStream {
     await this.initConnect();
     let res = await promise(this.event, {
       ...this.payload,
-      iteratorId: this.iteratorId
+      iteratorId: this.iteratorId,
     });
-    console.log("next", res);
     return res.data;
   }
   async initConnect() {

@@ -42,7 +42,7 @@ class FileIterator extends EventEmitter {
     FileIterator.map[this.id] = this;
     this.totalCount = 0;
     this.fileCount = 0;
-    this.setpCount = 0;
+    this.stepCount = 0;
     this.stepPage = 1;
     this.errorHeap = [];
     this.runData = {};
@@ -64,7 +64,7 @@ class FileIterator extends EventEmitter {
   }
   async next() {
     if (!this.runData.finish) {
-      this.setpCount = 0;
+      this.stepCount = 0;
       if (this.state === "pause") {
         this.nextStep();
       } else if (!this.hasRun) {
@@ -79,7 +79,7 @@ class FileIterator extends EventEmitter {
       return [];
     }
   }
-  async setp(cb) {
+  async step(cb) {
     let iterator = this.iteratorFiles(this.path);
     let outputWatcher = this.on("output", (data) => {
       cb(data, () => {
@@ -92,8 +92,6 @@ class FileIterator extends EventEmitter {
   }
   async iteratorFiles(path, deep = 0) {
     // 遍历器截断和暂停检查
-    let access = await this.runGrard();
-    if (!access) return;
     let data = {
       path: path,
       sub: [],
@@ -101,7 +99,7 @@ class FileIterator extends EventEmitter {
       finish: false,
     };
     this.dataList.push({
-      path: path
+      path: path,
     });
     if (!deep) {
       this.runData = data;
@@ -111,7 +109,8 @@ class FileIterator extends EventEmitter {
       for (let name of files) {
         try {
           this.totalCount++;
-          this.setpCount++;
+          this.stepCount++;
+          console.log(this.stepCount, this.state);
           var info = await util.promisify(fs.stat)(path + "/" + name);
           if (info.isDirectory()) {
             let sub = await this.iteratorFiles(path + "/" + name, deep + 1);
@@ -142,6 +141,7 @@ class FileIterator extends EventEmitter {
     data.finish = true;
     if (!deep) {
       this.outputData();
+      this.finish = true;
     }
     return data;
   }
@@ -151,7 +151,7 @@ class FileIterator extends EventEmitter {
       data: this.runData,
       finish: this.runData.finish,
       total: this.totalCount,
-      setp: this.stepPage
+      step: this.stepPage,
     });
   }
   waitNext() {
@@ -165,7 +165,7 @@ class FileIterator extends EventEmitter {
     });
   }
   runGrard() {
-    if (this.options.setp && this.stepCount >= this.options.setp) {
+    if (this.options.step && this.stepCount >= this.options.step) {
       this.outputData();
       this.setState("pause");
     }
@@ -181,7 +181,7 @@ class FileIterator extends EventEmitter {
     this.setState("stop");
   }
   async nextStep() {
-    if (this.runData.finish || this.setState !== "pause") {
+    if (this.runData.finish || this.state !== "pause") {
       return;
     }
     this.setState("run");
