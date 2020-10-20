@@ -54,6 +54,11 @@ export default {
               label: "目录读取长度",
               key: "readStep",
               type: "number"
+            },
+            {
+              label: "目录翻页高度",
+              key: "turnHeight",
+              type: "number"
             }
           ]
         },

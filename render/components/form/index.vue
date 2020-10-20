@@ -1,10 +1,12 @@
 <template>
-  <Form :model="value" size="small" :label-width="80">
+  <Form class="form" :model="value" size="small" label-position="top">
     <FormItem
+      class="form-item"
       :prop="field.key"
       :label="field.label || field.key"
       v-for="field of model.fields"
       :key="field.key"
+      :style="fieldStyle(field)"
     >
       <Input
         v-if="!field.component"
@@ -32,9 +34,30 @@ export default {
   components: { Form, FormItem, Input },
   props: {
     model: Object,
-    value: Object
+    value: Object,
+    column: {
+      type: Number,
+      default: 2
+    }
+  },
+  methods: {
+    fieldStyle(field) {
+      return {
+        width: ((field.span || 1) / this.column) * 100 + "%"
+      };
+    }
   }
 };
 </script>
 
-<style></style>
+<style lang="less">
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  .form-item {
+    .ivu-input-wrapper {
+      width: auto;
+    }
+  }
+}
+</style>

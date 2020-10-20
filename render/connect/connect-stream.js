@@ -1,10 +1,29 @@
-import core from "./core";
+import promise from "./promise";
 export default class ConnectStream {
-  constructor(code, data, options) {
-    this.code = code;
-    this.data = data;
+  constructor(event, payload, options) {
+    console.log(event, "!!!");
+    this.event = event;
+    this.payload = payload;
     this.options = options;
-    this.id = core.getConnectId();
+    this.finish = false;
+    this.loading = false;
+    return this;
+  }
+  async next() {
+    await this.initConnect();
+    let res = await promise(this.event, {
+      ...this.payload,
+      iteratorId: this.iteratorId
+    });
+    console.log("next", res);
+    return res.data;
+  }
+  async initConnect() {
+    if (this.iteratorId) {
+      return;
+    }
+    let res = await promise(this.event, this.payload);
+    this.iteratorId = res.iteratorId;
   }
   on() {
     return this;

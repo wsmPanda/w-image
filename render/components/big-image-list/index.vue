@@ -81,18 +81,8 @@ export default {
       </div>
     );
   },
+  inject: ["$main"],
   props: {
-    imageSetting: {
-      type: Object,
-      default() {
-        return {
-          padding: 4,
-          margin: 4,
-          column: 3,
-          height: 80
-        };
-      }
-    },
     dictorySetting: {
       type: Object,
       default() {
@@ -120,6 +110,9 @@ export default {
     };
   },
   computed: {
+    imageSetting() {
+      return this.$main.config.image;
+    },
     thumbnailStyle() {
       return {
         paddingTop: `${this.imageSetting.padding}px`,
@@ -296,6 +289,14 @@ export default {
     },
     async checkPosition() {
       this.scrollTop = this.$refs.listWrapper.scrollTop || 0;
+      this.scrollBottom =
+        this.$refs.listWrapper.scrollHeight -
+        this.$refs.listWrapper.clientHeight -
+        this.$refs.listWrapper.scrollTop;
+      console.log(this.scrollBottom);
+      if (this.scrollBottom <= (this.imageSetting.turnHeight || 100)) {
+        this.$emit("loadMore");
+      }
       // 当前位置与错位位置大于一个视图位时进行视图更新
       if (
         Math.abs(
