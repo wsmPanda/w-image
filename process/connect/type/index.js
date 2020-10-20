@@ -1,4 +1,4 @@
-import data from "./data";
+import Stream from "./stream";
 import Data from "./data";
 import File from "./file";
-export default { ...Data, ...File };
+export default { ...Data, ...File, ...Stream };

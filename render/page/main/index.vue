@@ -93,7 +93,6 @@
         </div>
         <component
           :is="viewComponent"
-          :imageSetting="(config && config.image) || undefined"
           ref="imageList"
           class="main-image-list"
           :height="listHeight"
@@ -139,7 +138,8 @@ const ViewType = {
 export default {
   provide() {
     return {
-      $main: this
+      $main: this,
+      $config: this.config
     };
   },
   components: {
@@ -163,7 +163,7 @@ export default {
       configShow: false,
       imageLoading: false,
       listHeight: 300,
-      config: null,
+      config: {},
       dictory: [],
       activeListDictory: null,
       treeEditing: false,
@@ -179,7 +179,6 @@ export default {
   },
   watch: {},
   methods: {
-    onListLoadMore() {},
     cartAdd(data) {
       this.cartData.push(data);
     },
@@ -263,18 +262,44 @@ export default {
       this.$set(this.storage, "activeTree", e);
       this.imageLoading = true;
       await Connect.run("cleanIterator");
-      return Connect.run("getTreeFiles", e).then((res) => {
-        this.activeListDictory = e;
-        let list = this.floaFileTree(
-          res,
-          null,
-          this.config.image && this.config.image.showEmptyFolder
-        );
-        //list.shift();
-        console.log(list);
-        this.$refs.imageList.setData(list);
-        this.imageLoading = false;
+      if (this.config.image.readStep) {
+        this.setFileStream(e);
+        return this.fileStream.next().then((res) => {
+          this.$refs.imageList.setData(res);
+          this.imageLoading = false;
+        });
+      } else {
+        return Connect.run("getTreeFiles", e).then((res) => {
+          this.activeListDictory = e;
+          let list = this.floaFileTree(
+            res,
+            null,
+            this.config.image && this.config.image.showEmptyFolder
+          );
+          this.$refs.imageList.setData(list);
+          this.imageLoading = false;
+        });
+      }
+    },
+    setFileStream(e) {
+      if (this.fileStream) {
+        this.fileStream.stop();
+      }
+      this.fileStream = Connect.stream("fileListStream", {
+        path: e.path,
+        setp: this.config.image.readStep
       });
+    },
+    onListLoadMore() {
+      if (
+        this.fileStream &&
+        !this.fileStream.finish &&
+        !this.fileStream.loading
+      ) {
+        this.fileStream.next().then((res) => {
+          this.$refs.imageList.appendData(res);
+        });
+      }
     },
     floaFileTree(data, path, showEmptyFolder) {
       let list = [
@@ -331,7 +356,7 @@ export default {
       this.$connect.run("saveDictoryCache", { data: this.dictory });
     });
     this.config = await Connect.run("getConfig");
-    let setConfig = functionDebounce(Connect.setConfig);
+    let setConfig = functionDebounce((e) => Connect.run("setConfig", e));
     this.$watch("config", {
       deep: true,
       handler(v) {
@@ -411,16 +436,7 @@ export default {
     padding: 8px;
     display: flex;
   }
-  .page-header-left {
-    flex: 1;
-    .ivu-input-wrapper {
-      display: inline-block;
-      width: 60px;
-      margin-left: 4px;
-    }
-    .ivu-input {
-    }
-  }
+
   .main-image-viewer {
     overflow-x: hidden;
     overflow-y: auto;
@@ -446,7 +462,7 @@ export default {
   }
   .image-list-header {
     position: absolute;
-    z-index: 1000;
+    z-index: 100;
     background: #fff;
     border-bottom: 1px solid #eee;
     left: 0;
@@ -462,6 +478,16 @@ export default {
   .layout-center {
     height: 100%;
     overflow: hidden;
+  }
+}
+.page-header-left {
+  flex: 1;
+  .ivu-input-wrapper {
+    display: inline-block;
+    width: 60px;
+    margin-left: 4px;
+  }
+  .ivu-input {
   }
 }
 </style>

@@ -1,3 +1,4 @@
+import { resolve } from "path";
 import EventEmitter from "./event-emitter";
 const util = require("util");
 var fs = require("fs");
@@ -42,9 +43,11 @@ class FileIterator extends EventEmitter {
     this.totalCount = 0;
     this.fileCount = 0;
     this.setpCount = 0;
-    this.setpPage = 1;
+    this.stepPage = 1;
     this.errorHeap = [];
-    this.runData = null;
+    this.runData = {};
+    this.dataList = [];
+    this.hasRun = false;
     this.setState("ready");
   }
   async run() {
@@ -56,11 +59,28 @@ class FileIterator extends EventEmitter {
     FileIterator.map[this.id] = null;
     return data;
   }
+  async next() {
+    if (!this.runData.finish) {
+      this.setpCount = 0;
+      if (this.state === "pause") {
+        this.nextStep();
+      } else if (!this.hasRun) {
+        this.iteratorFiles(this.path);
+      }
+      return new Promise((resolve) => {
+        this.once("output", (e) => {
+          resolve(e);
+        });
+      });
+    } else {
+      return [];
+    }
+  }
   async setp(cb) {
     let iterator = this.iteratorFiles(this.path);
     let outputWatcher = this.on("output", (data) => {
       cb(data, () => {
-        this.next();
+        this.nextStep();
       });
     });
     return iterator.then(() => {
@@ -77,6 +97,9 @@ class FileIterator extends EventEmitter {
       files: [],
       finish: false
     };
+    this.dataList.push({
+      path: path
+    });
     if (!deep) {
       this.runData = data;
     }
@@ -97,44 +120,56 @@ class FileIterator extends EventEmitter {
               if (this.options.filter(name, info)) {
                 this.fileCount++;
                 data.files.push(name);
+                this.dataList.push(path + "/" + name);
               }
             } else {
               this.fileCount++;
               data.files.push(name);
+              this.dataList.push(path + "/" + name);
             }
           }
         } catch (ex) {
           this.errorHeap.push(ex);
         }
+        let access = await this.runGrard();
+        if (!access) return;
       }
       data.hasRead = true;
     }
     data.finish = true;
+    if (!deep) {
+      this.outputData();
+    }
     return data;
   }
   outputData() {
-    this.$emit("output", {
-      data: this.tempData,
-      finish: this.tempData.finish,
+    this.emit("output", {
+      list: this.dataList,
+      data: this.runData,
+      finish: this.runData.finish,
       total: this.totalCount,
-      setp: this.setpPage
+      setp: this.stepPage
+    });
+  }
+  waitNext() {
+    return new Promise((resove) => {
+      this.once("continue", () => {
+        resove(true);
+      });
+      this.once("stop", () => {
+        resove(false);
+      });
     });
   }
   runGrard() {
     if (this.options.setp && this.stepCount >= this.options.setp) {
       this.outputData();
+      this.setState("pause");
     }
-    if (this.setState === "stop") {
+    if (this.state === "stop") {
       return false;
-    } else if (this.setState === "pause") {
-      return new Promise((resove) => {
-        this.once("continue", () => {
-          resove(true);
-        });
-        this.once("stop", () => {
-          resove(false);
-        });
-      });
+    } else if (this.state === "pause") {
+      return this.waitNext();
     }
     return true;
   }
@@ -142,12 +177,12 @@ class FileIterator extends EventEmitter {
     this.setState("finish");
     this.setState("stop");
   }
-  async next() {
-    if (this.tempData.finish || this.setState !== "pause") {
+  async nextStep() {
+    if (this.runData.finish || this.setState !== "pause") {
       return;
     }
     this.setState("run");
-    this.setpPage++;
+    this.stepPage++;
     this.emit("continue");
   }
   destory() {
