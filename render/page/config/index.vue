@@ -1,7 +1,7 @@
 <template>
   <div class="config-view">
     <h3>图片列表</h3>
-    <Form v-model="data.image" :model="model.image"></Form>
+    <Form v-if="data.image" v-model="data.image" :model="model.image"></Form>
   </div>
 </template>
 

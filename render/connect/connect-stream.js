@@ -1,6 +1,8 @@
 import promise from "./promise";
-export default class ConnectStream {
+import EventEmitter from "../../process/util/event-emitter";
+export default class ConnectStream extends EventEmitter {
   constructor(event, payload, options) {
+    super();
     this.event = event;
     this.payload = payload;
     this.options = options;
@@ -12,8 +14,11 @@ export default class ConnectStream {
     await this.initConnect();
     let res = await promise(this.event, {
       ...this.payload,
-      iteratorId: this.iteratorId,
+      iteratorId: this.iteratorId
     });
+    if (res.finish) {
+      this.emit("finish", this);
+    }
     return res.data;
   }
   async initConnect() {
@@ -23,10 +28,10 @@ export default class ConnectStream {
     let res = await promise(this.event, this.payload);
     this.iteratorId = res.iteratorId;
   }
-  on() {
-    return this;
-  }
   stop() {}
+  onFinish(cb) {
+    return this.on("finish", cb);
+  }
   onData(cb) {
     return this.on("data", cb);
   }

@@ -1,4 +1,3 @@
-import { resolve } from "path";
 import EventEmitter from "./event-emitter";
 const util = require("util");
 var fs = require("fs");
@@ -63,12 +62,15 @@ class FileIterator extends EventEmitter {
     return data;
   }
   async next() {
-    if (!this.runData.finish) {
+    if (!this.finish) {
       this.stepCount = 0;
+      this.dataList = [];
       if (this.state === "pause") {
         this.nextStep();
       } else if (!this.hasRun) {
-        this.iteratorFiles(this.path);
+        this.iteratorFiles(this.path).then(() => {
+          this.finish = true;
+        });
       }
       return new Promise((resolve) => {
         this.once("output", (e) => {
@@ -96,11 +98,13 @@ class FileIterator extends EventEmitter {
       path: path,
       sub: [],
       files: [],
-      finish: false,
+      finish: false
     };
-    this.dataList.push({
+    let row = {
       path: path,
-    });
+      count: 0
+    };
+    this.dataList.push(row);
     if (!deep) {
       this.runData = data;
     }
@@ -110,9 +114,9 @@ class FileIterator extends EventEmitter {
         try {
           this.totalCount++;
           this.stepCount++;
-          console.log(this.stepCount, this.state);
           var info = await util.promisify(fs.stat)(path + "/" + name);
           if (info.isDirectory()) {
+            row.count++;
             let sub = await this.iteratorFiles(path + "/" + name, deep + 1);
             if (sub) {
               data.sub.push(sub);
@@ -140,8 +144,8 @@ class FileIterator extends EventEmitter {
     }
     data.finish = true;
     if (!deep) {
-      this.outputData();
       this.finish = true;
+      this.outputData();
     }
     return data;
   }
@@ -151,7 +155,7 @@ class FileIterator extends EventEmitter {
       data: this.runData,
       finish: this.runData.finish,
       total: this.totalCount,
-      step: this.stepPage,
+      step: this.stepPage
     });
   }
   waitNext() {

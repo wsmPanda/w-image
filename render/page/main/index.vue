@@ -44,11 +44,11 @@
       </div>
       <RadioGroup v-model="storage.viewType" type="button" size="small">
         <Radio label="book"> <Icon type="md-book" /> </Radio>
-        <Radio label="grid"><Icon type="md-grid" /></Radio>
-        <Radio label="scroll"><Icon type="md-more" /></Radio>
+        <Radio label="grid"><Icon type="md-grid"/></Radio>
+        <Radio label="scroll"><Icon type="md-more"/></Radio>
       </RadioGroup>
     </div>
-    <Layout class="page-content" ref="layout" :config="config.mainLayout">
+    <Layout class="page-content" ref="layout" :config="config.mainLayout || {}">
       <template slot="left">
         <div class="main-tree">
           <div class="tree-header">
@@ -96,7 +96,7 @@
           ref="imageList"
           class="main-image-list"
           :height="listHeight"
-          :finish="listLoadFinish"
+          :loadFinish="listLoadFinish"
           @scroll="onListScroll"
           @dictoryChange="onDictoryChange"
           @activeImageChange="onActiveImageChange"
@@ -133,13 +133,13 @@ const { shell } = window.require("electron").remote;
 const ViewType = {
   scroll: ImageScroll,
   grid: ImageList,
-  page: PageViewer,
+  page: PageViewer
 };
 export default {
   provide() {
     return {
       $main: this,
-      $config: this.config,
+      $config: this.config
     };
   },
   components: {
@@ -151,14 +151,14 @@ export default {
     Dropdown,
     Config,
     DropdownMenu,
-    ImageViewer,
+    ImageViewer
   },
   data() {
     return {
       listLoadFinish: false,
       viewImage: null,
       storage: {
-        viewType: "grid",
+        viewType: "grid"
       },
       configShow: false,
       imageLoading: false,
@@ -169,13 +169,13 @@ export default {
       treeEditing: false,
       images: [],
       tree: [],
-      cartData: [],
+      cartData: []
     };
   },
   computed: {
     viewComponent() {
       return ViewType[this.storage.viewType || "grid"];
-    },
+    }
   },
   watch: {},
   methods: {
@@ -200,7 +200,7 @@ export default {
               name: item,
               path: pathText,
               type: index !== path.length - 1 ? "set" : "dictory",
-              sub: [],
+              sub: []
             };
             node.push(folder);
           }
@@ -264,7 +264,8 @@ export default {
       if (this.config.image.readStep) {
         this.setFileStream(e);
         return this.fileStream.next().then((res) => {
-          this.$refs.imageList.setData(res);
+          this.$refs.imageList.setData([]);
+          this.$refs.imageList.appendData(res);
           this.imageLoading = false;
         });
       } else {
@@ -284,9 +285,15 @@ export default {
       if (this.fileStream) {
         this.fileStream.stop();
       }
+      this.listLoadFinish = false;
       this.fileStream = Connect.stream("fileListStream", {
         path: e.path,
-        step: this.config.image.readStep,
+        step: Number(this.config.image.readStep)
+      });
+      this.fileStream.onFinish((ctx) => {
+        if (ctx === this.fileStream) {
+          this.listLoadFinish = true;
+        }
       });
     },
     onListLoadMore() {
@@ -296,7 +303,6 @@ export default {
         !this.fileStream.loading
       ) {
         this.fileStream.next().then((res) => {
-          console.log("next", res);
           if (res) {
             this.$refs.imageList.appendData(res);
           }
@@ -307,8 +313,8 @@ export default {
       let list = [
         {
           path: path || data.path,
-          name: data.path.split(/\\|\//).pop(),
-        },
+          name: data.path.split(/\\|\//).pop()
+        }
       ];
       list = list.concat(data.files.map((p) => (path || data.path) + "/" + p));
       if (data.sub && data.sub.length) {
@@ -347,7 +353,7 @@ export default {
     },
     onListScroll(v) {
       this.$set(this.storage, "listScroll", v);
-    },
+    }
   },
   mounted() {
     this.onResize();
@@ -362,7 +368,7 @@ export default {
       deep: true,
       handler(v) {
         setConfig({ data: v });
-      },
+      }
     });
     this.storage = await Connect.run("getStorage");
 
@@ -370,7 +376,7 @@ export default {
       deep: true,
       handler(v) {
         Connect.run("setStorage", { data: v });
-      },
+      }
     });
     setTimeout(() => {
       this.onResize();
@@ -385,7 +391,7 @@ export default {
         deep: true,
         handler() {
           this.onTreeChange();
-        },
+        }
       });
     });
 
@@ -399,7 +405,7 @@ export default {
         });
       });
     }
-  },
+  }
 };
 </script>
 <style lang="less">

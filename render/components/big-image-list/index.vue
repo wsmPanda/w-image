@@ -18,13 +18,13 @@ export default {
           <div
             class="image-bigtable-list"
             style={{
-              height: this.listHeight + "px",
+              height: this.listHeight + "px"
             }}
           >
             <div
               class="image-bigtable-list-inner"
               style={{
-                transform: `translateY(${this.transformTop}px)`,
+                transform: `translateY(${this.transformTop}px)`
               }}
             >
               {this.viewData.map((row, index) => {
@@ -32,7 +32,7 @@ export default {
                   return (
                     <div
                       class={{
-                        "dictory-list-item": true,
+                        "dictory-list-item": true
                         // start: index === 0,
                         // current: index + this.startIndex === this.currentIndex,
                         // end: index === this.viewData.length - 1
@@ -45,7 +45,7 @@ export default {
                       <Icon class="icon-fold" type="md-folder" />
                       <a
                         on={{
-                          click: () => this.onDictoryClick(row),
+                          click: () => this.onDictoryClick(row)
                         }}
                       >
                         {row.name || row.path}
@@ -57,14 +57,14 @@ export default {
                     <Thumbnail
                       class={{
                         "image-list-item": true,
-                        active: this.activeImage === row,
+                        active: this.activeImage === row
                         // start: index === 0,
                         // current: index + this.startIndex === this.currentIndex,
                         // end: index === this.viewData.length - 1
                       }}
                       nativeOn={{
                         click: () => this.onClick(row),
-                        dblclick: () => this.onDbClick(row),
+                        dblclick: () => this.onDbClick(row)
                       }}
                       showName={this.imageSetting.showFileName}
                       //key={index + this.startIndex}
@@ -87,26 +87,30 @@ export default {
       type: Object,
       default() {
         return {
-          height: 34,
+          height: 34
         };
-      },
+      }
+    },
+    loadFinish: {
+      type: Boolean,
+      default: false
     },
     loading: {
       type: Boolean,
-      default: false,
+      default: false
     },
     height: {
       type: Number,
-      default: 600,
+      default: 600
     },
     preloadPage: {
       type: Number,
-      default: 3,
-    },
+      default: 3
+    }
   },
   data() {
     return {
-      activeImage: null,
+      activeImage: null
     };
   },
   computed: {
@@ -121,7 +125,7 @@ export default {
         marginBottom: `${this.imageSetting.margin}px`,
         height: `${this.imageSetting.height}px`,
         minHeight: `${this.imageSetting.height}px`,
-        width: `${100 / this.imageSetting.column}%`,
+        width: `${100 / this.imageSetting.column}%`
       };
     },
     dictoryHeight() {
@@ -131,12 +135,12 @@ export default {
       return (
         Number(this.imageSetting.height) + Number(this.imageSetting.margin)
       );
-    },
+    }
   },
   watch: {
     imageSetting() {
       this.updateHeightList();
-    },
+    }
   },
   methods: {
     onDictoryClick(v) {
@@ -181,6 +185,34 @@ export default {
       this.appendHeightList(data);
       this.data = this.data.concat(data);
       this.updateList();
+      // 检测页面不满的情况
+      setTimeout(() => {
+        if (
+          !this.loadFinish &&
+          (this.fullPageCheck() || this.bottomPageCheck())
+        ) {
+          this.$emit("loadMore");
+        }
+      });
+    },
+    fullPageCheck() {
+      let res = true;
+      if (this.$refs.listWrapper) {
+        res = this.$refs.listWrapper.scrollHeight >= this.$refs.height;
+      }
+      return res;
+    },
+    bottomPageCheck() {
+      let res = false;
+      if (this.$refs.listWrapper) {
+        this.scrollTop = this.$refs.listWrapper.scrollTop || 0;
+        this.scrollBottom =
+          this.$refs.listWrapper.scrollHeight -
+          this.$refs.listWrapper.clientHeight -
+          this.$refs.listWrapper.scrollTop;
+        res = this.scrollBottom <= (this.imageSetting.turnHeight || 100);
+      }
+      return res;
     },
     appendHeightList(data) {
       let count = this.heightList[this.data.length - 1] || 0;
@@ -289,12 +321,7 @@ export default {
     },
     async checkPosition() {
       this.scrollTop = this.$refs.listWrapper.scrollTop || 0;
-      this.scrollBottom =
-        this.$refs.listWrapper.scrollHeight -
-        this.$refs.listWrapper.clientHeight -
-        this.$refs.listWrapper.scrollTop;
-      console.log(this.scrollBottom);
-      if (this.scrollBottom <= (this.imageSetting.turnHeight || 100)) {
+      if (this.bottomPageCheck()) {
         this.$emit("loadMore");
       }
       // 当前位置与错位位置大于一个视图位时进行视图更新
@@ -321,7 +348,7 @@ export default {
         this.$refs.listWrapper &&
           this.$refs.listWrapper.scrollTo({
             top: scrollTop,
-            behavior: "smooth",
+            behavior: "smooth"
           });
       }
     },
@@ -333,10 +360,10 @@ export default {
         this.$refs.listWrapper &&
           this.$refs.listWrapper.scrollTo({
             top: scrollTop,
-            behavior: "smooth",
+            behavior: "smooth"
           });
       }
-    },
+    }
   },
   created() {
     this.heightList = [];
@@ -356,7 +383,7 @@ export default {
       return true;
     });
     this.updateList();
-  },
+  }
 };
 </script>
 

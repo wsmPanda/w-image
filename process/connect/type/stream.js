@@ -15,7 +15,7 @@ export default {
         iteratorId,
         data: data.list,
         finish: iterator.finish,
-        page: iterator.stepPage,
+        page: iterator.stepPage
       };
     } else {
       iterator = new Iterator(path, {
@@ -24,13 +24,13 @@ export default {
         step,
         filter(name) {
           return isImage(name) || isVideo(name);
-        },
+        }
       });
       return {
         path,
         iteratorId: iterator.id,
-        data: [],
+        data: []
       };
     }
-  },
+  }
 };
