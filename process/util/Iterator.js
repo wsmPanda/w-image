@@ -45,8 +45,14 @@ class FileIterator extends EventEmitter {
     this.stepPage = 1;
     this.errorHeap = [];
     this.runData = {};
+    this.runList = [];
     this.dataList = [];
     this.hasRun = false;
+    this.on("finish", () => {
+      if (FileIterator.onFinish) {
+        FileIterator.onFinish(this);
+      }
+    });
     this.setState("ready");
   }
   async run() {
@@ -105,6 +111,7 @@ class FileIterator extends EventEmitter {
       count: 0
     };
     this.dataList.push(row);
+    this.runList.push(row);
     if (!deep) {
       this.runData = data;
     }
@@ -127,11 +134,13 @@ class FileIterator extends EventEmitter {
                 this.fileCount++;
                 data.files.push(name);
                 this.dataList.push(path + "/" + name);
+                this.runList.push(path + "/" + name);
               }
             } else {
               this.fileCount++;
               data.files.push(name);
               this.dataList.push(path + "/" + name);
+              this.runList.push(path + "/" + name);
             }
           }
         } catch (ex) {
@@ -145,6 +154,7 @@ class FileIterator extends EventEmitter {
     data.finish = true;
     if (!deep) {
       this.finish = true;
+      this.emit("finish");
       this.outputData();
     }
     return data;
@@ -181,7 +191,7 @@ class FileIterator extends EventEmitter {
     return true;
   }
   async stop() {
-    this.setState("finish");
+    // this.setState("finish");
     this.setState("stop");
   }
   async nextStep() {

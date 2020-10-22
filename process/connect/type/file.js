@@ -1,9 +1,19 @@
 import { walkFilesAsync, isImage, isVideo, isWindows } from "../../util";
-import { selectTable } from "../../db";
+import { selectTable, selectFilesTable } from "../../db";
 import { dialog, shell } from "electron";
 import fs from "fs";
 import util from "util";
 import Iterator from "../../util/iterator";
+
+Iterator.onFinish = function(iterator) {
+  let table = selectFilesTable("files_cache");
+  table.save(iterator.path.replace(/\//g, "=="), {
+    path: iterator.path,
+    data: iterator.runData,
+    list: iterator.runList,
+    createTime: +new Date()
+  });
+};
 export default {
   selectDictory() {
     return dialog

@@ -27,16 +27,22 @@
 
         <Dropdown trigger="click">
           <a href="javascript:void(0)">
-            <Button icon="md-cart" size="small">
+            <Button icon="md-images" size="small">
               <Icon type="md-arrow-dropdown" />
             </Button>
           </a>
           <DropdownMenu slot="list">
-            <Config v-if="config" :data="config"></Config>
+            <CheckList :data="checkList"></CheckList>
           </DropdownMenu>
         </Dropdown>
-
-        <Button icon="md-bookmark" size="small" />
+        <Button
+          @click.native.stop="showCheck = !showCheck"
+          :type="showCheck ? 'primary' : 'default'"
+          :ghost="showCheck"
+          icon="md-checkbox-outline"
+          size="small"
+        />
+        <Button icon="md-bookmark" size="small" @click="addBookmark" />
         <Button icon="md-pricetags" size="small" />
         <Button size="small">
           <Icon type="ios-apps" /> <Icon type="md-arrow-dropdown" />
@@ -73,6 +79,10 @@
             :data="dictory"
             :edit="treeEditing"
           ></Tree>
+          <BookmarkList
+            ref="bookmarks"
+            @bookmarksClick="toBookmark"
+          ></BookmarkList>
         </div>
       </template>
       <template slot="center">
@@ -125,10 +135,16 @@ import ImageScroll from "render/components/big-image-list/scroll";
 import PageViewer from "render/components/page-viewer";
 import Layout from "render/layout";
 import Connect from "render/connect";
+import CheckMixins from "./check";
 import ImageViewer from "render/components/image-viewer";
+import BookmarkList from "render/components/bookmark-list";
 import { Dropdown, DropdownMenu, Button, Icon } from "iview";
 import Config from "../config";
 import { functionDebounce } from "render/util";
+import CheckList from "./check-list";
+let isMac = (function() {
+  return /macintosh|mac os x/i.test(navigator.userAgent);
+})();
 const { shell } = window.require("electron").remote;
 const ViewType = {
   scroll: ImageScroll,
@@ -136,6 +152,7 @@ const ViewType = {
   page: PageViewer
 };
 export default {
+  mixins: [CheckMixins],
   provide() {
     return {
       $main: this,
@@ -151,10 +168,13 @@ export default {
     Dropdown,
     Config,
     DropdownMenu,
-    ImageViewer
+    ImageViewer,
+    CheckList,
+    BookmarkList
   },
   data() {
     return {
+      showCheck: true,
       listLoadFinish: false,
       viewImage: null,
       storage: {
@@ -179,6 +199,24 @@ export default {
   },
   watch: {},
   methods: {
+    toBookmark({ dictory, scrollTop }) {
+      this.onTreeActive(dictory).then(() => {
+        setTimeout(() => {
+          this.$refs.tree.setActive(dictory);
+          if (scrollTop) {
+            this.$refs.imageList.setScroll(scrollTop);
+          }
+        });
+      });
+    },
+    addBookmark() {
+      this.$connect.addData("bookmark", {
+        dictory: this.storage.activeTree,
+        scrollTop: this.$refs.imageList && this.$refs.imageList.scrollTop,
+        createTime: +new Date()
+      });
+      this.$refs.bookmarks.update();
+    },
     cartAdd(data) {
       this.cartData.push(data);
     },
@@ -191,6 +229,9 @@ export default {
         }
         let node = list;
         let pathText = "";
+        if (isMac) {
+          pathText = "/";
+        }
         path.forEach((item, index) => {
           let folder = node.find((i) => i.name === item);
           pathText += (pathText ? "/" : "") + item;

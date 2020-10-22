@@ -1,7 +1,5 @@
 <template>
   <div class="image-viewer">
-    <img v-if="isImage" class="image-viewer-img" :src="'file://' + data" />
-    <VideoViewer v-else :key="data" :data="data"></VideoViewer>
     <div>
       <a @click="onNameClick">{{ data }}</a>
       <div>
@@ -11,10 +9,11 @@
         <Button @click.native="onDeleteClick">
           <Icon type="md-trash"></Icon>
         </Button>
+        <span v-if="info">{{ sizeText }}</span>
       </div>
-
-      <div v-if="info">{{ sizeText }}</div>
     </div>
+    <img v-if="isImage" class="image-viewer-img" :src="'file://' + data" />
+    <VideoViewer v-else :key="data" :data="data"></VideoViewer>
   </div>
 </template>
 

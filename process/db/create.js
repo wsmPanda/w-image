@@ -31,11 +31,15 @@ export function initDB() {
   let TableList = readJson("data/table");
   for (let item of schema) {
     if (item && item.name) {
-      let init = item.type === "object" ? "{}" : "[]";
-      if (item.init) {
-        init = JSON.stringify(item.init);
+      if (item.type === "files") {
+        checkDictory("data/store/" + item.name);
+      } else {
+        let init = item.type === "object" ? "{}" : "[]";
+        if (item.init) {
+          init = JSON.stringify(item.init);
+        }
+        checkFile(tablePath(item.name), init);
       }
-      checkFile(tablePath(item.name), init);
     }
   }
   writeJson("data/table", TableList);

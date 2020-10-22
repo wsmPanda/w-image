@@ -3,6 +3,10 @@ export default class EventEmitter {
     this.listeners = {};
     this.watcher = null;
   }
+  eventClean() {
+    this.listeners = {};
+    this.watcher = null;
+  }
   emit(event, payload) {
     if (this.listeners[event] && this.listeners[event].length) {
       for (let listener of this.listeners[event]) {

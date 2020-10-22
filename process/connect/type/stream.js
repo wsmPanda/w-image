@@ -1,10 +1,26 @@
 import Iterator from "../../util/iterator";
 import { isImage, isVideo } from "../../util";
+import { selectFilesTable } from "../../db";
+
 export default {
   async fileListStream(arg) {
-    let { path, iteratorId, step } = arg;
+    let { path, iteratorId, step, cache } = arg;
     let iterator;
     if (iteratorId && Iterator.map[iteratorId]) {
+      if (cache !== false) {
+        let table = selectFilesTable("files_cache");
+        let cacheData = await table.get(path.replace(/\//g, "=="));
+        if (cacheData) {
+          Iterator.map[iteratorId].destory();
+          return {
+            path,
+            iteratorId,
+            data: cacheData.list,
+            finish: true,
+            page: 1
+          };
+        }
+      }
       iterator = Iterator.map[iteratorId];
       let data = [];
       if (!iterator.finish) {

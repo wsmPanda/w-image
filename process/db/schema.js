@@ -44,6 +44,11 @@ export default [
     name: "dictory_cache",
     type: "array"
   },
+  // 目录结构缓存
+  {
+    name: "files_cache",
+    type: "files"
+  },
   // 目录树
   {
     name: "dictory_tree",
@@ -69,5 +74,9 @@ export default [
   // 图片状态记录
   {
     name: "images"
+  },
+  // 书签
+  {
+    name: "bookmark"
   }
 ];

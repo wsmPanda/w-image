@@ -1,8 +1,24 @@
 import { writeTable, readTable } from "./util";
+export function selectFilesTable(name) {
+  return {
+    save(key, data) {
+      return writeTable(name + "/" + key, data);
+    },
+    remove() {},
+    async get(key) {
+      try {
+        return readTable(name + "/" + key);
+      } catch (ex) {
+        return null;
+      }
+    },
+    list() {}
+  };
+}
 export function selectTable(name) {
   return {
-    get() {
-      return readTable(name);
+    async get() {
+      return await readTable(name);
     },
     save(data) {
       return writeTable(name, data);

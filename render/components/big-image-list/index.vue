@@ -48,7 +48,7 @@ export default {
                           click: () => this.onDictoryClick(row)
                         }}
                       >
-                        {row.name || row.path}
+                        {this.dictoryName(row)}
                       </a>
                     </div>
                   );
@@ -66,6 +66,11 @@ export default {
                         click: () => this.onClick(row),
                         dblclick: () => this.onDbClick(row)
                       }}
+                      on={{
+                        check: (e) => this.onCheck({ data: row, e })
+                      }}
+                      showCheck={this.$main.showCheck}
+                      check={this.$checkList.isCheck(row)}
                       showName={this.imageSetting.showFileName}
                       //key={index + this.startIndex}
                       key={row}
@@ -81,7 +86,7 @@ export default {
       </div>
     );
   },
-  inject: ["$main"],
+  inject: ["$main", "$checkList"],
   props: {
     dictorySetting: {
       type: Object,
@@ -143,8 +148,19 @@ export default {
     }
   },
   methods: {
+    dictoryName(data) {
+      let name = data.name || data.path;
+      if (this.data[0].path) {
+        name = name.replace(this.data[0].path + "/", "");
+      }
+      return name;
+    },
     onDictoryClick(v) {
       this.$emit("dictoryClick", v);
+    },
+    onCheck(e) {
+      this.$emit("check", e);
+      this.$checkList.check(e.data);
     },
     onClick(v) {
       this.activeImage = v;
@@ -355,7 +371,6 @@ export default {
     pageDown() {
       let scrollTop = this.scrollTop || 0;
       scrollTop = scrollTop + (this.height - this.imageHeight);
-      console.log(scrollTop);
       if (scrollTop) {
         this.$refs.listWrapper &&
           this.$refs.listWrapper.scrollTo({

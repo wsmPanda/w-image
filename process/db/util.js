@@ -9,7 +9,7 @@ export function readJson(name) {
 export function writeJson(name, data) {
   fs.writeFileSync(
     path(name) + ".json",
-    typeof data === "object" ? JSON.stringify(data) : data
+    typeof data === "object" ? JSON.stringify(data, null, 2) : data
   );
 }
 export function tablePath(name) {
@@ -22,6 +22,6 @@ export function readTable(name) {
 export function writeTable(name, data) {
   fs.writeFileSync(
     tablePath(name),
-    typeof data === "object" ? JSON.stringify(data) : data
+    typeof data === "object" ? JSON.stringify(data, null, 2) : data
   );
 }

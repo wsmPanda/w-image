@@ -86,7 +86,6 @@ export function functionDebounce(func, t = 300) {
     if (timer) {
       clearTimeout(timer);
     }
-    console.log(arg);
     timer = setTimeout(() => {
       timer = null;
       return func(...(arg || {}));
