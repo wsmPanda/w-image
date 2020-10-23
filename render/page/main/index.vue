@@ -25,7 +25,7 @@
           v-model="config.image.height"
         />
 
-        <Dropdown trigger="click">
+        <Dropdown trigger="click" transfer>
           <a href="javascript:void(0)">
             <Button icon="md-images" size="small">
               <Icon type="md-arrow-dropdown" />
@@ -76,6 +76,7 @@
             ref="tree"
             class="tree-body"
             @on-active="onTreeActive"
+            @on-fresh="onTreeFersh"
             :data="dictory"
             :edit="treeEditing"
           ></Tree>
@@ -107,6 +108,7 @@
           class="main-image-list"
           :height="listHeight"
           :loadFinish="listLoadFinish"
+          :loadingMore="imageLoadingMore"
           @scroll="onListScroll"
           @dictoryChange="onDictoryChange"
           @activeImageChange="onActiveImageChange"
@@ -182,6 +184,7 @@ export default {
       },
       configShow: false,
       imageLoading: false,
+      imageLoadingMore: false,
       listHeight: 300,
       config: {},
       dictory: [],
@@ -295,15 +298,19 @@ export default {
       let dictoryList = await Connect.run("getDictory");
       this.dictory = this.dictoryParse(dictoryList);
     },
-    async onTreeActive(e) {
+    onTreeFersh(data) {
+      this.onTreeActive(data, false);
+    },
+    async onTreeActive(e, cache) {
       if (e.type === "set") {
         return;
       }
       this.$set(this.storage, "activeTree", e);
       this.imageLoading = true;
+      this.imageLoadingMore = false;
       await Connect.run("cleanIterator");
       if (this.config.image.readStep) {
-        this.setFileStream(e);
+        this.setFileStream(e, cache);
         return this.fileStream.next().then((res) => {
           this.$refs.imageList.setData([]);
           this.$refs.imageList.appendData(res);
@@ -322,16 +329,18 @@ export default {
         });
       }
     },
-    setFileStream(e) {
+    setFileStream(e, cache) {
       if (this.fileStream) {
         this.fileStream.stop();
       }
       this.listLoadFinish = false;
       this.fileStream = Connect.stream("fileListStream", {
         path: e.path,
-        step: Number(this.config.image.readStep)
+        step: Number(this.config.image.readStep),
+        cache
       });
       this.fileStream.onFinish((ctx) => {
+        this.imageLoadingMore = false;
         if (ctx === this.fileStream) {
           this.listLoadFinish = true;
         }
@@ -343,7 +352,9 @@ export default {
         !this.fileStream.finish &&
         !this.fileStream.loading
       ) {
+        this.imageLoadingMore = true;
         this.fileStream.next().then((res) => {
+          this.imageLoadingMore = false;
           if (res) {
             this.$refs.imageList.appendData(res);
           }

@@ -83,6 +83,11 @@ export default {
             </div>
           </div>
         </div>
+        {this.loadingMore && (
+          <div class="image-bigtable-list-loading">
+            <i class="ivu-load-loop ivu-icon ivu-icon-ios-loading"></i>
+          </div>
+        )}
       </div>
     );
   },
@@ -108,6 +113,7 @@ export default {
       type: Number,
       default: 600
     },
+    loadingMore: { type: Boolean, default: false },
     preloadPage: {
       type: Number,
       default: 3
@@ -115,7 +121,8 @@ export default {
   },
   data() {
     return {
-      activeImage: null
+      activeImage: null,
+      scrollTarget: null
     };
   },
   computed: {
@@ -205,11 +212,18 @@ export default {
       setTimeout(() => {
         if (
           !this.loadFinish &&
-          (this.fullPageCheck() || this.bottomPageCheck())
+          (this.fullPageCheck() ||
+            this.bottomPageCheck() ||
+            (this.scrollTarget && this.listHeight < this.scrollTarget))
         ) {
-          this.$emit("loadMore");
+          this.onLoadMore();
         }
       });
+    },
+    onLoadMore() {
+      if (!this.loadingMore) {
+        this.$emit("loadMore");
+      }
     },
     fullPageCheck() {
       let res = true;
@@ -277,6 +291,16 @@ export default {
       this.listHeight = this.heightList[this.heightList.length - 1];
       await this.pageChange();
       this.$forceUpdate();
+      setTimeout(() => {
+        if (
+          this.scrollTarget &&
+          this.scrollTarget <= this.listHeight &&
+          this.$refs.listWrapper
+        ) {
+          this.$refs.listWrapper.scrollTop = this.scrollTarget;
+          this.scrollTarget = null;
+        }
+      });
     },
     async pageChange() {
       this.currentIndex = this.findIndex(this.scrollTop);
@@ -337,8 +361,11 @@ export default {
     },
     async checkPosition() {
       this.scrollTop = this.$refs.listWrapper.scrollTop || 0;
-      if (this.bottomPageCheck()) {
-        this.$emit("loadMore");
+      if (this.scrollTop >= this.scrollTarget) {
+        this.scrollTarget = null;
+      }
+      if (this.bottomPageCheck() || this.scrollTarget) {
+        this.onLoadMore();
       }
       // 当前位置与错位位置大于一个视图位时进行视图更新
       if (
@@ -353,9 +380,12 @@ export default {
     },
     setScroll(v) {
       this.$refs.listWrapper && (this.$refs.listWrapper.scrollTop = v);
+      this.scrollTarget = v;
       this.scrollTop = v;
-      this.checkPosition();
       this.$forceUpdate();
+      this.$nextTick(() => {
+        this.checkPosition();
+      });
     },
     pageUp() {
       let scrollTop = this.scrollTop || 0;
@@ -406,6 +436,12 @@ export default {
 .image-bigtable-list-wrapper {
   overflow: auto;
   position: relative;
+}
+.image-bigtable-list-loading {
+  position: absolute;
+  bottom: 8px;
+  right: 16px;
+  z-index: 100;
 }
 .image-bigtable-list {
   position: relative;

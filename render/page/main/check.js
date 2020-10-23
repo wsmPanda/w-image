@@ -33,6 +33,7 @@ export default {
     }
   },
   async created() {
+    console.log(await this.$connect.run("getStorageValue", { code: "check" }));
     this.checkList =
       (await this.$connect.run("getStorageValue", { code: "check" })) || [];
   }

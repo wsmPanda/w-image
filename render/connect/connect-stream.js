@@ -25,6 +25,7 @@ export default class ConnectStream extends EventEmitter {
     if (this.iteratorId) {
       return;
     }
+    console.log(this.payload.cache);
     let res = await promise(this.event, this.payload);
     this.iteratorId = res.iteratorId;
   }

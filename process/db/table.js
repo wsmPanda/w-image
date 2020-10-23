@@ -1,10 +1,12 @@
-import { writeTable, readTable } from "./util";
+import { writeTable, readTable, removeTable } from "./util";
 export function selectFilesTable(name) {
   return {
     save(key, data) {
       return writeTable(name + "/" + key, data);
     },
-    remove() {},
+    remove(key) {
+      return removeTable(name + "/" + key);
+    },
     async get(key) {
       try {
         return readTable(name + "/" + key);

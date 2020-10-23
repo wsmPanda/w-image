@@ -25,3 +25,7 @@ export function writeTable(name, data) {
     typeof data === "object" ? JSON.stringify(data, null, 2) : data
   );
 }
+
+export function removeTable(name) {
+  fs.unlinkSync(tablePath(name));
+}

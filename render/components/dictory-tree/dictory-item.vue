@@ -3,7 +3,7 @@
     class="tree-item"
     v-if="data"
     :class="{
-      active: $treeRoot.active && data.path === $treeRoot.active.path,
+      active: isActive,
       single: !loading && data.hasRead && (!subList || !subList.length)
     }"
   >
@@ -28,8 +28,19 @@
         />
         {{ itemName }}</span
       >
-      <div class="tree-item-name-edit" v-if="$treeRoot.edit" @click="onDelete">
+      <div
+        class="tree-item-name-edit"
+        v-if="$treeRoot.edit"
+        @click.stop="onDelete"
+      >
         <Icon type="md-close"></Icon>
+      </div>
+      <div
+        class="tree-item-name-edit"
+        v-else-if="isActive"
+        @click.stop="onRefresh"
+      >
+        <Icon type="md-refresh"></Icon>
       </div>
     </div>
     <div
@@ -64,6 +75,11 @@ export default {
     };
   },
   computed: {
+    isActive() {
+      return (
+        this.$treeRoot.active && this.data.path === this.$treeRoot.active.path
+      );
+    },
     subList() {
       if (this.subData) {
         return this.subData;
@@ -88,6 +104,9 @@ export default {
       } else {
         this.$set(this.data, "open", !this.data.open);
       }
+    },
+    onRefresh() {
+      this.$treeRoot.$emit("on-fresh", this.data);
     },
     onClose() {
       if (this.data.open) {

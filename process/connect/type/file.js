@@ -7,12 +7,14 @@ import Iterator from "../../util/iterator";
 
 Iterator.onFinish = function(iterator) {
   let table = selectFilesTable("files_cache");
-  table.save(iterator.path.replace(/\//g, "=="), {
-    path: iterator.path,
-    data: iterator.runData,
-    list: iterator.runList,
-    createTime: +new Date()
-  });
+  if (iterator.options.file && !iterator.options.deep) {
+    table.save(iterator.path.replace(/\//g, "=="), {
+      path: iterator.path,
+      data: iterator.runData,
+      list: iterator.runList,
+      createTime: +new Date()
+    });
+  }
 };
 export default {
   selectDictory() {

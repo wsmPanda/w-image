@@ -7,9 +7,9 @@ export default {
     let { path, iteratorId, step, cache } = arg;
     let iterator;
     if (iteratorId && Iterator.map[iteratorId]) {
+      let cacheTable = selectFilesTable("files_cache");
       if (cache !== false) {
-        let table = selectFilesTable("files_cache");
-        let cacheData = await table.get(path.replace(/\//g, "=="));
+        let cacheData = await cacheTable.get(path.replace(/\//g, "=="));
         if (cacheData) {
           Iterator.map[iteratorId].destory();
           return {
@@ -20,6 +20,10 @@ export default {
             page: 1
           };
         }
+      } else {
+        try {
+          cacheTable.remove(path.replace(/\//g, "=="));
+        } catch (ex) {}
       }
       iterator = Iterator.map[iteratorId];
       let data = [];

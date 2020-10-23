@@ -12,11 +12,11 @@ export default {
   setStorage({ data }) {
     return selectTable("storage").set(data);
   },
-  getStorageValue({ code }) {
-    return selectTable("storage").get()[code];
+  async getStorageValue({ code }) {
+    return (await selectTable("storage").get())[code];
   },
-  setStorageValue({ code, value }) {
-    let data = selectTable("storage").get();
+  async setStorageValue({ code, value }) {
+    let data = await selectTable("storage").get();
     data[code] = value;
     return selectTable("storage").set(data);
   },
