@@ -10,7 +10,7 @@
       ></Thumbnail>
     </div>
     <div class="checklist-tool">
-      <Button icon="md-bookmarks" @click="onCollect"></Button>
+      <Button icon="ios-archive" @click="onCollect"></Button>
     </div>
   </div>
 </template>
@@ -38,7 +38,12 @@ export default {
     }
   },
   methods: {
-    onCollect() {}
+    onCollect() {
+      this.$connect.addData("collect", {
+        name: "collect",
+        files: this.data
+      });
+    }
   },
   created() {}
 };

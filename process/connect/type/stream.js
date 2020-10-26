@@ -11,7 +11,7 @@ export default {
       if (cache !== false) {
         let cacheData = await cacheTable.get(path.replace(/\//g, "=="));
         if (cacheData) {
-          Iterator.map[iteratorId].destory();
+          Iterator.map[iteratorId] && Iterator.map[iteratorId].destory();
           return {
             path,
             iteratorId,

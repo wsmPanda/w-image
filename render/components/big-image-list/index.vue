@@ -40,7 +40,16 @@ export default {
                       key={index + this.startIndex}
                     >
                       <Icon
-                        type={!this.open ? "ios-arrow-up" : "ios-arrow-forward"}
+                        class="icon-arrow"
+                        type={
+                          this.closeState[row.path]
+                            ? "ios-arrow-up"
+                            : "ios-arrow-forward"
+                        }
+                        nativeOn={{
+                          click: () =>
+                            this.onDictoryOpen(row, this.startIndex + index)
+                        }}
                       ></Icon>
                       <Icon class="icon-fold" type="md-folder" />
                       <a
@@ -196,7 +205,13 @@ export default {
       }
       return start;
     },
+    onDictoryOpen(row, index) {
+      this.closeState[row.path] = !this.closeState[row.path];
+      console.log(this.data[index]);
+      this.checkPosition();
+    },
     setData(data) {
+      this.closeState = {};
       this.data = data;
       if (this.$refs.listWrapper) {
         this.$refs.listWrapper.scrollTop = 0;

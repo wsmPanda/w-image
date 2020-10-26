@@ -56,34 +56,84 @@
     </div>
     <Layout class="page-content" ref="layout" :config="config.mainLayout || {}">
       <template slot="left">
-        <div class="main-tree">
-          <div class="tree-header">
-            <Button @click="onClick" icon="md-add-circle" size="small"></Button>
-            <Button
-              @click="onTreeEdit"
-              icon="md-create"
-              :type="treeEditing ? 'primary' : 'default'"
-              :ghost="treeEditing"
-              size="small"
-            ></Button>
-            <Button
-              @click="updateDictory"
-              icon="md-refresh"
-              size="small"
-            ></Button>
+        <div class="main-left">
+          <div class="main-left-header">
+            <Icon
+              class="panel-item"
+              type="md-folder"
+              :class="{ active: storage.leftTab === 'folder' }"
+              @click.native="storage.leftTab = 'folder'"
+            /><Icon
+              class="panel-item"
+              type="md-bookmarks"
+              :class="{ active: storage.leftTab === 'bookmark' }"
+              @click.native="storage.leftTab = 'bookmark'"
+            />
+            <Icon
+              class="panel-item"
+              type="ios-archive"
+              :class="{ active: storage.leftTab === 'collect' }"
+              @click.native="storage.leftTab = 'collect'"
+            />
+            <Icon
+              class="panel-item"
+              type="md-pricetags"
+              :class="{ active: storage.leftTab === 'tags' }"
+              @click.native="storage.leftTab = 'tags'"
+            />
           </div>
-          <Tree
-            ref="tree"
-            class="tree-body"
-            @on-active="onTreeActive"
-            @on-fresh="onTreeFersh"
-            :data="dictory"
-            :edit="treeEditing"
-          ></Tree>
-          <BookmarkList
-            ref="bookmarks"
-            @bookmarksClick="toBookmark"
-          ></BookmarkList>
+          <div class="main-left-body">
+            <div
+              class="main-left-content"
+              v-show="storage.leftTab === 'folder'"
+            >
+              <div class="tree-header">
+                <Button
+                  @click="onClick"
+                  icon="md-add-circle"
+                  size="small"
+                ></Button>
+                <Button
+                  @click="onTreeEdit"
+                  icon="md-create"
+                  :type="treeEditing ? 'primary' : 'default'"
+                  :ghost="treeEditing"
+                  size="small"
+                ></Button>
+                <Button
+                  @click="updateDictory"
+                  icon="md-refresh"
+                  size="small"
+                ></Button>
+              </div>
+              <Tree
+                ref="tree"
+                class="tree-body"
+                @on-active="onTreeActive"
+                @on-fresh="onTreeFersh"
+                :data="dictory"
+                :edit="treeEditing"
+              ></Tree>
+            </div>
+            <div
+              class="main-left-content"
+              v-show="storage.leftTab === 'bookmark'"
+            >
+              <BookmarkList
+                ref="bookmarks"
+                @bookmarksClick="toBookmark"
+              ></BookmarkList>
+            </div>
+            <div
+              class="main-left-content"
+              v-show="storage.leftTab === 'collect'"
+            >
+              collect
+            </div>
+            <div class="main-left-content" v-show="storage.leftTab === 'tags'">
+              tags
+            </div>
+          </div>
         </div>
       </template>
       <template slot="center">
@@ -144,6 +194,7 @@ import { Dropdown, DropdownMenu, Button, Icon } from "iview";
 import Config from "../config";
 import { functionDebounce } from "render/util";
 import CheckList from "./check-list";
+import "./style.less";
 let isMac = (function() {
   return /macintosh|mac os x/i.test(navigator.userAgent);
 })();
@@ -460,93 +511,3 @@ export default {
   }
 };
 </script>
-<style lang="less">
-.page-view {
-  height: 100vh;
-  width: 100%;
-  overflow: hidden;
-  display: flex;
-  .spin-icon-load {
-    animation: icon-load-spin 1s linear infinite;
-  }
-  .ivu-spin {
-    z-index: 100;
-    background: rgba(255, 255, 255, 0.6);
-  }
-  @keyframes icon-load-spin {
-    from {
-      transform: rotate(0deg);
-    }
-    50% {
-      transform: rotate(180deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  .icon-fold {
-    color: #fbc776;
-  }
-  .ivu-btn {
-    margin-right: 4px;
-  }
-  flex-direction: column;
-  .page-header {
-    padding: 8px;
-    display: flex;
-  }
-
-  .main-image-viewer {
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-  .page-content {
-    flex: 1;
-    overflow: hidden;
-    background: #fafafa;
-  }
-
-  .main-tree {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: hidden;
-    .tree-header {
-      padding: 8px;
-    }
-    .tree-body {
-      flex: 1;
-      overflow: auto;
-    }
-  }
-  .image-list-header {
-    position: absolute;
-    z-index: 100;
-    background: #fff;
-    border-bottom: 1px solid #eee;
-    left: 0;
-    top: 0;
-    right: 15px;
-    padding: 4px 8px;
-    font-size: 14px;
-  }
-  .main-image-list {
-    height: 100%;
-    overflow: hidden;
-  }
-  .layout-center {
-    height: 100%;
-    overflow: hidden;
-  }
-}
-.page-header-left {
-  flex: 1;
-  .ivu-input-wrapper {
-    display: inline-block;
-    width: 60px;
-    margin-left: 4px;
-  }
-  .ivu-input {
-  }
-}
-</style>
