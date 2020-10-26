@@ -5,17 +5,13 @@
         v-for="item of data"
         :key="item"
         :src="item"
-        :showCheck="false"
+        :showCheck="true"
         :style="thumbnailStyle"
       ></Thumbnail>
     </div>
     <div class="checklist-tool">
-      <<<<<<< HEAD
       <Button icon="ios-archive" @click="onCollect"></Button>
-      =======
       <Button icon="md-download" @click="onOutput"></Button>
-      <Button icon="md-bookmarks" @click="onCollect"></Button>
-      >>>>>>> f069200... feat: 添加收藏导出
     </div>
   </div>
 </template>
@@ -51,8 +47,10 @@ export default {
     onCollect() {
       this.$connect.addData("collect", {
         name: "collect",
-        files: this.data
+        files: this.data,
+        createTime: +new Date()
       });
+      this.$main.$emit("collectChange");
     },
     onOutput() {
       this.$connect.run("copyToDictory", { data: this.data });

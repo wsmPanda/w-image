@@ -50,8 +50,8 @@
       </div>
       <RadioGroup v-model="storage.viewType" type="button" size="small">
         <Radio label="book"> <Icon type="md-book" /> </Radio>
-        <Radio label="grid"><Icon type="md-grid"/></Radio>
-        <Radio label="scroll"><Icon type="md-more"/></Radio>
+        <Radio label="grid"><Icon type="md-grid" /></Radio>
+        <Radio label="scroll"><Icon type="md-more" /></Radio>
       </RadioGroup>
     </div>
     <Layout class="page-content" ref="layout" :config="config.mainLayout || {}">
@@ -128,7 +128,10 @@
               class="main-left-content"
               v-show="storage.leftTab === 'collect'"
             >
-              collect
+              <CollectList
+                ref="collect"
+                @collectClick="collectOpen"
+              ></CollectList>
             </div>
             <div class="main-left-content" v-show="storage.leftTab === 'tags'">
               tags
@@ -193,9 +196,10 @@ import BookmarkList from "render/components/bookmark-list";
 import { Dropdown, DropdownMenu, Button, Icon } from "iview";
 import Config from "../config";
 import { functionDebounce } from "render/util";
+import CollectList from "./collect-list";
 import CheckList from "./check-list";
 import "./style.less";
-let isMac = (function() {
+let isMac = (function () {
   return /macintosh|mac os x/i.test(navigator.userAgent);
 })();
 const { shell } = window.require("electron").remote;
@@ -223,7 +227,8 @@ export default {
     DropdownMenu,
     ImageViewer,
     CheckList,
-    BookmarkList
+    BookmarkList,
+    CollectList
   },
   data() {
     return {
@@ -351,6 +356,10 @@ export default {
     },
     onTreeFersh(data) {
       this.onTreeActive(data, false);
+    },
+    collectOpen(data) {
+      this.listLoadFinish = true;
+      this.$refs.imageList.setData(data.files);
     },
     async onTreeActive(e, cache) {
       if (e.type === "set") {
