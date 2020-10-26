@@ -9,8 +9,9 @@ export default {
   getStorage() {
     return selectTable("storage").get();
   },
-  setStorage({ data }) {
-    return selectTable("storage").set(data);
+  async setStorage({ data }) {
+    let oldData = await selectTable("storage").get();
+    return selectTable("storage").set({...oldData,...data});
   },
   async getStorageValue({ code }) {
     return (await selectTable("storage").get())[code];

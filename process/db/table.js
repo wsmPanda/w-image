@@ -14,7 +14,7 @@ export function selectFilesTable(name) {
         return null;
       }
     },
-    list() {}
+    list() {},
   };
 }
 export function selectTable(name) {
@@ -24,6 +24,10 @@ export function selectTable(name) {
     },
     save(data) {
       return writeTable(name, data);
+    },
+    async merge(data) {
+      let oldData = await this.get();
+      return writeTable(name, {...oldData,...data});
     },
     async add(data) {
       let list = await readTable(name, data);
@@ -40,6 +44,6 @@ export function selectTable(name) {
     },
     async set(data) {
       return writeTable(name, data);
-    }
+    },
   };
 }

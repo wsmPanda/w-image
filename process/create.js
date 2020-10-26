@@ -13,7 +13,7 @@ export default async function(win) {
       resizeTimmer = null;
       let storage = selectTable("storage").get();
       storage.windowPosition = win.getContentBounds();
-      selectTable("storage").save(storage);
+      selectTable("storage").merge(storage);
     }, 300);
   });
   if (storage && storage.windowPosition) {

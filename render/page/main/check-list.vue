@@ -10,7 +10,12 @@
       ></Thumbnail>
     </div>
     <div class="checklist-tool">
+      <<<<<<< HEAD
       <Button icon="ios-archive" @click="onCollect"></Button>
+      =======
+      <Button icon="md-download" @click="onOutput"></Button>
+      <Button icon="md-bookmarks" @click="onCollect"></Button>
+      >>>>>>> f069200... feat: 添加收藏导出
     </div>
   </div>
 </template>
@@ -24,6 +29,11 @@ export default {
   props: {
     data: {}
   },
+  data() {
+    return {
+      checkZoom: 2
+    };
+  },
   computed: {
     thumbnailStyle() {
       return {
@@ -31,9 +41,9 @@ export default {
         paddingLeft: `${this.$main.config.image.padding}px`,
         paddingRight: `${this.$main.config.image.padding}px`,
         marginBottom: `${this.$main.config.image.margin}px`,
-        height: `${this.$main.config.image.height / 4}px`,
-        minHeight: `${this.$main.config.image.height / 4}px`,
-        width: `${100 / this.$main.config.image.column / 4}%`
+        height: `${this.$main.config.image.height / this.checkZoom}px`,
+        minHeight: `${this.$main.config.image.height / this.checkZoom}px`,
+        width: `${100 / this.$main.config.image.column / this.checkZoom}%`
       };
     }
   },
@@ -43,6 +53,9 @@ export default {
         name: "collect",
         files: this.data
       });
+    },
+    onOutput() {
+      this.$connect.run("copyToDictory", { data: this.data });
     }
   },
   created() {}
