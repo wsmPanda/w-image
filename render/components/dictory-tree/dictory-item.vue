@@ -69,7 +69,7 @@ export default {
   props: { data: {}, path: {}, index: Number },
   data() {
     return {
-      open: false,
+      open: this.data && this.data.open !== undefined ? this.data.open : false,
       subData: null,
       loading: false
     };
@@ -96,9 +96,9 @@ export default {
     }
   },
   methods: {
-    onOpen() {
-      if (!this.data.hasRead) {
-        this.getSubData().then(() => {
+    async onOpen() {
+      if (!this.data.hasRead && this.data.type !== "set") {
+        await this.getSubData().then(() => {
           this.$set(this.data, "open", true);
         });
       } else {
@@ -112,6 +112,15 @@ export default {
       if (this.data.open) {
         this.$set(this.data, "open", false);
       }
+    },
+    async openItem() {
+      if (!this.open && !this.data.open) {
+        await this.onOpen();
+      }
+      if (!this.data.hasRead && this.data.type !== "set") {
+        await this.getSubData();
+      }
+      return this.data.sub;
     },
     async getSubData() {
       this.loading = true;

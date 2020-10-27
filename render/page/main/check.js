@@ -18,7 +18,7 @@ export default {
       }
       this.setCheckStorage();
     },
-    clean() {
+    cleanCheck() {
       this.$set(this, "checkList", []);
       this.setCheckStorage();
     },
@@ -26,6 +26,7 @@ export default {
       return this.checkList.indexOf(data) >= 0;
     },
     setCheckStorage() {
+      console.log(this.checkList);
       this.$connect.run("setStorageValue", {
         code: "check",
         value: this.checkList

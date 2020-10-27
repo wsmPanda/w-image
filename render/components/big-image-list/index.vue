@@ -1,6 +1,7 @@
 <script>
 import Thumbnail from "../thumbnail";
 import { Icon } from "iview";
+import "./style.less";
 export default {
   render() {
     this.transformTop = Math.max(0, this.heightList[this.startIndex - 1]) || 0;
@@ -42,9 +43,9 @@ export default {
                       <Icon
                         class="icon-arrow"
                         type={
-                          this.closeState[row.path]
-                            ? "ios-arrow-up"
-                            : "ios-arrow-forward"
+                          row.open === false
+                            ? "ios-arrow-forward"
+                            : "ios-arrow-up"
                         }
                         nativeOn={{
                           click: () =>
@@ -206,10 +207,70 @@ export default {
       return start;
     },
     onDictoryOpen(row, index) {
-      this.closeState[row.path] = !this.closeState[row.path];
-      console.log(this.data[index]);
-      this.checkPosition();
+      if (row.open !== false) {
+        row.open = false;
+      } else {
+        row.open = true;
+      }
+      if (row.open) {
+        this.openDictory(index);
+      } else {
+        this.closeDictory(index);
+      }
+      this.$forceUpdate();
+      this.$nextTick(() => {
+        this.updateList();
+        this.$nextTick(() => {
+          this.checkPosition();
+        });
+      });
     },
+    closeDictory(index) {
+      let row = this.data[index];
+      if (row.length === undefined) {
+        row.length = 0;
+        for (let i = index + 1; i < this.data.length; i++) {
+          let item = this.data[i];
+          let path = (item && item.path) || item;
+          console.log(row.path, path);
+          if (path && path.indexOf(row.path) === 0) {
+            row.length++;
+          } else {
+            break;
+          }
+        }
+      }
+      console.log(row.length);
+      row.sub = this.data.splice(index + 1, row.length);
+      // 高度变化值
+      let dHeight =
+        this.heightList[index + row.length] - this.heightList[index];
+      this.heightList.splice(index + 1, row.length);
+      for (let i = index + 1; i < this.heightList.length; i++) {
+        this.heightList[i] = this.heightList[i] - dHeight;
+      }
+      this.listHeight = this.heightList[this.heightList.length - 1];
+    },
+    openDictory(index) {
+      let row = this.data[index];
+      if (!row.sub) {
+        return;
+      }
+      this.data.splice(index, 0, ...row.sub);
+      // 高度变化值
+      let heightList = this.getHeightList(row.sub).list.map(
+        (item) => item + this.heightList[index]
+      );
+      let dHeight =
+        this.heightList[index + row.length] - this.heightList[index];
+      this.heightList.splice(index, 0, ...heightList);
+      for (let i = index + row.length + 1; i < this.heightList.length; i++) {
+        this.heightList[i] = this.heightList[i] + dHeight;
+      }
+      this.listHeight = this.heightList[this.heightList.length - 1];
+      row.sub = null;
+    },
+    insertSubData() {},
     setData(data) {
       this.closeState = {};
       this.data = data;
@@ -282,25 +343,33 @@ export default {
     updateHeightList() {
       this.heightList = [];
       // 生成元素高度位置的单向数列
-      let count = 0;
       this.columnCount = 0;
-      this.data.forEach((row) => {
-        this.columnCount++;
+      let res = this.getHeightList(this.data, this.columnCount);
+      this.heightList = res.list;
+      this.columnCount = res.columnCount;
+      this.listHeight = this.heightList[this.heightList.length - 1];
+    },
+    getHeightList(data, columnCount = 0) {
+      let list = [];
+      let count = 0;
+      data.forEach((row) => {
+        columnCount++;
         if (row && row.path) {
           count += this.dictoryHeight;
           // 目录元素清空行元素计数
           this.columnCount = 0;
-        } else if (this.columnCount === 1) {
+        } else if (this.columnCount === 1 || count === 0) {
           // 对于图片元素只有首行才增加高度
           count += this.imageHeight;
         }
         // 清空行元素计数
-        if (this.columnCount === Number(this.imageSetting.column)) {
-          this.columnCount = 0;
+        if (columnCount === Number(this.imageSetting.column)) {
+          columnCount = 0;
         }
-        this.heightList.push(count);
+        list.push(count);
       });
-      this.listHeight = this.heightList[this.heightList.length - 1];
+
+      return { list, columnCount };
     },
     async updateList() {
       this.listHeight = this.heightList[this.heightList.length - 1];
@@ -374,6 +443,7 @@ export default {
         }, 30);
       }
     },
+    // 检查当前高度更新视图数据
     async checkPosition() {
       this.scrollTop = this.$refs.listWrapper.scrollTop || 0;
       if (this.scrollTop >= this.scrollTarget) {
@@ -446,58 +516,3 @@ export default {
   }
 };
 </script>
-
-<style lang="less">
-.image-bigtable-list-wrapper {
-  overflow: auto;
-  position: relative;
-}
-.image-bigtable-list-loading {
-  position: absolute;
-  bottom: 8px;
-  right: 16px;
-  z-index: 100;
-}
-.image-bigtable-list {
-  position: relative;
-  z-index: 10;
-  overflow: hidden;
-}
-.image-bigtable-row {
-  border: 1px solid #eee;
-}
-.image-bigtable-list-inner {
-  display: flex;
-  flex-wrap: wrap;
-  .start {
-    background: red;
-  }
-  .current {
-    background: green;
-  }
-  .end {
-    background: blue;
-  }
-  .image-list-item {
-    &:hover {
-      box-shadow: 0 0 2px #666;
-    }
-    &.active {
-      //outline: 1px solid #2955c6;
-      background: #eff5ff;
-    }
-  }
-  .dictory-list-item {
-    padding: 2px 0;
-    margin: 4px 0;
-    font-size: 14px;
-    border-bottom: 1px solid #ddd;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    width: 100%;
-    a {
-      margin-left: 4px;
-    }
-  }
-}
-</style>

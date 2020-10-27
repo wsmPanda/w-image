@@ -67,6 +67,13 @@ class FileIterator extends EventEmitter {
     }
     return data;
   }
+  wait() {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      });
+    });
+  }
   async next() {
     if (!this.finish) {
       this.stepCount = 0;
@@ -116,6 +123,8 @@ class FileIterator extends EventEmitter {
       this.runData = data;
     }
     var files = await util.promisify(fs.readdir)(path);
+    let runIndex = this.runList.length;
+    let dataIndex = this.dataList.length;
     if (!this.options.deep || deep < this.options.deep) {
       for (let name of files) {
         try {
@@ -129,18 +138,15 @@ class FileIterator extends EventEmitter {
               data.sub.push(sub);
             }
           } else if (this.options.file) {
-            if (this.options.filter) {
-              if (this.options.filter(name, info)) {
-                this.fileCount++;
-                data.files.push(name);
-                this.dataList.push(path + "/" + name);
-                this.runList.push(path + "/" + name);
-              }
-            } else {
+            if (
+              !this.options.filter ||
+              (this.options.filter && this.options.filter(name, info))
+            ) {
+              let fileName = path + "/" + name;
               this.fileCount++;
               data.files.push(name);
-              this.dataList.push(path + "/" + name);
-              this.runList.push(path + "/" + name);
+              this.dataList.splice(dataIndex, 0, fileName);
+              this.runList.splice(runIndex, 0, fileName);
             }
           }
         } catch (ex) {

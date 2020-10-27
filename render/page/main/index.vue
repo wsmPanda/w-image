@@ -2,7 +2,7 @@
   <div class="page-view" v-if="config">
     <div class="page-header">
       <div class="page-header-left">
-        <Dropdown trigger="click">
+        <Dropdown trigger="click" transfer>
           <a href="javascript:void(0)">
             <Button size="small" icon="md-settings"></Button>
           </a>
@@ -50,8 +50,8 @@
       </div>
       <RadioGroup v-model="storage.viewType" type="button" size="small">
         <Radio label="book"> <Icon type="md-book" /> </Radio>
-        <Radio label="grid"><Icon type="md-grid" /></Radio>
-        <Radio label="scroll"><Icon type="md-more" /></Radio>
+        <Radio label="grid"><Icon type="md-grid"/></Radio>
+        <Radio label="scroll"><Icon type="md-more"/></Radio>
       </RadioGroup>
     </div>
     <Layout class="page-content" ref="layout" :config="config.mainLayout || {}">
@@ -134,7 +134,7 @@
               ></CollectList>
             </div>
             <div class="main-left-content" v-show="storage.leftTab === 'tags'">
-              tags
+              <TagList ref="tag"></TagList>
             </div>
           </div>
         </div>
@@ -198,8 +198,10 @@ import Config from "../config";
 import { functionDebounce } from "render/util";
 import CollectList from "./collect-list";
 import CheckList from "./check-list";
+import TagList from "./tag-list";
+
 import "./style.less";
-let isMac = (function () {
+let isMac = (function() {
   return /macintosh|mac os x/i.test(navigator.userAgent);
 })();
 const { shell } = window.require("electron").remote;
@@ -228,6 +230,7 @@ export default {
     ImageViewer,
     CheckList,
     BookmarkList,
+    TagList,
     CollectList
   },
   data() {
@@ -359,6 +362,8 @@ export default {
     },
     collectOpen(data) {
       this.listLoadFinish = true;
+      this.imageLoadingMore = false;
+      this.imageLoading = false;
       this.$refs.imageList.setData(data.files);
     },
     async onTreeActive(e, cache) {
@@ -367,7 +372,7 @@ export default {
       }
       this.$set(this.storage, "activeTree", e);
       this.imageLoading = true;
-      this.imageLoadingMore = false;
+      this.imageLoadingMore = true;
       await Connect.run("cleanIterator");
       if (this.config.image.readStep) {
         this.setFileStream(e, cache);
@@ -409,6 +414,7 @@ export default {
     onListLoadMore() {
       if (
         this.fileStream &&
+        !this.imageLoadingMore &&
         !this.fileStream.finish &&
         !this.fileStream.loading
       ) {

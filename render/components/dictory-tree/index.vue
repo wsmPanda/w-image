@@ -27,14 +27,40 @@ export default {
   data() {
     return {
       active: null,
-      selected: []
+      selected: [],
+      activeNode: null
     };
   },
   methods: {
     setActive(v) {
       this.active = v;
       this.$emit("on-active-set");
+      this.$nextTick(() => {
+        this.openActiveNode(this.data);
+      });
       this.scrollToActive();
+    },
+    async openActiveNode(data) {
+      if (this.active) {
+        let path = this.active.path;
+        let node = data.find((item) => item && path.indexOf(item.path) === 0);
+        if (!node) {
+          return;
+        }
+        if (node.path === this.active) {
+          this.scrollToActive();
+        } else {
+          let nodeItem = this.items[node.path];
+          if (nodeItem) {
+            let sub = await nodeItem.openItem();
+            this.$nextTick(() => {
+              if (sub && sub.length) {
+                this.openActiveNode(sub);
+              }
+            });
+          }
+        }
+      }
     },
     onItemClick({ data, path }) {
       this.active = data;
@@ -63,7 +89,7 @@ export default {
     },
     scrollToActive() {
       if (this.active && this.items[this.active.path]) {
-        this.$nextTick(() => {
+        setTimeout(() => {
           if (
             this.items[this.active.path] &&
             this.items[this.active.path].$el

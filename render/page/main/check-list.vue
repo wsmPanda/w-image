@@ -2,11 +2,13 @@
   <div class="checklist">
     <div class="checklist-box" v-if="$main.config && $main.config.image">
       <Thumbnail
-        v-for="item of data"
+        v-for="(item, index) of data"
         :key="item"
         :src="item"
-        :showCheck="true"
         :style="thumbnailStyle"
+        :showCheck="false"
+        showDelete
+        @delete="onDelete(index)"
       ></Thumbnail>
     </div>
     <div class="checklist-tool">
@@ -20,7 +22,7 @@
 import Thumbnail from "../../components/thumbnail";
 
 export default {
-  inject: ["$config", "$main"],
+  inject: ["$config", "$main", "$checkList"],
   components: { Thumbnail },
   props: {
     data: {}
@@ -51,9 +53,19 @@ export default {
         createTime: +new Date()
       });
       this.$main.$emit("collectChange");
+      this.$checkList.cleanCheck();
+    },
+    onDelete(index) {
+      let row = this.data[index];
+      this.$connect.deleteData("collect", {
+        code: "createTime",
+        value: row.createTime
+      });
+      this.data.splice(index, 1);
     },
     onOutput() {
       this.$connect.run("copyToDictory", { data: this.data });
+      this.$checkList.cleanCheck();
     }
   },
   created() {}

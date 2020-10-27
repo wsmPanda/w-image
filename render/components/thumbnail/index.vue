@@ -18,6 +18,13 @@
       class="thumbnail-check"
       :type="this.check ? 'md-checkbox-outline' : 'md-square-outline'"
     />
+    <Icon
+      v-show="showDelete"
+      @click.native.stop="onDelete"
+      @dblclick.native.stop
+      class="thumbnail-delete"
+      type="md-close"
+    />
   </div>
 </template>
 
@@ -28,7 +35,8 @@ export default {
     src: String,
     showCheck: { type: Boolean, default: true },
     check: Boolean,
-    showName: { type: Boolean, default: true }
+    showName: { type: Boolean, default: true },
+    showDelete: { type: Boolean, default: false }
   },
   data() {
     return {
@@ -49,6 +57,9 @@ export default {
   methods: {
     onCheck() {
       this.$emit("check", this.check);
+    },
+    onDelete() {
+      this.$emit("delete", this.data);
     }
   }
 };
@@ -74,6 +85,14 @@ export default {
   left: 8px;
   top: 8px;
   color: #2b85e4;
+  cursor: pointer;
+  opacity: 0.8;
+}
+.thumbnail-delete {
+  position: absolute;
+  font-size: 18px;
+  right: 8px;
+  top: 8px;
   cursor: pointer;
   opacity: 0.8;
 }
