@@ -16,6 +16,12 @@ const Connect = {
       data
     });
   },
+  editData(table, data) {
+    return primise("editData", {
+      table,
+      data
+    });
+  },
   getData(table) {
     return primise("getData", { table });
   },

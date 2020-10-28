@@ -210,8 +210,9 @@ const ViewType = {
   grid: ImageList,
   page: PageViewer
 };
+import KeyListener from "./key-listener";
 export default {
-  mixins: [CheckMixins],
+  mixins: [CheckMixins, KeyListener],
   provide() {
     return {
       $main: this,

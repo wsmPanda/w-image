@@ -8,25 +8,57 @@
       @click="onCollectActive(item)"
     >
       <Icon class="collect-icon" type="md-folder"></Icon>
-      <span class="collect-name">{{ item.name }}</span>
+      <span ref="name" class="collect-name">{{ item.name }}</span>
       <Icon type="md-close" @click.native.stop="onDelete(data, index)"></Icon>
     </div>
+    <NameInput
+      ref="nameInput"
+      v-if="nameEditing && data && data[editIndex]"
+      :value="data[editIndex].name"
+      @blur="saveName"
+    ></NameInput>
   </div>
 </template>
 
 <script>
+import NameInput from "../../components/name-input";
 export default {
   inject: ["$config", "$main"],
+  components: { NameInput },
   props: {
     edit: Boolean
   },
   data() {
     return {
+      nameEditing: false,
       active: null,
+      editIndex: null,
       data: []
     };
   },
   methods: {
+    saveName(name) {
+      let data = this.data[this.editIndex];
+      data.name = name;
+      console.log(data);
+      this.$connect.editData("collect", {
+        code: "createTime",
+        value: data.createTime,
+        data
+      });
+      setTimeout(() => {
+        this.nameEditing = false;
+      });
+    },
+    editName() {
+      this.nameEditing = true;
+      this.editIndex = this.data.findIndex(
+        (item) => item.createTime === this.active
+      );
+      this.$nextTick(() => {
+        this.$refs.nameInput.setLink(this.$refs.name[this.editIndex]);
+      });
+    },
     async update() {
       this.data = (await this.$connect.getData("collect")) || {};
     },
@@ -38,22 +70,40 @@ export default {
       });
     },
     async onCollectActive(data) {
+      this.$emit("keyListenerFocus");
       this.$emit("collectClick", data);
       this.active = data.createTime;
     }
+  },
+  destroyed() {
+    this.$main.removeListenerKeyup(this);
   },
   created() {
     this.update();
     this.$main.$on("collectChange", () => {
       this.update();
     });
+    this.$main.addListenerKeyup(this, (e) => {
+      if (e.key === "F2" || e.key === "Enter") {
+        if (this.active && !this.nameEditing) {
+          this.editName();
+        }
+      }
+    });
   }
 };
 </script>
 
 <style lang="less">
+.hidden-input {
+  display: block;
+  width: 0;
+  height: 0;
+  position: absolute;
+  border: 0;
+}
 .collect-list {
-  padding: 16px 8px;
+  padding: 8px 8px;
 }
 .collect-item {
   display: flex;
