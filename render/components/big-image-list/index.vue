@@ -232,7 +232,6 @@ export default {
         for (let i = index + 1; i < this.data.length; i++) {
           let item = this.data[i];
           let path = (item && item.path) || item;
-          console.log(row.path, path);
           if (path && path.indexOf(row.path) === 0) {
             row.length++;
           } else {
@@ -240,7 +239,6 @@ export default {
           }
         }
       }
-      console.log(row.length);
       row.sub = this.data.splice(index + 1, row.length);
       // 高度变化值
       let dHeight =
@@ -253,17 +251,17 @@ export default {
     },
     openDictory(index) {
       let row = this.data[index];
+      console.log(row.sub);
       if (!row.sub) {
         return;
       }
-      this.data.splice(index, 0, ...row.sub);
+      this.data.splice(index + 1, 0, ...row.sub);
       // 高度变化值
       let heightList = this.getHeightList(row.sub).list.map(
         (item) => item + this.heightList[index]
       );
-      let dHeight =
-        this.heightList[index + row.length] - this.heightList[index];
-      this.heightList.splice(index, 0, ...heightList);
+      let dHeight = heightList[heightList.length - 1] - this.heightList[index];
+      this.heightList.splice(index + 1, 0, ...heightList);
       for (let i = index + row.length + 1; i < this.heightList.length; i++) {
         this.heightList[i] = this.heightList[i] + dHeight;
       }
