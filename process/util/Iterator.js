@@ -123,21 +123,17 @@ class FileIterator extends EventEmitter {
       this.runData = data;
     }
     var files = await util.promisify(fs.readdir)(path);
-    let runIndex = this.runList.length;
-    let dataIndex = this.dataList.length;
     if (!this.options.deep || deep < this.options.deep) {
+      let subDictory = [];
+      // 分开处理文件和子目录，防止目录和文件在列表中混合出现
       for (let name of files) {
         try {
-          this.totalCount++;
-          this.stepCount++;
           var info = await util.promisify(fs.stat)(path + "/" + name);
           if (info.isDirectory()) {
-            row.count++;
-            let sub = await this.iteratorFiles(path + "/" + name, deep + 1);
-            if (sub) {
-              data.sub.push(sub);
-            }
+            subDictory.push(name);
           } else if (this.options.file) {
+            this.totalCount++;
+            this.stepCount++;
             if (
               !this.options.filter ||
               (this.options.filter && this.options.filter(name, info))
@@ -145,9 +141,24 @@ class FileIterator extends EventEmitter {
               let fileName = path + "/" + name;
               this.fileCount++;
               data.files.push(name);
-              this.dataList.splice(dataIndex, 0, fileName);
-              this.runList.splice(runIndex, 0, fileName);
+              this.dataList.push(fileName);
+              this.runList.push(fileName);
             }
+            let access = await this.runGrard();
+            if (!access) return;
+          }
+        } catch (ex) {
+          this.errorHeap.push(ex);
+        }
+      }
+      for (let name of subDictory) {
+        try {
+          this.totalCount++;
+          this.stepCount++;
+          row.count++;
+          let sub = await this.iteratorFiles(path + "/" + name, deep + 1);
+          if (sub) {
+            data.sub.push(sub);
           }
         } catch (ex) {
           this.errorHeap.push(ex);
