@@ -2,7 +2,8 @@
   <div class="tree-panel">
     <div class="tree-header">
       <div class="tree-header-left">
-        <Button @click="onClick" icon="md-add-circle" size="small"></Button>
+        <Button @click="onAddDictiry" icon="md-add" size="small"></Button>
+        <Button @click="onAddGroup" icon="md-add-circle" size="small" />
         <Button
           @click="onTreeEdit"
           icon="md-create"
@@ -46,6 +47,7 @@ export default {
     };
   },
   methods: {
+    onAddGroup() {},
     onTreeEdit() {
       this.editing = !this.editing;
     },
@@ -59,7 +61,7 @@ export default {
         this.updateDictory();
       }
     },
-    async onClick() {
+    async onAddDictiry() {
       let path = await this.$connect.run("selectDictory");
       await this.$connect.run("addDictory", { path });
       this.dictory.push({ path });

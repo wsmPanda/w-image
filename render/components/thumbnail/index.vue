@@ -16,14 +16,15 @@
       @click.native.stop="onCheck"
       @dblclick.native.stop
       class="thumbnail-check"
-      :type="this.check ? 'md-checkbox-outline' : 'md-square-outline'"
+      :class="{ uncheck: !this.check }"
+      :type="'md-checkmark-circle'"
     />
     <Icon
       v-show="showDelete"
       @click.native.stop="onDelete"
       @dblclick.native.stop
       class="thumbnail-delete"
-      type="md-close"
+      type="md-close-circle"
     />
   </div>
 </template>
@@ -87,6 +88,16 @@ export default {
   color: #2b85e4;
   cursor: pointer;
   opacity: 0.8;
+  background: rgba(255, 255, 255, 0.4);
+  &.uncheck {
+    color: transparent;
+    border: 1px solid #2b85e4;
+    border-radius: 100%;
+    height: 16px;
+    box-sizing: border-box;
+    width: 16px;
+    margin: 2px;
+  }
 }
 .thumbnail-delete {
   position: absolute;

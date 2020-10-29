@@ -165,7 +165,7 @@ export default {
 <style lang="less">
 .tree-item {
   font-size: 12px;
-  margin: 0 4px;
+  margin-left: 4px;
   user-select: none;
   .icon-fold {
     color: #fbc776;
@@ -200,7 +200,7 @@ export default {
   .tree-item-name {
     word-break: break-all;
     display: flex;
-    padding: 2px 4px;
+    padding: 2px 0 2px 4px;
     &:hover {
       background: #ebf1fa;
     }
