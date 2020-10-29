@@ -13,6 +13,7 @@ export default [
         showEmptyFolder: false,
         showFileName: true
       },
+      video: {},
       tree: {
         showEmptyFolder: false
       },

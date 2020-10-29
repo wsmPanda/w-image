@@ -12,7 +12,7 @@ Iterator.onFinish = function(iterator) {
       path: iterator.path,
       data: iterator.runData,
       list: iterator.runList,
-      createTime: +new Date(),
+      createTime: +new Date()
     });
   }
 };
@@ -21,7 +21,7 @@ export default {
     console.log(data);
     return dialog
       .showOpenDialog({
-        properties: ["openFile", "openDirectory"],
+        properties: ["openFile", "openDirectory"]
       })
       .then((files) => {
         let path = files.filePaths[0];
@@ -47,7 +47,7 @@ export default {
   selectDictory() {
     return dialog
       .showOpenDialog({
-        properties: ["openFile", "openDirectory"],
+        properties: ["openFile", "openDirectory"]
       })
       .then((files) => {
         return files.filePaths[0];
@@ -96,7 +96,7 @@ export default {
   },
   getTree({ path }) {
     return new Iterator(path, {
-      file: false,
+      file: false
     }).run();
   },
   getTreeFiles({ path }) {
@@ -104,16 +104,26 @@ export default {
       file: true,
       filter(name) {
         return isImage(name) || isVideo(name);
-      },
+      }
     }).run();
   },
   getDictoryFolder({ path, deep }) {
     return new Iterator(path, {
       file: false,
-      deep,
+      deep
     }).run();
   },
   cleanIterator({ type }) {
     return Iterator.clean({ type });
   },
+  saveBlob({ file, name, time }) {
+    fs.writeFile(
+      `${__dirname}/snap/${name}==${time || +new Date()}.png`,
+      file,
+      {},
+      (err) => {
+        if (err) return console.error(err);
+      }
+    );
+  }
 };

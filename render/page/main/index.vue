@@ -1,8 +1,8 @@
 <template>
-  <div class="page-view" v-if="config">
+  <div class="page-view" v-if="pageInit">
     <div class="page-header">
       <div class="page-header-left">
-        <Dropdown trigger="click" transfer>
+        <Dropdown transfer>
           <a href="javascript:void(0)">
             <Button size="small" icon="md-settings"></Button>
           </a>
@@ -87,33 +87,11 @@
               class="main-left-content"
               v-show="storage.leftTab === 'folder'"
             >
-              <div class="tree-header">
-                <Button
-                  @click="onClick"
-                  icon="md-add-circle"
-                  size="small"
-                ></Button>
-                <Button
-                  @click="onTreeEdit"
-                  icon="md-create"
-                  :type="treeEditing ? 'primary' : 'default'"
-                  :ghost="treeEditing"
-                  size="small"
-                ></Button>
-                <Button
-                  @click="updateDictory"
-                  icon="md-refresh"
-                  size="small"
-                ></Button>
-              </div>
-              <Tree
+              <TreePanel
                 ref="tree"
-                class="tree-body"
                 @on-active="onTreeActive"
-                @on-fresh="onTreeFersh"
-                :data="dictory"
-                :edit="treeEditing"
-              ></Tree>
+                :active="storage.activeTree"
+              ></TreePanel>
             </div>
             <div
               class="main-left-content"
@@ -184,7 +162,6 @@
 </template>
 
 <script>
-import Tree from "render/components/dictory-tree";
 import ImageList from "render/components/big-image-list";
 import ImageScroll from "render/components/big-image-list/scroll";
 import PageViewer from "render/components/page-viewer";
@@ -199,11 +176,8 @@ import { functionDebounce } from "render/util";
 import CollectList from "./collect-list";
 import CheckList from "./check-list";
 import TagList from "./tag-list";
-
+import TreePanel from "./tree-panel";
 import "./style.less";
-let isMac = (function() {
-  return /macintosh|mac os x/i.test(navigator.userAgent);
-})();
 const { shell } = window.require("electron").remote;
 const ViewType = {
   scroll: ImageScroll,
@@ -223,7 +197,6 @@ export default {
     ImageList,
     Icon,
     Layout,
-    Tree,
     Button,
     Dropdown,
     Config,
@@ -232,10 +205,13 @@ export default {
     CheckList,
     BookmarkList,
     TagList,
-    CollectList
+    CollectList,
+    TreePanel
   },
   data() {
     return {
+      pageInit: false,
+      config: {},
       showCheck: true,
       listLoadFinish: false,
       viewImage: null,
@@ -246,10 +222,9 @@ export default {
       imageLoading: false,
       imageLoadingMore: false,
       listHeight: 300,
-      config: {},
+
       dictory: [],
       activeListDictory: null,
-      treeEditing: false,
       images: [],
       tree: [],
       cartData: []
@@ -263,7 +238,7 @@ export default {
   watch: {},
   methods: {
     toBookmark({ dictory, scrollTop }) {
-      this.onTreeActive(dictory).then(() => {
+      this.updateListData(dictory).then(() => {
         setTimeout(() => {
           this.$refs.tree.setActive(dictory);
           if (scrollTop) {
@@ -283,55 +258,9 @@ export default {
     cartAdd(data) {
       this.cartData.push(data);
     },
-    dictoryParse(data) {
-      let list = [];
-      for (let dictory of data) {
-        let path = dictory.path.split(/\\|\//);
-        if (path[0] === "") {
-          path.splice(0, 1);
-        }
-        let node = list;
-        let pathText = "";
-        if (isMac) {
-          pathText = "/";
-        }
-        path.forEach((item, index) => {
-          let folder = node.find((i) => i.name === item);
-          pathText += (pathText ? "/" : "") + item;
-          if (!folder) {
-            folder = {
-              open: index !== path.length - 1,
-              name: item,
-              path: pathText,
-              type: index !== path.length - 1 ? "set" : "dictory",
-              sub: []
-            };
-            node.push(folder);
-          }
-          node = folder.sub;
-        });
-      }
-      return this.mergeDictoryList(list);
-    },
-    mergeDictoryList(list) {
-      let res = [];
-      if (list.length) {
-        for (let item of list) {
-          let sub = this.mergeDictoryList(item.sub);
-          if (sub.length === 1) {
-            res.push({ ...sub[0], name: `${item.name}/${sub[0].name}` });
-          } else {
-            res.push({ ...item, sub });
-          }
-        }
-      }
-      return res;
-    },
+
     onImageDbClick(v) {
       shell.openPath(v);
-    },
-    onTreeEdit() {
-      this.treeEditing = !this.treeEditing;
     },
     onActiveImageChange(v) {
       this.viewImage = v;
@@ -339,27 +268,8 @@ export default {
     onDictoryClick(v) {
       Connect.run("openDictory", v);
     },
-    async updateDictoryCache() {
-      try {
-        this.dictory = await this.$connect.run("getDictoryCache");
-      } catch (ex) {
-        console.error(ex);
-      }
-      if (!this.dictory || !this.dictory.length) {
-        this.updateDictory();
-      }
-    },
-    async onClick() {
-      let path = await Connect.run("selectDictory");
-      await Connect.run("addDictory", { path });
-      this.dictory.push({ path });
-    },
-    async updateDictory() {
-      let dictoryList = await Connect.run("getDictory");
-      this.dictory = this.dictoryParse(dictoryList);
-    },
-    onTreeFersh(data) {
-      this.onTreeActive(data, false);
+    onTreeActive({ data, cache }) {
+      this.updateListData(data, cache);
     },
     collectOpen(data) {
       this.listLoadFinish = true;
@@ -367,21 +277,26 @@ export default {
       this.imageLoading = false;
       this.$refs.imageList.setData(data.files);
     },
-    async onTreeActive(e, cache) {
+    async updateListData(e, cache) {
       if (e.type === "set") {
         return;
       }
       this.$set(this.storage, "activeTree", e);
       this.imageLoading = true;
-      this.imageLoadingMore = true;
       await Connect.run("cleanIterator");
       if (this.config.image.readStep) {
         this.setFileStream(e, cache);
-        return this.fileStream.next().then((res) => {
-          this.$refs.imageList.setData([]);
-          this.$refs.imageList.appendData(res);
-          this.imageLoading = false;
-        });
+        this.imageLoadingMore = true;
+        return this.fileStream
+          .next()
+          .then((res) => {
+            this.$refs.imageList.setData([]);
+            this.$refs.imageList.appendData(res);
+          })
+          .finally(() => {
+            this.imageLoading = false;
+            this.imageLoadingMore = false;
+          });
       } else {
         return Connect.run("getTreeFiles", e).then((res) => {
           this.activeListDictory = e;
@@ -400,6 +315,7 @@ export default {
         this.fileStream.stop();
       }
       this.listLoadFinish = false;
+      cache = false;
       this.fileStream = Connect.stream("fileListStream", {
         path: e.path,
         step: Number(this.config.image.readStep),
@@ -472,16 +388,33 @@ export default {
     },
     onListScroll(v) {
       this.$set(this.storage, "listScroll", v);
+    },
+    waitNextTick() {
+      return new Promise((resolve) => {
+        this.$nextTick(() => {
+          resolve();
+        });
+      });
+    },
+    async afterInit() {
+      if (this.storage.activeTree) {
+        await this.waitNextTick();
+        await this.updateListData(this.storage.activeTree);
+        await this.waitNextTick();
+        if (this.storage.listScroll) {
+          this.$refs.imageList.setScroll(this.storage.listScroll);
+        }
+      }
     }
   },
   mounted() {
     this.onResize();
   },
   async created() {
-    this.onTreeChange = functionDebounce(() => {
-      this.$connect.run("saveDictoryCache", { data: this.dictory });
-    });
-    this.config = await Connect.run("getConfig");
+    this.config = (await Connect.run("getConfig")) || {};
+    this.storage = (await Connect.run("getStorage")) || {};
+    this.pageInit = true;
+    let setStorage = functionDebounce((e) => Connect.run("setStorage", e));
     let setConfig = functionDebounce((e) => Connect.run("setConfig", e));
     this.$watch("config", {
       deep: true,
@@ -489,12 +422,10 @@ export default {
         setConfig({ data: v });
       }
     });
-    this.storage = await Connect.run("getStorage");
-
     this.$watch("storage", {
       deep: true,
       handler(v) {
-        Connect.run("setStorage", { data: v });
+        setStorage({ data: v });
       }
     });
     setTimeout(() => {
@@ -503,27 +434,7 @@ export default {
     window.addEventListener("resize", () => {
       this.onResize();
     });
-
-    await this.updateDictoryCache();
-    setTimeout(() => {
-      this.$watch("dictory", {
-        deep: true,
-        handler() {
-          this.onTreeChange();
-        }
-      });
-    });
-
-    if (this.storage.activeTree) {
-      this.onTreeActive(this.storage.activeTree).then(() => {
-        setTimeout(() => {
-          this.$refs.tree.setActive(this.storage.activeTree);
-          if (this.storage.listScroll) {
-            this.$refs.imageList.setScroll(this.storage.listScroll);
-          }
-        });
-      });
-    }
+    this.afterInit();
   }
 };
 </script>

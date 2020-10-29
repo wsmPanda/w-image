@@ -22,11 +22,12 @@ export default {
   components: { TreeItem },
   props: {
     data: Array,
-    edit: Boolean
+    edit: Boolean,
+    initActive: {}
   },
   data() {
     return {
-      active: null,
+      active: this.initActive,
       selected: [],
       activeNode: null
     };

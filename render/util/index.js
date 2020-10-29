@@ -92,3 +92,6 @@ export function functionDebounce(func, t = 300) {
     }, t);
   };
 }
+export const isMac = (function() {
+  return /macintosh|mac os x/i.test(navigator.userAgent);
+})();

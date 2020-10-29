@@ -23,6 +23,7 @@ function checkFile(p, init = "") {
 }
 
 export function initDB() {
+  checkDictory("snap");
   checkDictory("data");
   checkDictory("data/store");
   checkDictory("data/backup");
