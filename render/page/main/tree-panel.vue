@@ -47,7 +47,15 @@ export default {
     };
   },
   methods: {
-    onAddGroup() {},
+    onAddGroup() {
+      let data = {
+        name: "group",
+        type: "group",
+        sub: []
+      };
+      this.dictory.push(data);
+      this.$connect.addData("dictory", data);
+    },
     onTreeEdit() {
       this.editing = !this.editing;
     },

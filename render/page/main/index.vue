@@ -131,7 +131,9 @@
           @click="onDictoryClick(activeListDictory)"
         >
           <Icon class="icon-fold" type="md-folder" />
-          {{ activeListDictory.name || activeListDictory.path }}
+          <span class="image-list-header-name">
+            {{ activeListDictory.name || activeListDictory.path }}
+          </span>
         </div>
         <component
           :is="viewComponent"

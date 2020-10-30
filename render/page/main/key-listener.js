@@ -18,7 +18,11 @@ export default {
     window.addEventListener("keyup", (e) => {
       if (this.focisItem && this.keyListeners.has(this.focisItem)) {
         let cb = this.keyListeners.get(this.focisItem);
-        if (this.focisItem.$el && this.focisItem.$el.offsetHeight) {
+        if (
+          this.focisItem.$el &&
+          this.focisItem.$el.offsetHeight &&
+          e.target === document.body
+        ) {
           cb(e);
         }
       }

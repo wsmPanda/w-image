@@ -1,7 +1,7 @@
 import fs from "fs";
 import schema from "./schema";
-import { tablePath } from "./util";
-import { writeJson, readJson } from "./util";
+import { tablePath, writeJson, readJson } from "./util";
+import { initTable } from "./table";
 
 function path(p) {
   return `${__dirname}/${p}`;
@@ -22,13 +22,14 @@ function checkFile(p, init = "") {
   }
 }
 
-export function initDB() {
-  checkDictory("snap");
-  checkDictory("data");
-  checkDictory("data/store");
-  checkDictory("data/backup");
-  checkFile(path("data/meta.json"), "{}");
-  checkFile(path("data/table.json"), "[]");
+export async function initDB() {
+  await checkDictory("snap");
+  await checkDictory("data");
+  await checkDictory("data/store");
+  await checkDictory("data/backup");
+  await checkFile(path("data/meta.json"), "{}");
+  await checkFile(path("data/table.json"), "[]");
+  await checkFile(path("data/pk.json"), "{}");
   let TableList = readJson("data/table");
   for (let item of schema) {
     if (item && item.name) {
@@ -43,5 +44,6 @@ export function initDB() {
       }
     }
   }
-  writeJson("data/table", TableList);
+  await writeJson("data/table", TableList);
+  await initTable();
 }

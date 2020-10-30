@@ -13,7 +13,7 @@
     </div>
     <div class="checklist-tool">
       <Button icon="ios-archive" size="small" @click="onCollect">收藏</Button>
-      <Button icon="md-download" size="small" @click="onOutput">导出</Button>
+      <Button icon="md-download" size="small" @click="onOutput">复制</Button>
       <Button icon="md-return-right" size="small">移动</Button>
       <Button icon="md-transh" size="small">删除</Button>
     </div>

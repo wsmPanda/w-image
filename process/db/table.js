@@ -1,10 +1,15 @@
 import { writeTable, readTable, removeTable } from "./util";
+export const TableStatus = {
+  pkMap: {},
+  init: false
+};
+export function initTable() {}
 export function selectFilesTable(name) {
   return {
-    save(key, data) {
+    async save(key, data) {
       return writeTable(name + "/" + key, data);
     },
-    remove(key) {
+    async remove(key) {
       return removeTable(name + "/" + key);
     },
     async get(key) {
@@ -14,7 +19,7 @@ export function selectFilesTable(name) {
         return null;
       }
     },
-    list() {},
+    list() {}
   };
 }
 export function selectTable(name) {
@@ -27,7 +32,7 @@ export function selectTable(name) {
     },
     async merge(data) {
       let oldData = await this.get();
-      return writeTable(name, {...oldData,...data});
+      return writeTable(name, { ...oldData, ...data });
     },
     async add(data) {
       let list = await readTable(name, data);
@@ -44,6 +49,6 @@ export function selectTable(name) {
     },
     async set(data) {
       return writeTable(name, data);
-    },
+    }
   };
 }
