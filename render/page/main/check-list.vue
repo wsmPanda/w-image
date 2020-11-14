@@ -69,8 +69,7 @@ export default {
       this.$connect.run("copyToDictory", { data: this.data });
       this.$checkList.cleanCheck();
     }
-  },
-  created() {}
+  }
 };
 </script>
 

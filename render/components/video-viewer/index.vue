@@ -4,7 +4,6 @@
       ref="video"
       class="video"
       controls="1"
-      height="300"
       :muted="this.$main.storage.videoMuted"
       autoplay
       @volumechange="onVolumechange"

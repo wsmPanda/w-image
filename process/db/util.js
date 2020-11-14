@@ -27,5 +27,7 @@ export function writeTable(name, data) {
 }
 
 export function removeTable(name) {
-  fs.unlinkSync(tablePath(name));
+  try {
+    fs.unlinkSync(tablePath(name));
+  } catch (ex) {}
 }

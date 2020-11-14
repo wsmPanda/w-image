@@ -106,6 +106,8 @@ export default {
       }
     },
     onRefresh() {
+      this.data.hasRead = false;
+      this.getSubData();
       this.$treeRoot.$emit("on-fresh", this.data);
     },
     onClose() {
@@ -128,7 +130,7 @@ export default {
         this.subData = [];
         let data = await this.$connect.run("getDictoryFolder", {
           path: this.data.path,
-          deep: 2
+          deep: 1
         });
         this.subData = data.sub || [];
         this.$set(this.data, "sub", this.subData);

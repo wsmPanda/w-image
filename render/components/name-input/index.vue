@@ -4,6 +4,7 @@
       ref="input"
       v-model="currentValue"
       @change="$emit('blur', currentValue)"
+      @blur="$emit('blur', currentValue)"
     />
   </div>
 </template>

@@ -9,7 +9,9 @@ export default {
     if (iteratorId && Iterator.map[iteratorId]) {
       let cacheTable = selectFilesTable("files_cache");
       if (cache !== false) {
-        let cacheData = await cacheTable.get(path.replace(/\//g, "=="));
+        let cacheData = await cacheTable.get(
+          path.replace(/\//g, "==").replace(/\:/g, "++")
+        );
         if (cacheData) {
           Iterator.map[iteratorId] && Iterator.map[iteratorId].destory();
           return {
@@ -17,12 +19,12 @@ export default {
             iteratorId,
             data: cacheData.list,
             finish: true,
-            page: 1
+            page: 1,
           };
         }
       } else {
         try {
-          cacheTable.remove(path.replace(/\//g, "=="));
+          cacheTable.remove(path.replace(/\//g, "==").replace(/\:/g, "++"));
         } catch (ex) {}
       }
       iterator = Iterator.map[iteratorId];
@@ -35,7 +37,7 @@ export default {
         iteratorId,
         data: data.list,
         finish: iterator.finish,
-        page: iterator.stepPage
+        page: iterator.stepPage,
       };
     } else {
       iterator = new Iterator(path, {
@@ -44,13 +46,13 @@ export default {
         step,
         filter(name) {
           return isImage(name) || isVideo(name);
-        }
+        },
       });
       return {
         path,
         iteratorId: iterator.id,
-        data: []
+        data: [],
       };
     }
-  }
+  },
 };

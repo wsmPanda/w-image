@@ -34,7 +34,13 @@ const videoSuffix = [
   "mod",
 ];
 function getSuffix(name) {
-  return name && name.split(".").pop();
+  return (
+    name &&
+    name
+      .split(".")
+      .pop()
+      .toLowerCase()
+  );
 }
 function isImage(name) {
   return IMAGE_REGEXP.test(name);

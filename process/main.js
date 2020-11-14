@@ -13,7 +13,7 @@ let win;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
-  { scheme: "app", privileges: { secure: true, standard: true } }
+  { scheme: "app", privileges: { secure: true, standard: true } },
 ]);
 
 function createWindow() {
@@ -31,18 +31,14 @@ function createWindow() {
     // Load the index.html when not in development
     win.loadURL("app://./index.html");
   }
-  protocol.interceptFileProtocol(
-    "file",
-    (req, callback) => {
-      const url = req.url.substr(8);
+  protocol.interceptFileProtocol("file", (req, callback) => {
+    const url = req.url.substr(8);
+    try {
       callback(decodeURI(url));
-    },
-    (error) => {
-      if (error) {
-        console.error("Failed to register protocol");
-      }
+    } catch (ex) {
+      console.log(ex);
     }
-  );
+  });
   win.on("closed", () => {
     win = null;
   });

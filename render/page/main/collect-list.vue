@@ -9,7 +9,7 @@
     >
       <Icon class="collect-icon" type="md-folder"></Icon>
       <span ref="name" class="collect-name">{{ item.name }}</span>
-      <Icon type="md-close" @click.native.stop="onDelete(data, index)"></Icon>
+      <Icon type="md-close" @click.native.stop="onDelete(item, index)"></Icon>
     </div>
     <NameInput
       ref="nameInput"
@@ -40,17 +40,18 @@ export default {
     saveName(name) {
       let data = this.data[this.editIndex];
       data.name = name;
-      console.log(data);
       this.$connect.editData("collect", {
         code: "createTime",
         value: data.createTime,
         data
       });
       setTimeout(() => {
+        console.log("nameEditing!");
         this.nameEditing = false;
       });
     },
     editName() {
+      console.log("???");
       this.nameEditing = true;
       this.editIndex = this.data.findIndex(
         (item) => item.createTime === this.active

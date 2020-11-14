@@ -126,7 +126,7 @@ export default {
     loadingMore: { type: Boolean, default: false },
     preloadPage: {
       type: Number,
-      default: 3
+      default: 4
     }
   },
   data() {
@@ -356,7 +356,7 @@ export default {
           count += this.dictoryHeight;
           // 目录元素清空行元素计数
           this.columnCount = 0;
-        } else if (this.columnCount === 1 || count === 0) {
+        } else if (columnCount === 1 || count === 0) {
           // 对于图片元素只有首行才增加高度
           count += this.imageHeight;
         }
@@ -366,7 +366,6 @@ export default {
         }
         list.push(count);
       });
-
       return { list, columnCount };
     },
     async updateList() {

@@ -11,73 +11,77 @@ export default [
         height: 80,
         preload: 3,
         showEmptyFolder: false,
-        showFileName: true
+        showFileName: true,
       },
       video: {},
       tree: {
-        showEmptyFolder: false
+        showEmptyFolder: false,
       },
       mainLayout: {
         leftWidth: 100,
         rightWidth: 100,
         leftFold: false,
         rightFold: false,
-        topFold: false
-      }
-    }
+        topFold: false,
+      },
+    },
   },
   // 模式配置表
   {
     name: "config_mode",
-    init: []
+    init: [],
   },
   {
     name: "setting",
-    type: "object"
+    type: "object",
   },
   // 目录表
   {
     name: "dictory",
-    type: "array"
+    type: "array",
   },
   // 缓存数据
   {
     name: "dictory_cache",
-    type: "array"
+    type: "array",
   },
   // 目录结构缓存
   {
     name: "files_cache",
-    type: "files"
+    type: "files",
   },
   // 目录树
   {
     name: "dictory_tree",
-    type: "array"
+    type: "array",
   },
   // 状态缓存
   {
     name: "storage",
-    type: "object"
+    type: "object",
   },
   // 收藏
   {
-    name: "collect"
+    name: "collect",
   },
   // 标签
   {
-    name: "tag"
+    name: "tag",
   },
   // 缓存数据
   {
-    name: "cache"
+    name: "cache",
   },
   // 图片状态记录
   {
-    name: "images"
+    name: "images",
   },
   // 书签
   {
-    name: "bookmark"
-  }
+    name: "bookmark",
+  },
+  // 书签
+  {
+    name: "check_list",
+  },
 ];

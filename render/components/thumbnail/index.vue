@@ -1,6 +1,6 @@
 <template>
   <div class="thumbnail">
-    <img v-if="isImage" class="thumbnail-img" :src="'file://' + src" />
+    <img v-if="isImage || 1" class="thumbnail-img" :src="'file://' + src" />
     <video
       v-else
       class="thumbnail-img"

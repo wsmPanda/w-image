@@ -1,5 +1,6 @@
 import Connect from "./connect";
 import { initDB, selectTable } from "./db";
+
 export default async function(win) {
   initDB();
   Connect();

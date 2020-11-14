@@ -1,12 +1,12 @@
 export default {
   provide() {
     return {
-      $checkList: this
+      $checkList: this,
     };
   },
   data() {
     return {
-      checkList: []
+      checkList: [],
     };
   },
   methods: {
@@ -16,26 +16,20 @@ export default {
       } else {
         this.checkList.push(data);
       }
-      this.setCheckStorage();
+      this.setCheckData();
     },
     cleanCheck() {
       this.$set(this, "checkList", []);
-      this.setCheckStorage();
+      this.setCheckData();
     },
     isCheck(data) {
       return this.checkList.indexOf(data) >= 0;
     },
-    setCheckStorage() {
-      console.log(this.checkList);
-      this.$connect.run("setStorageValue", {
-        code: "check",
-        value: this.checkList
-      });
-    }
+    setCheckData() {
+      this.$connect.setData("check_list", this.checkList);
+    },
   },
   async created() {
-    console.log(await this.$connect.run("getStorageValue", { code: "check" }));
-    this.checkList =
-      (await this.$connect.run("getStorageValue", { code: "check" })) || [];
-  }
+    this.checkList = (await this.$connect.getData("check_list")) || [];
+  },
 };

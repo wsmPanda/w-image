@@ -46,6 +46,7 @@ export default {
   },
   deleteData({ table, data }) {
     let { code, value } = data;
+    console.log(table, data)
     return selectTable(table).delete((item) => item[code] === value);
   }
 };
