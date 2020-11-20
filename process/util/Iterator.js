@@ -1,6 +1,6 @@
 import EventEmitter from "./event-emitter";
-const util = require("util");
-var fs = require("fs");
+var fs = require("fs-extra");
+
 /*
 ？遍历预估进度
 多进程异步处理
@@ -122,13 +122,14 @@ class FileIterator extends EventEmitter {
     if (!deep) {
       this.runData = data;
     }
-    var files = await util.promisify(fs.readdir)(path);
+    var files = await fs.readdir(path);
     if (!this.options.deep || deep < this.options.deep) {
       let subDictory = [];
       // 分开处理文件和子目录，防止目录和文件在列表中混合出现
       for (let name of files) {
         try {
-          var info = await util.promisify(fs.stat)(path + "/" + name);
+          var info = await fs.stat(path + "/" + name);
+          //console.log(info);
           if (info.isDirectory()) {
             subDictory.push(name);
           } else if (this.options.file) {

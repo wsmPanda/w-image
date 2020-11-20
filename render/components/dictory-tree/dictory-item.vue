@@ -44,8 +44,7 @@
       </div>
     </div>
     <div
-      v-if="subList && subList.length"
-      v-show="data.open"
+      v-if="subList && subList.length && data.open"
       class="tree-item-sub"
     >
       <TreeDictoryItem
@@ -130,8 +129,9 @@ export default {
         this.subData = [];
         let data = await this.$connect.run("getDictoryFolder", {
           path: this.data.path,
-          deep: 1
+          deep: 2
         });
+        console.log(data)
         this.subData = data.sub || [];
         this.$set(this.data, "sub", this.subData);
       } finally {

@@ -126,7 +126,7 @@ export default {
     loadingMore: { type: Boolean, default: false },
     preloadPage: {
       type: Number,
-      default: 4
+      default: 2
     }
   },
   data() {
@@ -414,7 +414,7 @@ export default {
         this.scrollTop + this.height * (this.preloadPage + 1),
         this.listHeight
       );
-      if (bottomHeight <= this.listHeight) {
+      if (bottomHeight >= this.listHeight) {
         this.endIndex = this.data.length;
       } else {
         this.endIndex = this.findIndex(bottomHeight, this.currentIndex);

@@ -1,8 +1,40 @@
 import Iterator from "../../util/iterator";
 import { isImage, isVideo } from "../../util";
 import { selectFilesTable } from "../../db";
-
+import { fdir } from "fdir";
+let counter = 0;
+function fileListToList(list) {
+  return list.map((row) => {
+    if (row.match(/\.(\w+?)$/)) {
+      return row;
+    } else {
+      return {
+        path: row
+      };
+    }
+  });
+}
 export default {
+  async allFileList(arg) {
+    let { path, iteratorId } = arg;
+    if (!iteratorId) {
+      iteratorId = counter++;
+    }
+    let api = new fdir()
+      .withFullPaths()
+      .filter((path) => {
+        return isImage(path) || isVideo(path);
+      })
+      .withDirs()
+
+      .crawl(path);
+    let t = +new Date();
+    let res = await api.withPromise();
+    let data = fileListToList(res);
+    console.log(path);
+    console.log(+new Date() - t);
+    return data;
+  },
   async fileListStream(arg) {
     let { path, iteratorId, step, cache } = arg;
     let iterator;
@@ -19,7 +51,7 @@ export default {
             iteratorId,
             data: cacheData.list,
             finish: true,
-            page: 1,
+            page: 1
           };
         }
       } else {
@@ -37,7 +69,7 @@ export default {
         iteratorId,
         data: data.list,
         finish: iterator.finish,
-        page: iterator.stepPage,
+        page: iterator.stepPage
       };
     } else {
       iterator = new Iterator(path, {
@@ -46,13 +78,13 @@ export default {
         step,
         filter(name) {
           return isImage(name) || isVideo(name);
-        },
+        }
       });
       return {
         path,
         iteratorId: iterator.id,
-        data: [],
+        data: []
       };
     }
-  },
+  }
 };

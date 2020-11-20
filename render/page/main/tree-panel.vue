@@ -61,7 +61,7 @@ export default {
     },
     async updateDictoryCache() {
       try {
-        this.dictory = await this.$connect.run("getDictoryCache");
+        // this.dictory = await this.$connect.run("getDictoryCache");
       } catch (ex) {
         console.error(ex);
       }

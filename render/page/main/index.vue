@@ -286,7 +286,16 @@ export default {
       this.$set(this.storage, "activeTree", e);
       this.imageLoading = true;
       await Connect.run("cleanIterator");
-      if (this.config.image.readStep) {
+      let m = 1;
+      if (m) {
+        return Connect.run("allFileList", e).then((res) => {
+          this.activeListDictory = e;
+          this.$refs.imageList.setData(res);
+          this.allList = res;
+          console.log(res.length);
+          this.imageLoading = false;
+        });
+      } else if (this.config.image.readStep) {
         this.setFileStream(e, cache);
         this.imageLoadingMore = true;
         return this.fileStream
@@ -334,6 +343,7 @@ export default {
       if (
         this.fileStream &&
         !this.imageLoadingMore &&
+        !this.listLoadFinish &&
         !this.fileStream.finish &&
         !this.fileStream.loading
       ) {
