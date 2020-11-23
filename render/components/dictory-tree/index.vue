@@ -29,7 +29,8 @@ export default {
     return {
       active: this.initActive,
       selected: [],
-      activeNode: null
+      activeNode: null,
+      needActive:false
     };
   },
   methods: {
@@ -42,13 +43,14 @@ export default {
       this.scrollToActive();
     },
     async openActiveNode(data) {
+      console.log('!')
       if (this.active) {
         let path = this.active.path;
         let node = data.find((item) => item && path.indexOf(item.path) === 0);
         if (!node) {
           return;
         }
-        if (node.path === this.active) {
+        if (node.path === this.active.path) {
           this.scrollToActive();
         } else {
           let nodeItem = this.items[node.path];
@@ -76,7 +78,9 @@ export default {
     },
     initItem(item) {
       this.items[item.data.path] = item;
-      this.scrollToActive();
+      if(item.data.path === this.active.path){
+        console.log('???????')
+       this.scrollToActive();}
     },
     cleanItem(item) {
       this.items[item.data.path] = null;
@@ -89,6 +93,7 @@ export default {
       }
     },
     scrollToActive() {
+      console.error('s')
       if (this.active && this.items[this.active.path]) {
         setTimeout(() => {
           if (

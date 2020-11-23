@@ -4,15 +4,11 @@ import { selectFilesTable } from "../../db";
 import { fdir } from "fdir";
 let counter = 0;
 function fileListToList(list) {
-  return list.map((row) => {
-    if (row.match(/\.(\w+?)$/)) {
-      return row;
-    } else {
-      return {
-        path: row
-      };
-    }
-  });
+  console.log(list)
+  return list.reduce((res,item)=>{
+    res.push({path:item.dir})
+    return res.concat(item.files)
+  },[])
 }
 export default {
   async allFileList(arg) {
@@ -25,14 +21,11 @@ export default {
       .filter((path) => {
         return isImage(path) || isVideo(path);
       })
-      .withDirs()
-
+      //.withDirs()
+      .group()
       .crawl(path);
-    let t = +new Date();
     let res = await api.withPromise();
     let data = fileListToList(res);
-    console.log(path);
-    console.log(+new Date() - t);
     return data;
   },
   async fileListStream(arg) {
