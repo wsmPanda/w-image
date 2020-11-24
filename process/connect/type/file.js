@@ -114,7 +114,7 @@ export default {
       }
     }).run();
   },
-  getDictoryFolder({ path, deep }) {
+  async getDictoryFolder({ path, deep }) {
     //let t = +new Date();
 
     // let api = new fdir()
@@ -123,7 +123,6 @@ export default {
     //   .withMaxDepth(deep)
     //   .crawl(path);
     // return api.withPromise();
-
     return new Iterator(path, {
       file: false,
       deep

@@ -286,7 +286,7 @@ export default {
       this.$set(this.storage, "activeTree", e);
       this.imageLoading = true;
       await Connect.run("cleanIterator");
-      let m = 1;
+      let m = 0;
       if (m) {
         return Connect.run("allFileList", e).then((res) => {
           this.activeListDictory = e;

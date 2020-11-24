@@ -22,7 +22,8 @@
           class="icon-fold"
           :class="{
             'icon-dictory': data.type === 'dictory',
-            'icon-set': data.type === 'set'
+            'icon-set': data.type === 'set',
+            'icon-error': data.error
           }"
           type="md-folder"
         />
@@ -43,10 +44,7 @@
         <Icon type="md-refresh"></Icon>
       </div>
     </div>
-    <div
-      v-if="subList && subList.length && data.open"
-      class="tree-item-sub"
-    >
+    <div v-if="subList && subList.length && data.open" class="tree-item-sub">
       <TreeDictoryItem
         v-for="(item, index) of subList"
         :data="item"
@@ -104,9 +102,11 @@ export default {
         this.$set(this.data, "open", !this.data.open);
       }
     },
-    onRefresh() {
-      this.data.hasRead = false;
-      this.getSubData();
+    async onRefresh() {
+      let open = this.data.open;
+      this.$set(this.data, "hasRead", false);
+      await this.getSubData();
+      this.data.open = open;
       this.$treeRoot.$emit("on-fresh", this.data);
     },
     onClose() {
@@ -132,6 +132,11 @@ export default {
           deep: 2
         });
         this.subData = data.sub || [];
+        if (data.error) {
+          this.$set(this.data, "error", true);
+        } else {
+          data.error = false;
+        }
         this.$set(this.data, "sub", this.subData);
       } finally {
         this.loading = false;
@@ -175,6 +180,9 @@ export default {
     }
     &.icon-set {
       color: #cddfff;
+    }
+    &.icon-error {
+      color: #d9dadc;
     }
   }
 

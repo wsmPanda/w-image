@@ -72,7 +72,7 @@ export default {
     async onAddDictiry() {
       let path = await this.$connect.run("selectDictory");
       await this.$connect.run("addDictory", { path });
-      this.dictory.push({ path });
+      this.addDictory(path);
     },
     async updateDictory() {
       let dictoryList = await this.$connect.run("getDictory");
@@ -113,6 +113,36 @@ export default {
         });
       }
       return this.mergeDictoryList(list);
+    },
+    addDictory(dir) {
+      let path = dir.split(/\\|\//);
+      if (path[0] === "") {
+        path.splice(0, 1);
+      }
+      let node = this.dictory;
+      let pathText = "";
+      if (isMac) {
+        pathText = "/";
+      }
+      path.forEach((item, index) => {
+        pathText += (pathText ? "/" : "") + item;
+        let folder = node.find(
+          (i) => i.name === item || i.path.indexOf(pathText) === 0
+        );
+        if (!folder || folder.path === pathText) {
+          if (!folder) {
+            folder = {
+              open: index !== path.length - 1,
+              name: item,
+              path: pathText,
+              type: index !== path.length - 1 ? "set" : "dictory",
+              sub: []
+            };
+            node.push(folder);
+          }
+          node = folder.sub;
+        }
+      });
     },
     mergeDictoryList(list) {
       let res = [];
