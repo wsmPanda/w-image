@@ -133,7 +133,7 @@ export default {
   },
   saveBlob({ file, name, time }) {
     fs.writeFile(
-      `${__dirname}/snap/${name}==${time || +new Date()}.png`,
+      `${process.resourcesPath}/snap/${name}==${time || +new Date()}.png`,
       file,
       {},
       (err) => {

@@ -2,9 +2,8 @@ import fs from "fs";
 import schema from "./schema";
 import { tablePath, writeJson, readJson } from "./util";
 import { initTable } from "./table";
-
 function path(p) {
-  return `${__dirname}/${p}`;
+  return `${process.resourcesPath}/${p}`;
 }
 function checkDictory(p) {
   try {

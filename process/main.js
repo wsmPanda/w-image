@@ -7,13 +7,14 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 import ProcessCreate from "./create";
 import ProcessReady from "./ready";
 import WindowConfig from "./window";
+import fs from "fs";
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
-  { scheme: "app", privileges: { secure: true, standard: true } },
+  { scheme: "app", privileges: { secure: true, standard: true } }
 ]);
 
 function createWindow() {
@@ -31,14 +32,21 @@ function createWindow() {
     // Load the index.html when not in development
     win.loadURL("app://./index.html");
   }
-  protocol.interceptFileProtocol("file", (req, callback) => {
-    const url = req.url.substr(8);
-    try {
-      callback(decodeURI(url));
-    } catch (ex) {
-      console.log(ex);
-    }
-  });
+  // protocol.interceptFileProtocol("file", (req, callback) => {
+  //   const url = req.url.substr(8);
+  //   try {
+  //     //callback(decodeURI(url));
+  //     callback(
+  //       fs
+  //         .createReadStream(decodeURIComponent(req.url.substr(8)))
+  //         .on("error", (e) => {
+  //           console.log(e);
+  //         })
+  //     );
+  //   } catch (ex) {
+  //     console.log(ex);
+  //   }
+  // });
   win.on("closed", () => {
     win = null;
   });

@@ -174,7 +174,7 @@ import ImageViewer from "render/components/image-viewer";
 import BookmarkList from "render/components/bookmark-list";
 import { Dropdown, DropdownMenu, Button, Icon } from "iview";
 import Config from "../config";
-import { functionDebounce } from "render/util";
+import { functionDebounce, mergeObject } from "render/util";
 import CollectList from "./collect-list";
 import CheckList from "./check-list";
 import TagList from "./tag-list";
@@ -425,6 +425,10 @@ export default {
   async created() {
     this.config = (await Connect.run("getConfig")) || {};
     this.storage = (await Connect.run("getStorage")) || {};
+    this.storage = mergeObject(this.storage, {
+      viewType: "grid",
+      leftTab: "folder"
+    });
     this.pageInit = true;
     let setStorage = functionDebounce((e) => Connect.run("setStorage", e));
     let setConfig = functionDebounce((e) => Connect.run("setConfig", e));

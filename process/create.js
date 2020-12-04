@@ -2,7 +2,7 @@ import Connect from "./connect";
 import { initDB, selectTable } from "./db";
 
 export default async function(win) {
-  initDB();
+  await initDB();
   Connect();
   let resizeTimmer;
   let storage = selectTable("storage").get();

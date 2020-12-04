@@ -1,5 +1,5 @@
 function path(p) {
-  return `${__dirname}/${p}`;
+  return `${process.resourcesPath}/${p}`;
 }
 import fs from "fs";
 export function readJson(name) {
