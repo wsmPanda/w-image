@@ -1,7 +1,7 @@
-function path(p) {
+import fs from "fs";
+export function path(p) {
   return `${process.resourcesPath}/${p}`;
 }
-import fs from "fs";
 export function readJson(name) {
   let data = fs.readFileSync(path(name) + ".json");
   return JSON.parse(data.toString());

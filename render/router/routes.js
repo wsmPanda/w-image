@@ -1,7 +1,7 @@
 import Main from "render/page/main";
 export default [
   {
-    path: "/",
+    path: "*",
     component: Main
   }
 ];

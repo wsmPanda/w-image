@@ -4,6 +4,7 @@ import { dialog, shell } from "electron";
 import fs from "fs";
 import util from "util";
 import Iterator from "../../util/iterator";
+import { path } from "../../db/util";
 import { fdir } from "fdir";
 
 function fileListToTree(list) {
@@ -133,7 +134,7 @@ export default {
   },
   saveBlob({ file, name, time }) {
     fs.writeFile(
-      `${process.resourcesPath}/snap/${name}==${time || +new Date()}.png`,
+      `${path("snap")}/${name}==${time || +new Date()}.png`,
       file,
       {},
       (err) => {

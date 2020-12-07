@@ -32,21 +32,19 @@ function createWindow() {
     // Load the index.html when not in development
     win.loadURL("app://./index.html");
   }
-  // protocol.interceptFileProtocol("file", (req, callback) => {
-  //   const url = req.url.substr(8);
-  //   try {
-  //     //callback(decodeURI(url));
-  //     callback(
-  //       fs
-  //         .createReadStream(decodeURIComponent(req.url.substr(8)))
-  //         .on("error", (e) => {
-  //           console.log(e);
-  //         })
-  //     );
-  //   } catch (ex) {
-  //     console.log(ex);
-  //   }
-  // });
+  protocol.interceptFileProtocol("file", (req, callback) => {
+    const url = req.url.substr(8);
+    try {
+      //callback(decodeURI(url));
+      callback(
+        fs.createReadStream(decodeURIComponent(url)).on("error", (e) => {
+          //console.log(e);
+        })
+      );
+    } catch (ex) {
+      //console.log(ex);
+    }
+  });
   win.on("closed", () => {
     win = null;
   });

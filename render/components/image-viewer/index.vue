@@ -3,16 +3,23 @@
     <div>
       <a @click="onNameClick">{{ data }}</a>
       <div>
-        <Button @click="$main.cartAdd(data)">
+        <!-- <Button @click="$main.cartAdd(data)">
           <Icon type="ios-add"/><Icon type="md-cart"
-        /></Button>
+        /></Button> -->
         <Button @click.native="onDeleteClick">
           <Icon type="md-trash"></Icon>
         </Button>
         <span v-if="info">{{ sizeText }}</span>
       </div>
+      <Button @click="onFullScreen" icon="md-expand" />
     </div>
-    <img v-if="isImage" class="image-viewer-img" :src="'file://' + data" />
+    <Viewer
+      v-if="isImage"
+      :full="fullScreen"
+      class="image-viewer-img"
+      :data="data"
+      @fullClose="fullScreen = false"
+    />
     <VideoViewer v-else :key="data" :data="data"></VideoViewer>
   </div>
 </template>
@@ -20,14 +27,15 @@
 <script>
 import { isImage } from "render/util";
 import VideoViewer from "../video-viewer";
+import Viewer from "./viewer";
 export default {
   inject: ["$main"],
-  components: { VideoViewer },
+  components: { VideoViewer, Viewer },
   props: {
     data: {}
   },
   data() {
-    return { info: null };
+    return { info: null, fullScreen: false };
   },
   computed: {
     isImage() {
@@ -51,6 +59,9 @@ export default {
     }
   },
   methods: {
+    onFullScreen() {
+      this.fullScreen = true;
+    },
     onNameClick() {
       this.$connect.run("openDictory", { path: this.data });
     },

@@ -22,7 +22,7 @@
 
 <script>
 import Thumbnail from "../../components/thumbnail";
-
+import { Time } from "../../util/time";
 export default {
   inject: ["$config", "$main", "$checkList"],
   components: { Thumbnail },
@@ -35,22 +35,25 @@ export default {
     };
   },
   computed: {
+    imageConfig() {
+      return this.$main.config.image;
+    },
     thumbnailStyle() {
       return {
-        paddingTop: `${this.$main.config.image.padding}px`,
-        paddingLeft: `${this.$main.config.image.padding}px`,
-        paddingRight: `${this.$main.config.image.padding}px`,
-        marginBottom: `${this.$main.config.image.margin}px`,
-        height: `${this.$main.config.image.height / this.checkZoom}px`,
-        minHeight: `${this.$main.config.image.height / this.checkZoom}px`,
-        width: `${100 / this.$main.config.image.column / this.checkZoom}%`
+        paddingTop: `${this.imagaeConfig.padding}px`,
+        paddingLeft: `${this.imagaeConfig.padding}px`,
+        paddingRight: `${this.imagaeConfig.padding}px`,
+        marginBottom: `${this.imagaeConfig.margin}px`,
+        height: `${this.imagaeConfig.height / this.checkZoom}px`,
+        minHeight: `${this.imagaeConfig.height / this.checkZoom}px`,
+        width: `${100 / this.imagaeConfig.column / this.checkZoom}%`
       };
     }
   },
   methods: {
     onCollect() {
       this.$connect.addData("collect", {
-        name: "collect",
+        name: `${Time.toTime(new Date())}`,
         files: this.data,
         createTime: +new Date()
       });

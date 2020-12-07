@@ -1,10 +1,7 @@
 import fs from "fs";
 import schema from "./schema";
-import { tablePath, writeJson, readJson } from "./util";
+import { tablePath, writeJson, readJson, path } from "./util";
 import { initTable } from "./table";
-function path(p) {
-  return `${process.resourcesPath}/${p}`;
-}
 function checkDictory(p) {
   try {
     var stat = fs.statSync(path(p));

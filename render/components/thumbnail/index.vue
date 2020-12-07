@@ -1,7 +1,15 @@
 <template>
   <div class="thumbnail">
-    <img v-if="isImage || 1" class="thumbnail-img" :src="'file://' + src" />
-    <video
+    <img
+      v-if="isImage && loaded"
+      @error="loaded = false"
+      class="thumbnail-img"
+      :src="'file://' + src"
+    />
+    <div class="thumbnail-icon" v-else>
+      <FileIcon :type="suffix"></FileIcon>
+    </div>
+    <!-- <video
       v-else
       class="thumbnail-img"
       controls="controls"
@@ -9,7 +17,7 @@
       muted
     >
       <source :src="'file://' + src" />
-    </video>
+    </video> -->
     <div v-if="showName" class="thumbnail-name" :title="name">{{ name }}</div>
     <Icon
       v-show="showCheck"
@@ -31,7 +39,9 @@
 
 <script>
 import { isImage, getSuffix } from "render/util";
+import FileIcon from "../file-icon";
 export default {
+  components: { FileIcon },
   props: {
     src: String,
     showCheck: { type: Boolean, default: true },
@@ -41,7 +51,8 @@ export default {
   },
   data() {
     return {
-      v: false
+      v: false,
+      loaded: true
     };
   },
   computed: {
@@ -73,6 +84,15 @@ export default {
   box-sizing: border-box;
   position: relative;
   user-select: none;
+  .thumbnail-icon {
+    font-size: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    margin-bottom: 30px;
+  }
   video {
     pointer-events: none;
   }
