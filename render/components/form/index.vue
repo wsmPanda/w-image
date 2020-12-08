@@ -12,6 +12,7 @@
         v-if="!field.component"
         :value="value[field.key]"
         :type="field.type"
+        size="small"
         @input="$set(value, field.key, $event)"
         :v-bind="field.attr"
         :v-on="field.on"
@@ -20,6 +21,7 @@
         v-else
         :is="field.component"
         :value="value[field.key]"
+        size="small"
         :type="field.type"
         @input="$set(value, field.key, $event)"
         :v-bind="field.attr"
@@ -55,8 +57,13 @@ export default {
   display: flex;
   flex-wrap: wrap;
   .form-item {
+    margin-bottom: 8px;
+
     .ivu-input-wrapper {
       width: auto;
+    }
+    .ivu-form-item-label {
+      padding-bottom: 4px;
     }
   }
 }

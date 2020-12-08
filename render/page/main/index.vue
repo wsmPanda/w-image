@@ -2,14 +2,14 @@
   <div class="page-view" v-if="pageInit">
     <div class="page-header">
       <div class="page-header-left">
-        <Dropdown transfer>
+        <Poptip transfer trigger="click">
           <a href="javascript:void(0)">
             <Button size="small" icon="md-settings"></Button>
           </a>
-          <DropdownMenu slot="list">
+          <div slot="content">
             <Config v-if="config" :data="config"></Config>
-          </DropdownMenu>
-        </Dropdown>
+          </div>
+        </Poptip>
         <Input
           v-if="config.image"
           icon="md-barcode"
@@ -57,64 +57,30 @@
     <Layout class="page-content" ref="layout" :config="config.mainLayout || {}">
       <template slot="left">
         <div class="main-left">
-          <div class="main-left-header">
-            <Icon
-              class="panel-item"
-              type="md-folder"
-              :class="{ active: storage.leftTab === 'folder' }"
-              @click.native="storage.leftTab = 'folder'"
-            /><Icon
-              class="panel-item"
-              type="md-bookmarks"
-              :class="{ active: storage.leftTab === 'bookmark' }"
-              @click.native="storage.leftTab = 'bookmark'"
-            />
-            <Icon
-              class="panel-item"
-              type="ios-archive"
-              :class="{ active: storage.leftTab === 'collect' }"
-              @click.native="storage.leftTab = 'collect'"
-            />
-            <Icon
-              class="panel-item"
-              type="md-pricetags"
-              :class="{ active: storage.leftTab === 'tags' }"
-              @click.native="storage.leftTab = 'tags'"
-            />
-          </div>
-          <div class="main-left-body">
-            <div
-              class="main-left-content"
-              v-show="storage.leftTab === 'folder'"
-            >
+          <Tabs :items="tabItems" v-model="storage.leftTab">
+            <template slot="folder">
               <TreePanel
                 ref="tree"
                 @on-active="onTreeActive"
                 :active="storage.activeTree"
-              ></TreePanel>
-            </div>
-            <div
-              class="main-left-content"
-              v-show="storage.leftTab === 'bookmark'"
-            >
-              <BookmarkList
+              ></TreePanel
+            ></template>
+            <template slot="bookmark"
+              ><BookmarkList
                 ref="bookmarks"
                 @bookmarksClick="toBookmark"
-              ></BookmarkList>
-            </div>
-            <div
-              class="main-left-content"
-              v-show="storage.leftTab === 'collect'"
-            >
+              ></BookmarkList
+            ></template>
+
+            <template slot="collect">
               <CollectList
                 ref="collect"
                 @collectClick="collectOpen"
-              ></CollectList>
-            </div>
-            <div class="main-left-content" v-show="storage.leftTab === 'tags'">
-              <TagList ref="tag"></TagList>
-            </div>
-          </div>
+              ></CollectList
+            ></template>
+
+            <template slot="tags"><TagList ref="tag"></TagList></template>
+          </Tabs>
         </div>
       </template>
       <template slot="center">
@@ -179,6 +145,7 @@ import CollectList from "./collect-list";
 import CheckList from "./check-list";
 import TagList from "./tag-list";
 import TreePanel from "./tree-panel";
+import Tabs from "render/components/tabs";
 import "./style.less";
 const { shell } = window.require("electron").remote;
 const ViewType = {
@@ -208,10 +175,29 @@ export default {
     BookmarkList,
     TagList,
     CollectList,
-    TreePanel
+    TreePanel,
+    Tabs
   },
   data() {
     return {
+      tabItems: [
+        {
+          value: "folder",
+          icon: "md-folder"
+        },
+        {
+          value: "bookmark",
+          icon: "md-bookmark"
+        },
+        {
+          value: "collect",
+          icon: "ios-archive"
+        },
+        {
+          value: "tags",
+          icon: "md-pricetags"
+        }
+      ],
       pageInit: false,
       config: {},
       showCheck: true,

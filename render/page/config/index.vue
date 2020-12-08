@@ -1,21 +1,46 @@
 <template>
   <div class="config-view">
-    <h3>图片列表</h3>
-    <Form v-if="data.image" v-model="data.image" :model="model.image"></Form>
+    <Tabs v-model="active" :items="tabs">
+      <Form
+        slot="image"
+        v-if="data.image"
+        v-model="data.image"
+        :model="model.image"
+      ></Form>
+    </Tabs>
   </div>
 </template>
 
 <script>
 import Form from "render/components/form";
 import { Switch } from "iview";
+import Tabs from "render/components/tabs";
 export default {
-  components: { Form },
+  components: { Form, Tabs },
   props: {
     data: Object
   },
   data() {
     return {
+      active: "image",
       show: false,
+      tabs: [
+        {
+          name: "图片设置",
+          value: "image",
+          icon: "md-image"
+        },
+        {
+          name: "视频设置",
+          value: "video",
+          icon: "md-videocam"
+        },
+        {
+          name: "通用设置",
+          value: "common",
+          icon: "md-settings"
+        }
+      ],
       model: {
         image: {
           fields: [

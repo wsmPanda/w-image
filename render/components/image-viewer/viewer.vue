@@ -1,5 +1,10 @@
 <template>
-  <div class="image-viewer-container" :class="className" @click="outClick">
+  <div
+    class="image-viewer-container"
+    :class="className"
+    @click="outClick"
+    @mousewheel="onScroll"
+  >
     <img
       class="image-viewer-img"
       @mousedown="onDrag"
@@ -44,6 +49,17 @@ export default {
     }
   },
   methods: {
+    onScroll(e) {
+      if (this.full) {
+        this.scale -= e.deltaY * 0.0008;
+        if (this.scale < 0) {
+          this.scale = 0.01;
+        }
+      }
+    },
+    reset() {
+      Object.assign(this.$data, this.$options.data());
+    },
     outClick() {
       this.draging = false;
       this.$emit("fullClose");
