@@ -4,11 +4,10 @@ import { selectFilesTable } from "../../db";
 import { fdir } from "fdir";
 let counter = 0;
 function fileListToList(list) {
-  console.log(list)
-  return list.reduce((res,item)=>{
-    res.push({path:item.dir})
-    return res.concat(item.files)
-  },[])
+  return list.reduce((res, item) => {
+    res.push({ path: item.dir });
+    return res.concat(item.files);
+  }, []);
 }
 export default {
   async allFileList(arg) {
@@ -29,8 +28,9 @@ export default {
     return data;
   },
   async fileListStream(arg) {
-    let { path, iteratorId, step, cache } = arg;
+    let { path, iteratorId, step, cache, formatFilter } = arg;
     let iterator;
+    formatFilter = formatFilter || ["image", "video"];
     if (iteratorId && Iterator.map[iteratorId]) {
       let cacheTable = selectFilesTable("files_cache");
       if (cache !== false) {
@@ -70,7 +70,13 @@ export default {
         file: true,
         step,
         filter(name) {
-          return isImage(name) || isVideo(name);
+          let image = isImage(name);
+          let video = isVideo(name);
+          return (
+            (formatFilter.includes("image") && image) ||
+            (formatFilter.includes("video") && video) ||
+            (formatFilter.includes("other") && !image && !video)
+          );
         }
       });
       return {

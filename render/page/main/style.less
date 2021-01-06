@@ -3,6 +3,7 @@
   width: 100%;
   overflow: hidden;
   display: flex;
+
   .spin-icon-load {
     animation: icon-load-spin 1s linear infinite;
   }
@@ -24,8 +25,10 @@
   .icon-fold {
     color: #fbc776;
   }
-  .ivu-btn {
-    margin-right: 4px;
+  .page-header-left {
+    > .ivu-btn {
+      margin-right: 4px;
+    }
   }
   flex-direction: column;
   .page-header {
@@ -94,4 +97,12 @@
 
 div.ivu-select-dropdown {
   max-height: 100vh;
+}
+
+.format-fitler {
+  padding: 4px 8px;
+  .ivu-checkbox-wrapper {
+    display: block;
+    margin-top: 4px;
+  }
 }

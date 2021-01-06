@@ -26,23 +26,46 @@
         />
 
         <Dropdown trigger="click" transfer>
-          <a href="javascript:void(0)">
+          <ButtonGroup
+            ><Button
+              @click.native.stop="showCheck = !showCheck"
+              :type="showCheck ? 'primary' : 'default'"
+              :ghost="showCheck"
+              icon="md-checkbox-outline"
+              size="small"
+            />
             <Button icon="md-images" size="small">
               <Icon type="md-arrow-dropdown" />
             </Button>
-          </a>
+          </ButtonGroup>
           <DropdownMenu slot="list">
             <CheckList :data="checkList"></CheckList>
           </DropdownMenu>
         </Dropdown>
-        <Button
-          @click.native.stop="showCheck = !showCheck"
-          :type="showCheck ? 'primary' : 'default'"
-          :ghost="showCheck"
-          icon="md-checkbox-outline"
-          size="small"
-        />
         <Button icon="md-bookmark" size="small" @click="addBookmark" />
+
+        <Dropdown trigger="click" transfer>
+          <ButtonGroup>
+            <Button icon="ios-funnel" size="small">
+              <Icon type="md-arrow-dropdown" />
+            </Button>
+          </ButtonGroup>
+          <DropdownMenu slot="list">
+            <div class="format-fitler">
+              <div class="format-fitler-title">显示文件格式</div>
+              <CheckboxGroup v-model="storage.formatFilter" @click.native.stop>
+                <Checkbox icon="md-add" label="image"
+                  ><Icon type="md-image" />图片</Checkbox
+                ><Checkbox icon="md-add" label="video"
+                  ><Icon type="md-videocam" />视频</Checkbox
+                ><Checkbox icon="md-add" label="other"
+                  ><Icon type="md-document" />其他</Checkbox
+                >
+              </CheckboxGroup>
+            </div>
+          </DropdownMenu>
+        </Dropdown>
+
         <Button icon="md-pricetags" size="small" />
         <Button size="small">
           <Icon type="ios-apps" /> <Icon type="md-arrow-dropdown" />
@@ -117,12 +140,12 @@
         ></component>
       </template>
       <template slot="right">
-        <ImageViewer
+        <FileViewer
           :key="viewImage"
           v-if="viewImage"
           class="main-image-viewer"
           :data="viewImage"
-        ></ImageViewer>
+        ></FileViewer>
         <div v-else>空</div>
       </template>
     </Layout>
@@ -136,7 +159,7 @@ import PageViewer from "render/components/page-viewer";
 import Layout from "render/layout";
 import Connect from "render/connect";
 import CheckMixins from "./check";
-import ImageViewer from "render/components/image-viewer";
+import FileViewer from "render/components/image-viewer";
 import BookmarkList from "render/components/bookmark-list";
 import { Dropdown, DropdownMenu, Button, Icon } from "iview";
 import Config from "../config";
@@ -170,7 +193,7 @@ export default {
     Dropdown,
     Config,
     DropdownMenu,
-    ImageViewer,
+    FileViewer,
     CheckList,
     BookmarkList,
     TagList,
@@ -204,7 +227,8 @@ export default {
       listLoadFinish: false,
       viewImage: null,
       storage: {
-        viewType: "grid"
+        viewType: "grid",
+        formatFilter: ["image", "video"]
       },
       configShow: false,
       imageLoading: false,
@@ -223,7 +247,11 @@ export default {
       return ViewType[this.storage.viewType || "grid"];
     }
   },
-  watch: {},
+  watch: {
+    "storage.formatFilter"() {
+      this.refreshListData();
+    }
+  },
   methods: {
     toBookmark({ dictory, scrollTop }) {
       this.updateListData(dictory).then(() => {
@@ -265,6 +293,9 @@ export default {
       this.imageLoading = false;
       this.$refs.imageList.setData(data.files);
     },
+    refreshListData() {
+      this.updateListData(this.storage.activeTree);
+    },
     async updateListData(e, cache) {
       if (e.type === "set") {
         return;
@@ -295,7 +326,10 @@ export default {
             this.imageLoadingMore = false;
           });
       } else {
-        return Connect.run("getTreeFiles", e).then((res) => {
+        return Connect.run("getTreeFiles", {
+          ...e,
+          formatFilter: this.storage.formatFilter || ["image", "video"]
+        }).then((res) => {
           this.activeListDictory = e;
           let list = this.floaFileTree(
             res,
@@ -315,6 +349,7 @@ export default {
       cache = false;
       this.fileStream = Connect.stream("fileListStream", {
         path: e.path,
+        formatFilter: this.storage.formatFilter || ["image", "video"],
         step: Number(this.config.image.readStep),
         cache
       });

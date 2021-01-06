@@ -11,6 +11,7 @@ module.exports = {
   },
   pluginOptions: {
     electronBuilder: {
+      externals: ["ffmpeg", "@ffmpeg-installer/ffmpeg"],
       mainProcessWatch: ["process/main", "process"],
       mainProcessFile: "process/main"
     }

@@ -1,28 +1,41 @@
 <template>
-  <div>
-    <video
+  <div class="video-viewer">
+    <videoPlayer
       ref="video"
       class="video"
       controls="1"
       :muted="this.$main.storage.videoMuted"
       autoplay
       @volumechange="onVolumechange"
+      :options="playerOptions"
     >
       <source :src="'file://' + data" type="video/mp4" />
-    </video>
+    </videoPlayer>
     <Button @click="snap">截图(F3)</Button>
     <canvas v-show="canvasShow" ref="canvas"></canvas>
   </div>
 </template>
 
 <script>
+import "video.js/dist/video-js.css";
+import { videoPlayer } from "vue-video-player";
+
 export default {
   inject: ["$main"],
+  components: { videoPlayer },
   props: {
     data: {}
   },
   data() {
     return {
+      playerOptions: {
+        sources: [
+          {
+            type: "video/mp4",
+            src: "file://" + this.data
+          }
+        ]
+      },
       canvasShow: false,
       videoWidth: 0,
       videoHeight: 0
@@ -80,7 +93,14 @@ export default {
 </script>
 
 <style lang="less">
-.video {
-  width: 100%;
+.video-viewer {
+  .video {
+    width: 100%;
+    margin-bottom: 38px;
+  }
+  .video-js .vjs-control-bar {
+    display: flex;
+    margin-bottom: -32px;
+  }
 }
 </style>

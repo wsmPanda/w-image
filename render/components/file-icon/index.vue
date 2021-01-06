@@ -13,6 +13,8 @@ const FileIconMap = {
   bmp: "pic",
   gif: "pic",
   mp4: "video",
+  mov: "video",
+  wmv: "video",
   flv: "video",
   avi: "video",
   rmvb: "video",

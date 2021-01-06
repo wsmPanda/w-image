@@ -107,11 +107,18 @@ export default {
       file: false
     }).run();
   },
-  getTreeFiles({ path }) {
+  getTreeFiles({ path, formatFilter }) {
+    formatFilter = formatFilter || ["image", "video"];
     return new Iterator(path, {
       file: true,
       filter(name) {
-        return isImage(name) || isVideo(name);
+        let image = isImage(name);
+        let video = isVideo(name);
+        return (
+          (formatFilter.includes("image") && image) ||
+          (formatFilter.includes("video") && video) ||
+          (formatFilter.includes("other") && !image && !video)
+        );
       }
     }).run();
   },
