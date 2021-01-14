@@ -20,17 +20,24 @@
       :data="data"
       @fullClose="fullScreen = false"
     />
-    <VideoViewer v-else :key="data" :data="data"></VideoViewer>
+    <VideoViewer
+      v-else-if="videoViewerType !== 'ff'"
+      :key="data"
+      :data="data"
+    ></VideoViewer>
+    <VideoFFViewer v-else :key="data" :data="data"></VideoFFViewer>
   </div>
 </template>
 
 <script>
 import { isImage } from "render/util";
-import VideoViewer from "../video-viewer";
+import VideoViewer from "../video-viewer/index";
+import VideoFFViewer from "../video-viewer/ff";
+
 import Viewer from "./viewer";
 export default {
   inject: ["$main"],
-  components: { VideoViewer, Viewer },
+  components: { VideoViewer, Viewer, VideoFFViewer },
   props: {
     data: {}
   },
@@ -38,6 +45,13 @@ export default {
     return { info: null, fullScreen: false };
   },
   computed: {
+    videoViewerType() {
+      return (
+        this.$main.config &&
+        this.$main.config.video &&
+        this.$main.config.video.player
+      );
+    },
     isImage() {
       return isImage(this.data);
     },

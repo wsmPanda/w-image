@@ -1,4 +1,4 @@
-import videojs from "video.js";
+import {  videojs } from "vue-video-player";
 
 const Tech = videojs.getComponent("Tech");
 const Html5 = Tech.getTech("Html5");
@@ -36,6 +36,7 @@ if (Tech.getTech("StreamPlay")) {
     "videojs-StreamPlay should only be used with video.js@6 and above"
   );
 } else {
+  console.log("!!!!");
   videojs.registerTech("StreamPlay", StreamPlayTech);
 }
 

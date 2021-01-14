@@ -6,6 +6,12 @@
         v-if="data.image"
         v-model="data.image"
         :model="model.image"
+      ></Form
+      ><Form
+        slot="video"
+        v-if="data.video"
+        v-model="data.video"
+        :model="model.video"
       ></Form>
     </Tabs>
   </div>
@@ -89,6 +95,15 @@ export default {
         },
         video: {
           fields: [
+            {
+              label: "播放器",
+              key: "player",
+              type: "radio",
+              data: [
+                { name: "默认", value: "video" },
+                { name: "ffmpeg", value: "ff" }
+              ]
+            },
             {
               label: "自动播放",
               key: "autoPlay",

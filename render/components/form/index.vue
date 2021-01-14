@@ -8,8 +8,22 @@
       :key="field.key"
       :style="fieldStyle(field)"
     >
-      <Input
-        v-if="!field.component"
+      <RadioGroup
+        v-if="field.type === 'radio'"
+        :value="value[field.key]"
+        size="small"
+        @input="$set(value, field.key, $event)"
+        :v-bind="field.attr"
+        :v-on="field.on"
+      >
+        <Radio
+          v-for="item of field.data"
+          :key="item.value"
+          :label="item.value"
+          >{{ item.name }}</Radio
+        > </RadioGroup
+      ><Input
+        v-else-if="!field.component"
         :value="value[field.key]"
         :type="field.type"
         size="small"

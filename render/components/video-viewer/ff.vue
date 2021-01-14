@@ -5,12 +5,12 @@
       ref="video"
       class="video"
       controls="1"
-      :muted="this.$main.storage.videoMuted"
-      autoplay
+      :muted="$main.storage.videoMuted"
+      :autoplay="$main.config.video.autoPlay"
       @volumechange="onVolumechange"
       :options="playerOptions"
     >
-      <source :src="'file://' + data" type="video/mp4" />
+      <source :src="videoSource || 'file://' + data" type="video/mp4" />
     </videoPlayer>
     <Button @click="snap">截图(F3)</Button>
     <canvas v-show="canvasShow" ref="canvas"></canvas>
@@ -20,7 +20,7 @@
 <script>
 import "video.js/dist/video-js.css";
 import { videoPlayer } from "vue-video-player";
-
+import "./StreamPlayTech";
 export default {
   inject: ["$main"],
   components: { videoPlayer },
@@ -30,6 +30,7 @@ export default {
   data() {
     return {
       videoReady: false,
+      videoSource: null,
       playerOptions: {
         sources: [
           {
@@ -83,7 +84,7 @@ export default {
     window.removeEventListener("keyup", this.onSnap);
   },
   mounted() {
-    this.$refs.video.volume = this.$main.storage.videoVolume || 0;
+    // this.$refs.video.volume = this.$main.storage.videoVolume || 0;
     this.onSnap = (e) => {
       if (e.code === "F3") {
         this.snap();
@@ -96,8 +97,24 @@ export default {
       .run("video", {
         path: this.data
       })
-      .then((res) => {
-        console.log(res);
+      .then((message) => {
+        this.videoSource = message.videoSource;
+        this.playerOptions = {
+          techOrder: ["StreamPlay"],
+          StreamPlay: { duration: message.duration },
+          sources: [
+            {
+              type: "video/mp4",
+              src: message.videoSource
+            }
+          ]
+        };
+        this.videoReady = true;
+        setTimeout(() => {
+          if (this.$main.config.video.autoPlay) {
+            this.$refs.video.player.play();
+          }
+        });
       });
   }
 };

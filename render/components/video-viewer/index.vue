@@ -5,7 +5,7 @@
       class="video"
       controls="1"
       :muted="this.$main.storage.videoMuted"
-      autoplay
+      :autoplay="$main.config.video.autoPlay"
       @volumechange="onVolumechange"
     >
       <source :src="'file://' + data" type="video/mp4" />
