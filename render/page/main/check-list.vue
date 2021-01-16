@@ -28,11 +28,11 @@ export default {
   inject: ["$config", "$main", "$checkList"],
   components: { Thumbnail },
   props: {
-    data: {}
+    data: {},
   },
   data() {
     return {
-      checkZoom: 2
+      checkZoom: 2,
     };
   },
   computed: {
@@ -41,22 +41,22 @@ export default {
     },
     thumbnailStyle() {
       return {
-        paddingTop: `${this.imagaeConfig.padding}px`,
-        paddingLeft: `${this.imagaeConfig.padding}px`,
-        paddingRight: `${this.imagaeConfig.padding}px`,
-        marginBottom: `${this.imagaeConfig.margin}px`,
-        height: `${this.imagaeConfig.height / this.checkZoom}px`,
-        minHeight: `${this.imagaeConfig.height / this.checkZoom}px`,
-        width: `${100 / this.imagaeConfig.column / this.checkZoom}%`
+        paddingTop: `${this.imageConfig.padding}px`,
+        paddingLeft: `${this.imageConfig.padding}px`,
+        paddingRight: `${this.imageConfig.padding}px`,
+        marginBottom: `${this.imageConfig.margin}px`,
+        height: `${this.imageConfig.height / this.checkZoom}px`,
+        minHeight: `${this.imageConfig.height / this.checkZoom}px`,
+        width: `${100 / this.imageConfig.column / this.checkZoom}%`,
       };
-    }
+    },
   },
   methods: {
     onCollect() {
       this.$connect.addData("collect", {
         name: `${Time.toTime(new Date())}`,
         files: this.data,
-        createTime: +new Date()
+        createTime: +new Date(),
       });
       this.$main.$emit("collectChange");
       this.$checkList.cleanCheck();
@@ -65,15 +65,15 @@ export default {
       let row = this.data[index];
       this.$connect.deleteData("collect", {
         code: "createTime",
-        value: row.createTime
+        value: row.createTime,
       });
       this.data.splice(index, 1);
     },
     onOutput() {
       this.$connect.run("copyToDictory", { data: this.data });
       this.$checkList.cleanCheck();
-    }
-  }
+    },
+  },
 };
 </script>
 

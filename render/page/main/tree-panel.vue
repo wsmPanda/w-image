@@ -12,6 +12,7 @@
           size="small"
         ></Button>
         <Button @click="updateDictory" icon="md-refresh" size="small"></Button>
+        <Button icon="md-briefcase" @click="processShow = true" size="small" />
       </div>
 
       <div class="tree-header-right">
@@ -27,6 +28,16 @@
       :data="dictory"
       :edit="editing"
     ></Tree>
+    <Modal v-model="processShow" title="批量处理" @on-ok="onProcessOk">
+      <div>
+        <div>后缀修改</div>
+        <div>
+          <Input v-model="formatFrom" />->
+          <Input v-model="formatTo" />
+        </div>
+        <Checkbox v-model="addMode">添加后缀</Checkbox>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -38,20 +49,34 @@ export default {
   inject: ["$main"],
   components: { Tree },
   props: {
-    active: {}
+    active: {},
   },
   data() {
     return {
       dictory: [],
-      editing: false
+      editing: false,
+      processShow: false,
+      formatFrom: "",
+      formatTo: "",
+      addMode: false,
     };
   },
   methods: {
+    onProcessOk() {
+      this.$connect.run("processBatch", {
+        process: "format",
+        from: this.formatFrom,
+        to: this.formatTo,
+        add: this.addMode,
+        path:
+          this.$main.storage.activeTree && this.$main.storage.activeTree.path,
+      });
+    },
     onAddGroup() {
       let data = {
         name: "group",
         type: "group",
-        sub: []
+        sub: [],
       };
       this.dictory.push(data);
       this.$connect.addData("dictory", data);
@@ -105,7 +130,7 @@ export default {
               name: item,
               path: pathText,
               type: index !== path.length - 1 ? "set" : "dictory",
-              sub: []
+              sub: [],
             };
             node.push(folder);
           }
@@ -136,7 +161,7 @@ export default {
               name: item,
               path: pathText,
               type: index !== path.length - 1 ? "set" : "dictory",
-              sub: []
+              sub: [],
             };
             node.push(folder);
           }
@@ -157,7 +182,7 @@ export default {
         }
       }
       return res;
-    }
+    },
   },
   async created() {
     this.onTreeChange = functionDebounce(() => {
@@ -169,10 +194,10 @@ export default {
         deep: true,
         handler() {
           this.onTreeChange();
-        }
+        },
       });
     });
-  }
+  },
 };
 </script>
 

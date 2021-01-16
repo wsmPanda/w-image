@@ -14,19 +14,23 @@
     <canvas v-show="canvasShow" ref="canvas"></canvas>
   </div>
 </template>
-
 <script>
 export default {
   inject: ["$main"],
   props: {
-    data: {}
+    data: {},
   },
   data() {
     return {
       canvasShow: false,
       videoWidth: 0,
-      videoHeight: 0
+      videoHeight: 0,
     };
+  },
+  computed: {
+    videoType() {
+      return `video/${this.data.split(".").pop()}`;
+    },
   },
   methods: {
     snap() {
@@ -51,7 +55,7 @@ export default {
               .split(/\/|\\/)
               .pop()
               .split(".")
-              .shift()
+              .shift(),
           });
         };
         reader.onerror = (err) => console.error(err);
@@ -62,7 +66,7 @@ export default {
     onVolumechange() {
       this.$set(this.$main.storage, "videoVolume", this.$refs.video.volume);
       this.$set(this.$main.storage, "videoMuted", this.$refs.video.muted);
-    }
+    },
   },
   beforeDestroy() {
     window.removeEventListener("keyup", this.onSnap);
@@ -75,7 +79,7 @@ export default {
       }
     };
     window.addEventListener("keyup", this.onSnap);
-  }
+  },
 };
 </script>
 

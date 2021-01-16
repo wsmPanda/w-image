@@ -51,8 +51,8 @@ export default {
   components: { Icon },
   props: {
     config: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   data() {
     return { resizeWidthDict: 1, widthOffset: 0 };
@@ -73,8 +73,8 @@ export default {
     onReizeEnd() {
       window.removeEventListener("mouseup", this.onReizeEnd);
       window.removeEventListener("mousemove", this.onMove);
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -130,6 +130,11 @@ export default {
   .layout-fold {
     right: 4px;
     left: auto;
+  }
+  .layout-slot-content {
+    overflow: hidden;
+    height: 100%;
+    box-sizing: border-box;
   }
 }
 .layout-slot-right {
