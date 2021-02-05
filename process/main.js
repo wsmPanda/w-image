@@ -14,7 +14,7 @@ let win;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
-  { scheme: "app", privileges: { secure: true, standard: true } }
+  { scheme: "app", privileges: { secure: true, standard: true } },
 ]);
 
 function createWindow() {
@@ -32,6 +32,7 @@ function createWindow() {
     // Load the index.html when not in development
     win.loadURL("app://./index.html");
   }
+  win.webContents.openDevTools();
   protocol.interceptFileProtocol("file", (req, callback) => {
     const url = req.url.substr(8);
     try {

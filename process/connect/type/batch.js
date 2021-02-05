@@ -23,7 +23,7 @@ export default {
           l.push(format.replace(new RegExp(`${from}`, "mg"), to));
           res = l.join(".");
         }
-        fs.renameSync(path, res);
+        fs.rename(path, res);
       }
     });
   },

@@ -1,6 +1,6 @@
 import fs from "fs";
 export function path(p) {
-  return `${process.appPath || __dirname}/${p}`;
+  return `${process.dbPath || process.appPath || __dirname}/${p}`;
 }
 export function readJson(name) {
   let data = fs.readFileSync(path(name) + ".json");

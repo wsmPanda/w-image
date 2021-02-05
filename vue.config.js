@@ -7,8 +7,8 @@ module.exports = {
   pages: {
     index: {
       // page 的入口
-      entry: "render/main.js"
-    }
+      entry: "render/main.js",
+    },
   },
   pluginOptions: {
     electronBuilder: {
@@ -26,11 +26,11 @@ module.exports = {
       },
       externals: ["ffmpeg", "@ffmpeg-installer/ffmpeg", "fluent-ffmpeg"],
       mainProcessWatch: ["process/main", "process"],
-      mainProcessFile: "process/main"
-    }
+      mainProcessFile: "process/main",
+    },
   },
   chainWebpack: (config) => {
     config.resolve.alias.set("render", resolve("./render"));
     config.resolve.alias.set("process", resolve("./process"));
-  }
+  },
 };

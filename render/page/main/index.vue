@@ -70,6 +70,10 @@
         <Button size="small">
           <Icon type="ios-apps" /> <Icon type="md-arrow-dropdown" />
         </Button>
+
+        <Button size="small" @click="$connect.run('selectDbPath')">
+          <Icon type="ios-apps" />
+        </Button>
       </div>
       <RadioGroup v-model="storage.viewType" type="button" size="small">
         <Radio label="book"> <Icon type="md-book" /> </Radio>
@@ -174,7 +178,7 @@ const { shell } = window.require("electron").remote;
 const ViewType = {
   scroll: ImageScroll,
   grid: ImageList,
-  page: PageViewer
+  page: PageViewer,
 };
 import KeyListener from "./key-listener";
 export default {
@@ -182,7 +186,7 @@ export default {
   provide() {
     return {
       $main: this,
-      $config: this.config
+      $config: this.config,
     };
   },
   components: {
@@ -199,22 +203,22 @@ export default {
     TagList,
     CollectList,
     TreePanel,
-    Tabs
+    Tabs,
   },
   data() {
     return {
       tabItems: [
         {
           value: "folder",
-          icon: "md-folder"
+          icon: "md-folder",
         },
         {
           value: "bookmark",
-          icon: "md-bookmark"
+          icon: "md-bookmark",
         },
         {
           value: "collect",
-          icon: "ios-archive"
+          icon: "ios-archive",
         },
         {
           value: "tags",
@@ -232,7 +236,7 @@ export default {
       viewImage: null,
       storage: {
         viewType: "grid",
-        formatFilter: ["image", "video"]
+        formatFilter: ["image", "video"],
       },
       configShow: false,
       imageLoading: false,
@@ -243,18 +247,18 @@ export default {
       activeListDictory: null,
       images: [],
       tree: [],
-      cartData: []
+      cartData: [],
     };
   },
   computed: {
     viewComponent() {
       return ViewType[this.storage.viewType || "grid"];
-    }
+    },
   },
   watch: {
     "storage.formatFilter"() {
       this.refreshListData();
-    }
+    },
   },
   methods: {
     toBookmark({ dictory, scrollTop }) {
@@ -271,7 +275,7 @@ export default {
       this.$connect.addData("bookmark", {
         dictory: this.storage.activeTree,
         scrollTop: this.$refs.imageList && this.$refs.imageList.scrollTop,
-        createTime: +new Date()
+        createTime: +new Date(),
       });
       this.$refs.bookmarks.update();
     },
@@ -332,7 +336,7 @@ export default {
       } else {
         return Connect.run("getTreeFiles", {
           ...e,
-          formatFilter: this.storage.formatFilter || ["image", "video"]
+          formatFilter: this.storage.formatFilter || ["image", "video"],
         }).then((res) => {
           this.activeListDictory = e;
           let list = this.floaFileTree(
@@ -355,7 +359,7 @@ export default {
         path: e.path,
         formatFilter: this.storage.formatFilter || ["image", "video"],
         step: Number(this.config.image.readStep),
-        cache
+        cache,
       });
       this.fileStream.onFinish((ctx) => {
         this.imageLoadingMore = false;
@@ -385,8 +389,8 @@ export default {
       let list = [
         {
           path: path || data.path,
-          name: data.path.split(/\\|\//).pop()
-        }
+          name: data.path.split(/\\|\//).pop(),
+        },
       ];
       list = list.concat(data.files.map((p) => (path || data.path) + "/" + p));
       if (data.sub && data.sub.length) {
@@ -442,7 +446,7 @@ export default {
           this.$refs.imageList.setScroll(this.storage.listScroll);
         }
       }
-    }
+    },
   },
   mounted() {
     this.onResize();
@@ -452,7 +456,7 @@ export default {
     this.storage = (await Connect.run("getStorage")) || {};
     this.storage = mergeObject(this.storage, {
       viewType: "grid",
-      leftTab: "folder"
+      leftTab: "folder",
     });
     this.pageInit = true;
     let setStorage = functionDebounce((e) => Connect.run("setStorage", e));
@@ -461,13 +465,13 @@ export default {
       deep: true,
       handler(v) {
         setConfig({ data: v });
-      }
+      },
     });
     this.$watch("storage", {
       deep: true,
       handler(v) {
         setStorage({ data: v });
-      }
+      },
     });
     setTimeout(() => {
       this.onResize();
@@ -476,6 +480,6 @@ export default {
       this.onResize();
     });
     this.afterInit();
-  }
+  },
 };
 </script>

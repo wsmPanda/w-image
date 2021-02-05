@@ -36,7 +36,6 @@ if (Tech.getTech("StreamPlay")) {
     "videojs-StreamPlay should only be used with video.js@6 and above"
   );
 } else {
-  console.log("!!!!");
   videojs.registerTech("StreamPlay", StreamPlayTech);
 }
 

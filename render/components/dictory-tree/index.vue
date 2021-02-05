@@ -43,7 +43,6 @@ export default {
       this.scrollToActive();
     },
     async openActiveNode(data) {
-      console.log('!')
       if (this.active) {
         let path = this.active.path;
         let node = data.find((item) => item && path.indexOf(item.path) === 0);
@@ -79,7 +78,6 @@ export default {
     initItem(item) {
       this.items[item.data.path] = item;
       if(item.data.path === this.active.path){
-        console.log('???????')
        this.scrollToActive();}
     },
     cleanItem(item) {
@@ -93,7 +91,6 @@ export default {
       }
     },
     scrollToActive() {
-      console.error('s')
       if (this.active && this.items[this.active.path]) {
         setTimeout(() => {
           if (

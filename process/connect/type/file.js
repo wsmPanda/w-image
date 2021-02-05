@@ -21,15 +21,29 @@ Iterator.onFinish = function(iterator) {
       path: iterator.path,
       data: iterator.runData,
       list: iterator.runList,
-      createTime: +new Date()
+      createTime: +new Date(),
     });
   }
 };
 export default {
+  selectDbPath() {
+    return dialog
+      .showOpenDialog({
+        properties: ["openDirectory"],
+      })
+      .then((files) => {
+        let path = files.filePaths[0];
+        console.log(path);
+        fs.writeFileSync(
+          __dirname + "/config.json",
+          JSON.stringify({ dbPath: path }, null, 2)
+        );
+      });
+  },
   copyToDictory({ data }) {
     return dialog
       .showOpenDialog({
-        properties: ["openFile", "openDirectory"]
+        properties: ["openFile", "openDirectory"],
       })
       .then((files) => {
         let path = files.filePaths[0];
@@ -55,7 +69,7 @@ export default {
   selectDictory() {
     return dialog
       .showOpenDialog({
-        properties: ["openFile", "openDirectory"]
+        properties: ["openFile", "openDirectory"],
       })
       .then((files) => {
         return files.filePaths[0];
@@ -104,7 +118,7 @@ export default {
   },
   getTree({ path }) {
     return new Iterator(path, {
-      file: false
+      file: false,
     }).run();
   },
   getTreeFiles({ path, formatFilter }) {
@@ -112,14 +126,15 @@ export default {
     return new Iterator(path, {
       file: true,
       filter(name) {
-        let image = isImage(name);
+        console.log(formatFilter);
+        let image = formatFilter(name);
         let video = isVideo(name);
         return (
           (formatFilter.includes("image") && image) ||
           (formatFilter.includes("video") && video) ||
           (formatFilter.includes("other") && !image && !video)
         );
-      }
+      },
     }).run();
   },
   async getDictoryFolder({ path, deep }) {
@@ -133,7 +148,7 @@ export default {
     // return api.withPromise();
     return new Iterator(path, {
       file: false,
-      deep
+      deep,
     }).run();
   },
   cleanIterator({ type }) {
@@ -148,5 +163,5 @@ export default {
         if (err) return console.error(err);
       }
     );
-  }
+  },
 };

@@ -25,6 +25,12 @@ export async function initDB() {
     process.appPath = process.resourcesPath;
     await checkDictory("data");
   }
+  await checkFile(path("config.json"), "{}");
+  let systempConfig = await readJson("config");
+
+  if (systempConfig.dbPath) {
+    process.dbPath = systempConfig.dbPath;
+  }
   await checkDictory("snap");
   await checkDictory("data/store");
   await checkDictory("data/backup");
