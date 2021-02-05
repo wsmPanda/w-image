@@ -24,7 +24,7 @@ module.exports = {
           return args;
         });
       },
-      externals: ["ffmpeg", "@ffmpeg-installer/ffmpeg"],
+      externals: ["ffmpeg", "@ffmpeg-installer/ffmpeg", "fluent-ffmpeg"],
       mainProcessWatch: ["process/main", "process"],
       mainProcessFile: "process/main"
     }

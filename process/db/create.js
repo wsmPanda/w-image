@@ -19,8 +19,13 @@ function checkFile(p, init = "") {
 }
 
 export async function initDB() {
+  try {
+    await checkDictory("data");
+  } catch (ex) {
+    process.appPath = process.resourcesPath;
+    await checkDictory("data");
+  }
   await checkDictory("snap");
-  await checkDictory("data");
   await checkDictory("data/store");
   await checkDictory("data/backup");
   await checkFile(path("data/meta.json"), "{}");
