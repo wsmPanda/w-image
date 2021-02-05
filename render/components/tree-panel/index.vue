@@ -4,15 +4,14 @@
       v-for="(item, index) of data"
       :data="item"
       :index="index"
-      :key="item.path"
-      :path="item.path"
+      :key="key(item) || '_' + index"
       @on-delete="onDelete"
     ></TreeItem>
   </div>
 </template>
 
 <script>
-import TreeItem from "./dictory-item";
+import TreeItem from "./tree-item";
 export default {
   provide() {
     return {
@@ -29,6 +28,7 @@ export default {
       type: String,
       default: "path"
     },
+    getIcon: Function,
     rename: Boolean,
     drag: Boolean,
     multiple: Boolean
@@ -41,8 +41,15 @@ export default {
       needActive: false
     };
   },
+  computed: {
+    activeKey() {
+      return this.key(this.active);
+    }
+  },
   methods: {
-    closeAll() {},
+    key(data) {
+      return data && data[this.itemKey];
+    },
     openAll() {},
     setActive(v) {
       this.active = v;
@@ -54,12 +61,12 @@ export default {
     },
     async openActiveNode(data) {
       if (this.active) {
-        let path = this.active.path;
+        let path = this.activeKey;
         let node = data.find((item) => item && path.indexOf(item.path) === 0);
         if (!node) {
           return;
         }
-        if (node.path === this.active.path) {
+        if (node.path === this.activeKey) {
           this.scrollToActive();
         } else {
           let nodeItem = this.items[node.path];
@@ -87,8 +94,7 @@ export default {
     },
     initItem(item) {
       this.items[item.data.path] = item;
-      if (item.data.path === this.active.path) {
-        console.log("???????");
+      if (item.data.path === this.activeKey) {
         this.scrollToActive();
       }
     },
@@ -103,14 +109,10 @@ export default {
       }
     },
     scrollToActive() {
-      console.error("s");
-      if (this.active && this.items[this.active.path]) {
+      if (this.active && this.items[this.activeKey]) {
         setTimeout(() => {
-          if (
-            this.items[this.active.path] &&
-            this.items[this.active.path].$el
-          ) {
-            this.items[this.active.path].$el.scrollIntoViewIfNeeded();
+          if (this.items[this.activeKey] && this.items[this.activeKey].$el) {
+            this.items[this.activeKey].$el.scrollIntoViewIfNeeded();
           }
         });
       }

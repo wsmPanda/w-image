@@ -1,5 +1,5 @@
 <template>
-  <div class="thumbnail">
+  <a class="thumbnail" @dragstart="onDragstart" @mousedown="onDragstart">
     <img
       v-if="isImage && loaded"
       @error="loaded = false"
@@ -34,7 +34,7 @@
       class="thumbnail-delete"
       type="md-close-circle"
     />
-  </div>
+  </a>
 </template>
 
 <script>
@@ -67,6 +67,12 @@ export default {
     }
   },
   methods: {
+    onDragstart() {
+      console.log("drag");
+      this.$connect.run("fileDrag", {
+        path: this.src
+      });
+    },
     onCheck() {
       this.$emit("check", this.check);
     },
@@ -83,7 +89,7 @@ export default {
   padding-bottom: 30px;
   box-sizing: border-box;
   position: relative;
-  user-select: none;
+  // user-select: none;
   .thumbnail-icon {
     font-size: 40px;
     display: flex;
@@ -143,7 +149,7 @@ export default {
 .thumbnail-img {
   object-fit: contain;
   height: 100%;
-  user-select: none;
+  //user-select: none;
   width: 100%;
   margin-bottom: 30px;
   -webkit-user-drag: none;

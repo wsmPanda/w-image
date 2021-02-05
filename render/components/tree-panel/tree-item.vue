@@ -20,12 +20,8 @@
         ></Icon
         ><Icon
           class="icon-fold"
-          :class="{
-            'icon-dictory': data.type === 'dictory',
-            'icon-set': data.type === 'set',
-            'icon-error': data.error
-          }"
-          type="md-folder"
+          :class="iconInfo.class"
+          :type="iconInfo.icon"
         />
         {{ itemName }}</span
       >
@@ -72,9 +68,16 @@ export default {
     };
   },
   computed: {
+    iconInfo() {
+      return this.$treeRoot.getIcon();
+    },
+    dataKey() {
+      return this.data[this.$treeRoot.itemKey];
+    },
     isActive() {
       return (
-        this.$treeRoot.active && this.data.path === this.$treeRoot.active.path
+        this.$treeRoot.activeKey &&
+        this.data.path === this.$treeRoot.active.path
       );
     },
     subList() {

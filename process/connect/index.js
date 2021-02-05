@@ -3,10 +3,10 @@ import { ipcMain } from "electron";
 export default function() {
   ipcMain.on("promiseConnectRespnose", async (event, payload) => {
     if (ConnectType[payload.type]) {
-      let res = await ConnectType[payload.type](payload);
+      let res = await ConnectType[payload.type](payload, event);
       event.sender.send("promiseConnectRequest", {
         id: payload.id,
-        data: res,
+        data: res
       });
     }
   });
