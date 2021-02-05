@@ -16,7 +16,7 @@
       </div>
 
       <div class="tree-header-right">
-        <Button @click="updateDictory" icon="md-refresh" size="small"></Button>
+        <Button @click="updateDictory" icon="md-git-network" size="small"></Button>
       </div>
     </div>
     <Tree

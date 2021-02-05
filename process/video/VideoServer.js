@@ -62,9 +62,9 @@ export default class VideoServer {
                     .outputOptions(
                         '-movflags', 'frag_keyframe+empty_moov+faststart',
                         '-g', '18')
-                    .on('progress', function (progress) {
-                        console.log('time: ' + progress.timemark);
-                    })
+                    // .on('progress', function (progress) {
+                    //     console.log('time: ' + progress.timemark);
+                    // })
                     .on('error', function (err) {
                         console.log('An error occurred: ' + err.message);
                     })

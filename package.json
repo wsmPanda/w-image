@@ -13,7 +13,6 @@
   },
   "main": "background.js",
   "dependencies": {
-    "@ffmpeg-installer/darwin-x64": "^4.1.0",
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
     "core-js": "^3.6.5",
     "fdir": "^4.1.0",

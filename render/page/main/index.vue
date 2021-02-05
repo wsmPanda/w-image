@@ -219,6 +219,10 @@ export default {
         {
           value: "tags",
           icon: "md-pricetags"
+        },
+        {
+          value: "book",
+          icon: "ios-book"
         }
       ],
       pageInit: false,

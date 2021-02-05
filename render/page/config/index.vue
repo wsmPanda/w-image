@@ -135,7 +135,10 @@ export default {
 </script>
 
 <style lang="less">
+div.ivu-poptip-body {
+  padding: 0;
+}
 .config-view {
-  padding: 16px;
+  padding: 0;
 }
 </style>

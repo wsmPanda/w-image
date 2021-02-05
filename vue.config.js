@@ -1,4 +1,5 @@
 const path = require("path");
+
 function resolve(dir) {
   return path.join(__dirname, dir);
 }
@@ -11,6 +12,18 @@ module.exports = {
   },
   pluginOptions: {
     electronBuilder: {
+      chainWebpackMainProcess: (config) => {
+        config.plugin("define").tap((args) => {
+          args[0]["process.env.FLUENTFFMPEG_COV"] = false;
+          return args;
+        });
+      },
+      chainWebpackRendererProcess: (config) => {
+        config.plugin("define").tap((args) => {
+          args[0]["process.env.FLUENTFFMPEG_COV"] = false;
+          return args;
+        });
+      },
       externals: ["ffmpeg", "@ffmpeg-installer/ffmpeg"],
       mainProcessWatch: ["process/main", "process"],
       mainProcessFile: "process/main"
