@@ -15,8 +15,10 @@
       <Button icon="ios-archive" size="small" @click="onCollect">收藏</Button>
       <Button icon="md-download" size="small" @click="onOutput">复制</Button>
       <Button icon="md-return-right" size="small">移动</Button>
-      <Button icon="md-transh" size="small">清空</Button>
-      <Button icon="md-transh" size="small">批量删除</Button>
+      <Button icon="md-transh" size="small" @click="onClear">清空</Button>
+      <Button icon="md-transh" size="small" @click="onDeleteFile"
+        >批量删除</Button
+      >
     </div>
   </div>
 </template>
@@ -71,6 +73,13 @@ export default {
     },
     onOutput() {
       this.$connect.run("copyToDictory", { data: this.data });
+      this.$checkList.cleanCheck();
+    },
+    onClear() {
+      this.$checkList.cleanCheck();
+    },
+    onDeleteFile() {
+      this.$connect.run("deleteFiles", { data: this.data });
       this.$checkList.cleanCheck();
     },
   },

@@ -1,5 +1,5 @@
 <template>
-  <a class="thumbnail" @dragstart="onDragstart" @mousedown="onDragstart">
+  <div class="thumbnail" @mousedown="onDragstart">
     <img
       v-if="isImage && loaded"
       @error="loaded = false"
@@ -34,7 +34,7 @@
       class="thumbnail-delete"
       type="md-close-circle"
     />
-  </a>
+  </div>
 </template>
 
 <script>
@@ -47,12 +47,12 @@ export default {
     showCheck: { type: Boolean, default: true },
     check: Boolean,
     showName: { type: Boolean, default: true },
-    showDelete: { type: Boolean, default: false }
+    showDelete: { type: Boolean, default: false },
   },
   data() {
     return {
       v: false,
-      loaded: true
+      loaded: true,
     };
   },
   computed: {
@@ -64,22 +64,23 @@ export default {
     },
     suffix() {
       return getSuffix(this.src);
-    }
+    },
   },
   methods: {
     onDragstart() {
-      console.log("drag");
-      this.$connect.run("fileDrag", {
-        path: this.src
-      });
+      setTimeout(() => {
+        this.$connect.run("fileDrag", {
+          path: this.src,
+        });
+      }, 300);
     },
     onCheck() {
       this.$emit("check", this.check);
     },
     onDelete() {
       this.$emit("delete", this.data);
-    }
-  }
+    },
+  },
 };
 </script>
 

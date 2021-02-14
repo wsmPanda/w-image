@@ -35,6 +35,9 @@
               size="small"
             />
             <Button icon="md-images" size="small">
+              <span v-if="checkList.length" class="badge">{{
+                checkList.length
+              }}</span>
               <Icon type="md-arrow-dropdown" />
             </Button>
           </ButtonGroup>
@@ -43,29 +46,42 @@
           </DropdownMenu>
         </Dropdown>
         <Button icon="md-bookmark" size="small" @click="addBookmark" />
-
-        <Dropdown trigger="click" transfer>
-          <ButtonGroup>
-            <Button icon="ios-funnel" size="small">
-              <Icon type="md-arrow-dropdown" />
-            </Button>
-          </ButtonGroup>
-          <DropdownMenu slot="list">
-            <div class="format-fitler">
-              <div class="format-fitler-title">显示文件格式</div>
-              <CheckboxGroup v-model="storage.formatFilter" @click.native.stop>
-                <Checkbox icon="md-add" label="image"
-                  ><Icon type="md-image" />图片</Checkbox
-                ><Checkbox icon="md-add" label="video"
-                  ><Icon type="md-videocam" />视频</Checkbox
-                ><Checkbox icon="md-add" label="other"
-                  ><Icon type="md-document" />其他</Checkbox
-                >
-              </CheckboxGroup>
-            </div>
-          </DropdownMenu>
-        </Dropdown>
-
+        <ButtonGroup>
+          <Button icon="ios-funnel" size="small"> </Button>
+          <Button
+            icon="md-image"
+            size="small"
+            @click="filterSelect('image')"
+            :type="
+              storage.formatFilter && storage.formatFilter.includes('image')
+                ? 'primary'
+                : 'default'
+            "
+          >
+          </Button>
+          <Button
+            icon="md-videocam"
+            size="small"
+            @click="filterSelect('video')"
+            :type="
+              storage.formatFilter && storage.formatFilter.includes('video')
+                ? 'primary'
+                : 'default'
+            "
+          >
+          </Button>
+          <Button
+            icon="md-document"
+            size="small"
+            @click="filterSelect('other')"
+            :type="
+              storage.formatFilter && storage.formatFilter.includes('other')
+                ? 'primary'
+                : 'default'
+            "
+          >
+          </Button>
+        </ButtonGroup>
         <Button icon="md-pricetags" size="small" />
         <Button size="small">
           <Icon type="ios-apps" /> <Icon type="md-arrow-dropdown" />
@@ -222,12 +238,12 @@ export default {
         },
         {
           value: "tags",
-          icon: "md-pricetags"
+          icon: "md-pricetags",
         },
         {
           value: "book",
-          icon: "ios-book"
-        }
+          icon: "ios-book",
+        },
       ],
       pageInit: false,
       config: {},
@@ -261,6 +277,14 @@ export default {
     },
   },
   methods: {
+    filterSelect(v) {
+      let index = this.storage.formatFilter.indexOf(v);
+      if (index >= 0) {
+        this.storage.formatFilter.splice(index, 1);
+      } else {
+        this.storage.formatFilter.push(v);
+      }
+    },
     toBookmark({ dictory, scrollTop }) {
       this.updateListData(dictory).then(() => {
         setTimeout(() => {

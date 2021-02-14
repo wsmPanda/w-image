@@ -25,7 +25,7 @@ export default {
     return selectTable("dictory_cache").get();
   },
   saveDictoryCache({ data }) {
-    return selectTable("dictory_cache").set(data);
+    return selectTable("dictory_cache").set(data || {});
   },
   // 数据表通用存取方法
   setData({ table, data }) {
@@ -46,7 +46,7 @@ export default {
   },
   deleteData({ table, data }) {
     let { code, value } = data;
-    console.log(table, data)
+    console.log(table, data);
     return selectTable(table).delete((item) => item[code] === value);
-  }
+  },
 };

@@ -16,7 +16,11 @@
       </div>
 
       <div class="tree-header-right">
-        <Button @click="updateDictory" icon="md-git-network" size="small"></Button>
+        <Button
+          @click="updateDictory"
+          icon="md-git-network"
+          size="small"
+        ></Button>
       </div>
     </div>
     <Tree
@@ -36,6 +40,16 @@
           <Input v-model="formatTo" />
         </div>
         <Checkbox v-model="addMode">添加后缀</Checkbox>
+      </div>
+      <div>
+        <Button
+          @click="
+            $connect.run('clearEmpty', {
+              path: $main.storage.activeTree && $main.storage.activeTree.path,
+            })
+          "
+          >清理空目录</Button
+        >
       </div>
     </Modal>
   </div>
@@ -186,6 +200,7 @@ export default {
   },
   async created() {
     this.onTreeChange = functionDebounce(() => {
+      console.warn(this.dictory);
       this.$connect.run("saveDictoryCache", { data: this.dictory });
     });
     await this.updateDictoryCache();

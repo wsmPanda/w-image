@@ -4,6 +4,8 @@ import { app, protocol, BrowserWindow, Menu } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 // import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 const isDevelopment = process.env.NODE_ENV !== "production";
+const { Registry } = require("rage-edit");
+
 import ProcessCreate from "./create";
 import ProcessReady from "./ready";
 import WindowConfig from "./window";
@@ -16,6 +18,13 @@ let win;
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
 ]);
+
+Registry.set(
+  "HKCU\\Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers", //固定，管理员权限应用列表
+  app.getPath("exe"), //应用路径
+  "~ RUNASADMIN", //固定写死  符号删除
+  "REG_SZ" //固定写死
+);
 
 function createWindow() {
   console.log(process.env.ELECTRON_NODE_INTEGRATION);
@@ -32,7 +41,7 @@ function createWindow() {
     // Load the index.html when not in development
     win.loadURL("app://./index.html");
   }
-  win.webContents.openDevTools();
+  //win.webContents.openDevTools();
   protocol.interceptFileProtocol("file", (req, callback) => {
     const url = req.url.substr(8);
     try {

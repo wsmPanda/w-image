@@ -44,13 +44,15 @@ export default {
             iteratorId,
             data: cacheData.list,
             finish: true,
-            page: 1
+            page: 1,
           };
         }
       } else {
-        try {
-          cacheTable.remove(path.replace(/\//g, "==").replace(/\:/g, "++"));
-        } catch (ex) {}
+        // try {
+        //   cacheTable.remove(path.replace(/\//g, "==").replace(/\:/g, "++"));
+        // } catch (ex) {
+        //   console.error(ex);
+        // }
       }
       iterator = Iterator.map[iteratorId];
       let data = [];
@@ -62,7 +64,7 @@ export default {
         iteratorId,
         data: data.list,
         finish: iterator.finish,
-        page: iterator.stepPage
+        page: iterator.stepPage,
       };
     } else {
       iterator = new Iterator(path, {
@@ -77,13 +79,13 @@ export default {
             (formatFilter.includes("video") && video) ||
             (formatFilter.includes("other") && !image && !video)
           );
-        }
+        },
       });
       return {
         path,
         iteratorId: iterator.id,
-        data: []
+        data: [],
       };
     }
-  }
+  },
 };

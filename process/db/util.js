@@ -17,7 +17,13 @@ export function tablePath(name) {
 }
 export function readTable(name) {
   let data = fs.readFileSync(tablePath(name));
-  return JSON.parse(data.toString());
+  try {
+    let res = JSON.parse(data.toString());
+    return res;
+  } catch (ex) {
+    console.error(ex);
+    return null;
+  }
 }
 export function writeTable(name, data) {
   fs.writeFileSync(
@@ -29,5 +35,7 @@ export function writeTable(name, data) {
 export function removeTable(name) {
   try {
     fs.unlinkSync(tablePath(name));
-  } catch (ex) {}
+  } catch (ex) {
+    console.error(ex);
+  }
 }
