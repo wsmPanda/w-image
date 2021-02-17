@@ -26,15 +26,16 @@ export function readTable(name) {
   }
 }
 export function writeTable(name, data) {
-  fs.writeFileSync(
+  fs.writeFile(
     tablePath(name),
-    typeof data === "object" ? JSON.stringify(data, null, 2) : data
+    typeof data === "object" ? JSON.stringify(data, null, 2) : data,
+    () => {}
   );
 }
 
 export function removeTable(name) {
   try {
-    fs.unlinkSync(tablePath(name));
+    fs.unlink(tablePath(name), () => {});
   } catch (ex) {
     console.error(ex);
   }

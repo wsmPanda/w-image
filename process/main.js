@@ -41,7 +41,7 @@ function createWindow() {
     // Load the index.html when not in development
     win.loadURL("app://./index.html");
   }
-  //win.webContents.openDevTools();
+  win.webContents.openDevTools();
   protocol.interceptFileProtocol("file", (req, callback) => {
     const url = req.url.substr(8);
     try {

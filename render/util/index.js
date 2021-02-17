@@ -1,9 +1,14 @@
 const IMAGE_REGEXP = /\.(jpeg|jpg|gif|png|svg|webp|jfif|bmp|dpg)/i;
+const PDF_REGEXP = /\.(pdf)/i;
+
 export function getSuffix(name) {
   return name && name.split(".").pop();
 }
 export function isImage(name) {
   return IMAGE_REGEXP.test(name);
+}
+export function isPdf(name) {
+  return PDF_REGEXP.test(name);
 }
 export function cloneJson(obj) {
   if (obj && typeof obj === "object") {
@@ -23,7 +28,7 @@ export function mergeObject(o1, o2) {
       res = [...o1];
     } else {
       res = {
-        ...o1
+        ...o1,
       };
     }
     for (let key in o2) {

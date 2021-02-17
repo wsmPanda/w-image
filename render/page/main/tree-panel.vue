@@ -50,6 +50,14 @@
           "
           >清理空目录</Button
         >
+        <Button
+          @click="
+            $connect.run('shellFiles', {
+              path: $main.storage.activeTree && $main.storage.activeTree.path,
+            })
+          "
+          >文件退壳</Button
+        >
       </div>
     </Modal>
   </div>

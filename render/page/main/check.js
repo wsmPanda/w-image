@@ -28,6 +28,10 @@ export default {
     setCheckData() {
       this.$connect.setData("check_list", this.checkList);
     },
+    setCheckDataValue(data) {
+      this.$set(this, "checkList", data);
+      this.setCheckData();
+    },
   },
   async created() {
     this.checkList = (await this.$connect.getData("check_list")) || [];

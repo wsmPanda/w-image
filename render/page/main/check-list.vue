@@ -15,8 +15,10 @@
       <Button icon="ios-archive" size="small" @click="onCollect">收藏</Button>
       <Button icon="md-download" size="small" @click="onOutput">复制</Button>
       <Button icon="md-return-right" size="small">移动</Button>
-      <Button icon="md-transh" size="small" @click="onClear">清空</Button>
-      <Button icon="md-transh" size="small" @click="onDeleteFile"
+      <Button icon="ios-undo" size="small" @click="onUndo">恢复</Button>
+
+      <Button icon="md-trash" size="small" @click="onClear">清空</Button>
+      <Button icon="md-close" size="small" @click="onDeleteFile"
         >批量删除</Button
       >
     </div>
@@ -54,6 +56,13 @@ export default {
     },
   },
   methods: {
+    cleanCheck() {
+      this.backData = [...this.data];
+      this.$checkList.cleanCheck();
+    },
+    onUndo() {
+      this.$checkList.setCheckDataValue(this.backData || []);
+    },
     onCollect() {
       this.$connect.addData("collect", {
         name: `${Time.toTime(new Date())}`,
@@ -61,7 +70,7 @@ export default {
         createTime: +new Date(),
       });
       this.$main.$emit("collectChange");
-      this.$checkList.cleanCheck();
+      this.cleanCheck();
     },
     onDelete(index) {
       let row = this.data[index];
@@ -73,14 +82,14 @@ export default {
     },
     onOutput() {
       this.$connect.run("copyToDictory", { data: this.data });
-      this.$checkList.cleanCheck();
+      this.cleanCheck();
     },
     onClear() {
-      this.$checkList.cleanCheck();
+      this.cleanCheck();
     },
     onDeleteFile() {
       this.$connect.run("deleteFiles", { data: this.data });
-      this.$checkList.cleanCheck();
+      this.cleanCheck();
     },
   },
 };

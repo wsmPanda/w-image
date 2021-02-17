@@ -13,8 +13,15 @@
       </div>
       <Button @click="onFullScreen" icon="md-expand" />
     </div>
+    <iframe
+      v-if="isPdf"
+      :src="'file://' + data"
+      type="application/pdf"
+      width="100%"
+      height="100%"
+    />
     <Viewer
-      v-if="isImage"
+      v-else-if="isImage"
       :full="fullScreen"
       class="image-viewer-img"
       :data="data"
@@ -30,7 +37,7 @@
 </template>
 
 <script>
-import { isImage } from "render/util";
+import { isImage, isPdf } from "render/util";
 import VideoViewer from "../video-viewer/index";
 import VideoFFViewer from "../video-viewer/ff";
 
@@ -39,7 +46,7 @@ export default {
   inject: ["$main"],
   components: { VideoViewer, Viewer, VideoFFViewer },
   props: {
-    data: {}
+    data: {},
   },
   data() {
     return { info: null, fullScreen: false };
@@ -54,6 +61,9 @@ export default {
     },
     isImage() {
       return isImage(this.data);
+    },
+    isPdf() {
+      return isPdf(this.data);
     },
     sizeText() {
       let text = "";
@@ -70,7 +80,7 @@ export default {
         text = "G";
       }
       return number.toFixed(2) + text;
-    }
+    },
   },
   methods: {
     onFullScreen() {
@@ -83,13 +93,13 @@ export default {
       let path = this.data;
       this.data = null;
       this.$connect.run("deleteFile", { path });
-    }
+    },
   },
   created() {
     this.$connect.run("getFileInfo", { path: this.data }).then((res) => {
       this.info = res;
     });
-  }
+  },
 };
 </script>
 

@@ -1,6 +1,7 @@
 import Iterator from "../../util/iterator";
 import fs from "fs";
 import path from "path";
+
 var fse = require("fs-extra");
 
 var rimraf = require("rimraf");
@@ -35,6 +36,42 @@ function rmdir(dir, callback) {
     next(0);
   });
 }
+async function shellFiles(data) {
+  let files = getFileList(data);
+  let nameMap = {};
+  files.forEach((name) => {
+    let newName = name.split("/").pop();
+    if (nameMap[newName] || !newName) {
+      newName = name.replace(data.path + "/", "").replace(/\//g, "_");
+    } else {
+      nameMap[newName] = true;
+    }
+    fse
+      .rename(name, data.path + "/" + newName)
+      .then((res) => {
+        console.log("rename:", newName);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
+}
+
+function getFileList(data) {
+  let res = [];
+  if (data.files) {
+    data.files.forEach((name) => {
+      res.push(data.path + "/" + name);
+    });
+  }
+  if (data.sub) {
+    data.sub.forEach((item) => {
+      res = res.concat(getFileList(item));
+    });
+  }
+  return res;
+}
+
 async function clearEmpty(dir) {
   let count = 0;
   try {
@@ -97,6 +134,13 @@ export default {
   },
   async clearEmpty({ path }) {
     clearEmpty(path);
+  },
+  async shellFiles({ path }) {
+    let iterator = new Iterator(path, {
+      file: true,
+    });
+    let data = await iterator.run();
+    shellFiles(data);
   },
   async MoveFiles() {},
   async deleteFiles({ data }) {
