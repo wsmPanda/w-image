@@ -134,13 +134,22 @@
           </Spin>
         </div>
 
-        <div
-          class="image-list-header"
-          v-if="activeListDictory"
-          @click="onDictoryClick(activeListDictory)"
-        >
+        <div class="image-list-header" v-if="activeListDictory">
+          <Icon
+            v-if="showCheck"
+            @click="check(activeListDictory.path)"
+            :class="{
+              uncheck: !isCheck(activeListDictory.path),
+              'thumbnail-check': true
+            }"
+            type="md-checkmark-circle"
+          />
+
           <Icon class="icon-fold" type="md-folder" />
-          <span class="image-list-header-name">
+          <span
+            @click="onDictoryClick(activeListDictory)"
+            class="image-list-header-name"
+          >
             {{ activeListDictory.name || activeListDictory.path }}
           </span>
         </div>
@@ -194,7 +203,7 @@ const { shell } = window.require("electron").remote;
 const ViewType = {
   scroll: ImageScroll,
   grid: ImageList,
-  page: PageViewer,
+  page: PageViewer
 };
 import KeyListener from "./key-listener";
 export default {
@@ -202,7 +211,7 @@ export default {
   provide() {
     return {
       $main: this,
-      $config: this.config,
+      $config: this.config
     };
   },
   components: {
@@ -219,31 +228,31 @@ export default {
     TagList,
     CollectList,
     TreePanel,
-    Tabs,
+    Tabs
   },
   data() {
     return {
       tabItems: [
         {
           value: "folder",
-          icon: "md-folder",
+          icon: "md-folder"
         },
         {
           value: "bookmark",
-          icon: "md-bookmark",
+          icon: "md-bookmark"
         },
         {
           value: "collect",
-          icon: "ios-archive",
+          icon: "ios-archive"
         },
         {
           value: "tags",
-          icon: "md-pricetags",
+          icon: "md-pricetags"
         },
         {
           value: "book",
-          icon: "ios-book",
-        },
+          icon: "ios-book"
+        }
       ],
       pageInit: false,
       config: {},
@@ -252,7 +261,7 @@ export default {
       viewImage: null,
       storage: {
         viewType: "grid",
-        formatFilter: ["image", "video"],
+        formatFilter: ["image", "video"]
       },
       configShow: false,
       imageLoading: false,
@@ -263,18 +272,18 @@ export default {
       activeListDictory: null,
       images: [],
       tree: [],
-      cartData: [],
+      cartData: []
     };
   },
   computed: {
     viewComponent() {
       return ViewType[this.storage.viewType || "grid"];
-    },
+    }
   },
   watch: {
     "storage.formatFilter"() {
       this.refreshListData();
-    },
+    }
   },
   methods: {
     filterSelect(v) {
@@ -299,7 +308,7 @@ export default {
       this.$connect.addData("bookmark", {
         dictory: this.storage.activeTree,
         scrollTop: this.$refs.imageList && this.$refs.imageList.scrollTop,
-        createTime: +new Date(),
+        createTime: +new Date()
       });
       this.$refs.bookmarks.update();
     },
@@ -341,7 +350,6 @@ export default {
           this.activeListDictory = e;
           this.$refs.imageList.setData(res);
           this.allList = res;
-          console.log(res.length);
           this.imageLoading = false;
         });
       } else if (this.config.image.readStep) {
@@ -360,7 +368,7 @@ export default {
       } else {
         return Connect.run("getTreeFiles", {
           ...e,
-          formatFilter: this.storage.formatFilter || ["image", "video"],
+          formatFilter: this.storage.formatFilter || ["image", "video"]
         }).then((res) => {
           this.activeListDictory = e;
           let list = this.floaFileTree(
@@ -383,7 +391,7 @@ export default {
         path: e.path,
         formatFilter: this.storage.formatFilter || ["image", "video"],
         step: Number(this.config.image.readStep),
-        cache,
+        cache
       });
       this.fileStream.onFinish((ctx) => {
         this.imageLoadingMore = false;
@@ -413,8 +421,8 @@ export default {
       let list = [
         {
           path: path || data.path,
-          name: data.path.split(/\\|\//).pop(),
-        },
+          name: data.path.split(/\\|\//).pop()
+        }
       ];
       list = list.concat(data.files.map((p) => (path || data.path) + "/" + p));
       if (data.sub && data.sub.length) {
@@ -470,7 +478,7 @@ export default {
           this.$refs.imageList.setScroll(this.storage.listScroll);
         }
       }
-    },
+    }
   },
   mounted() {
     this.onResize();
@@ -480,7 +488,7 @@ export default {
     this.storage = (await Connect.run("getStorage")) || {};
     this.storage = mergeObject(this.storage, {
       viewType: "grid",
-      leftTab: "folder",
+      leftTab: "folder"
     });
     this.pageInit = true;
     let setStorage = functionDebounce((e) => Connect.run("setStorage", e));
@@ -489,13 +497,13 @@ export default {
       deep: true,
       handler(v) {
         setConfig({ data: v });
-      },
+      }
     });
     this.$watch("storage", {
       deep: true,
       handler(v) {
         setStorage({ data: v });
-      },
+      }
     });
     setTimeout(() => {
       this.onResize();
@@ -504,6 +512,6 @@ export default {
       this.onResize();
     });
     this.afterInit();
-  },
+  }
 };
 </script>

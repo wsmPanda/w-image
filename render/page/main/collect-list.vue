@@ -46,12 +46,10 @@ export default {
         data
       });
       setTimeout(() => {
-        console.log("nameEditing!");
         this.nameEditing = false;
       });
     },
     editName() {
-      console.log("???");
       this.nameEditing = true;
       this.editIndex = this.data.findIndex(
         (item) => item.createTime === this.active

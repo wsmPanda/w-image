@@ -69,7 +69,6 @@ export default {
         this.draging = true;
         this.x = e.clientX;
         this.y = e.clientY;
-        console.log(this.x, this.y);
       }
     },
     onDragEnd() {

@@ -19,21 +19,31 @@ export default {
           <div
             class="image-bigtable-list"
             style={{
-              height: this.listHeight + "px",
+              height: this.listHeight + "px"
             }}
           >
             <div
               class="image-bigtable-list-inner"
               style={{
-                transform: `translateY(${this.transformTop}px)`,
+                transform: `translateY(${this.transformTop}px)`
               }}
             >
               {this.viewData.map((row, index) => {
                 if (row && row.path) {
+                  let isRoot = false;
+                  let rowIndex = this.startIndex + index;
+                  if (
+                    rowIndex <= 1 ||
+                    !this.viewData[rowIndex - 1].path ||
+                    row.path.indexOf(this.viewData[rowIndex - 1].path) !== 0
+                  ) {
+                    isRoot = true;
+                  }
                   return (
                     <div
                       class={{
                         "dictory-list-item": true,
+                        "dictory-list-item-root": isRoot
                         // start: index === 0,
                         // current: index + this.startIndex === this.currentIndex,
                         // end: index === this.viewData.length - 1
@@ -49,17 +59,17 @@ export default {
                         }
                         nativeOn={{
                           click: () =>
-                            this.onDictoryOpen(row, this.startIndex + index),
+                            this.onDictoryOpen(row, this.startIndex + index)
                         }}
                       ></Icon>
                       {this.$main.showCheck && (
                         <Icon
                           on={{
-                            click: () => this.onCheck({ data: row.path }),
+                            click: () => this.onCheck({ data: row.path })
                           }}
                           class={{
                             uncheck: !this.$checkList.isCheck(row.path),
-                            "thumbnail-check": true,
+                            "thumbnail-check": true
                           }}
                           type="md-checkmark-circle"
                         />
@@ -67,7 +77,7 @@ export default {
                       <Icon class="icon-fold" type="md-folder" />
                       <a
                         on={{
-                          click: () => this.onDictoryClick(row),
+                          click: () => this.onDictoryClick(row)
                         }}
                       >
                         {this.dictoryName(row)}
@@ -79,17 +89,17 @@ export default {
                     <Thumbnail
                       class={{
                         "image-list-item": true,
-                        active: this.activeImage === row,
+                        active: this.activeImage === row
                         // start: index === 0,
                         // current: index + this.startIndex === this.currentIndex,
                         // end: index === this.viewData.length - 1
                       }}
                       nativeOn={{
                         click: () => this.onClick(row),
-                        dblclick: () => this.onDbClick(row),
+                        dblclick: () => this.onDbClick(row)
                       }}
                       on={{
-                        check: (e) => this.onCheck({ data: row, e }),
+                        check: (e) => this.onCheck({ data: row, e })
                       }}
                       showCheck={this.$main.showCheck}
                       check={this.$checkList.isCheck(row)}
@@ -119,32 +129,32 @@ export default {
       type: Object,
       default() {
         return {
-          height: 34,
+          height: 34
         };
-      },
+      }
     },
     loadFinish: {
       type: Boolean,
-      default: false,
+      default: false
     },
     loading: {
       type: Boolean,
-      default: false,
+      default: false
     },
     height: {
       type: Number,
-      default: 600,
+      default: 600
     },
     loadingMore: { type: Boolean, default: false },
     preloadPage: {
       type: Number,
-      default: 2,
-    },
+      default: 2
+    }
   },
   data() {
     return {
       activeImage: null,
-      scrollTarget: null,
+      scrollTarget: null
     };
   },
   computed: {
@@ -162,7 +172,7 @@ export default {
         marginBottom: `${this.imageSetting.margin}px`,
         height: `${this.imageSetting.height}px`,
         minHeight: `${this.imageSetting.height}px`,
-        width: `${100 / this.imageSetting.column}%`,
+        width: `${100 / this.imageSetting.column}%`
       };
     },
     dictoryHeight() {
@@ -172,12 +182,12 @@ export default {
       return (
         Number(this.imageSetting.height) + Number(this.imageSetting.margin)
       );
-    },
+    }
   },
   watch: {
     imageSetting() {
       this.updateHeightList();
-    },
+    }
   },
   methods: {
     onDictCheck(row) {
@@ -197,7 +207,6 @@ export default {
       this.$emit("dictoryClick", v);
     },
     onCheck(e) {
-      console.log(e.data);
       this.$checkList.check(e.data);
     },
     onClick(v) {
@@ -510,7 +519,7 @@ export default {
         this.$refs.listWrapper &&
           this.$refs.listWrapper.scrollTo({
             top: scrollTop,
-            behavior: "smooth",
+            behavior: "smooth"
           });
       }
     },
@@ -521,10 +530,10 @@ export default {
         this.$refs.listWrapper &&
           this.$refs.listWrapper.scrollTo({
             top: scrollTop,
-            behavior: "smooth",
+            behavior: "smooth"
           });
       }
-    },
+    }
   },
   created() {
     this.heightList = [];
@@ -550,6 +559,6 @@ export default {
       return true;
     });
     this.updateList();
-  },
+  }
 };
 </script>

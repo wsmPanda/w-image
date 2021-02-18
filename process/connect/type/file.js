@@ -21,7 +21,7 @@ Iterator.onFinish = function(iterator) {
       path: iterator.path,
       data: iterator.runData,
       list: iterator.runList,
-      createTime: +new Date(),
+      createTime: +new Date()
     });
   }
 };
@@ -29,7 +29,7 @@ export default {
   selectDbPath() {
     return dialog
       .showOpenDialog({
-        properties: ["openDirectory"],
+        properties: ["openDirectory"]
       })
       .then((files) => {
         let path = files.filePaths[0];
@@ -43,7 +43,7 @@ export default {
   copyToDictory({ data }) {
     return dialog
       .showOpenDialog({
-        properties: ["openFile", "openDirectory"],
+        properties: ["openFile", "openDirectory"]
       })
       .then((files) => {
         let path = files.filePaths[0];
@@ -69,7 +69,7 @@ export default {
   selectDictory() {
     return dialog
       .showOpenDialog({
-        properties: ["openFile", "openDirectory"],
+        properties: ["openFile", "openDirectory"]
       })
       .then((files) => {
         return files.filePaths[0];
@@ -118,7 +118,7 @@ export default {
   },
   getTree({ path }) {
     return new Iterator(path, {
-      file: false,
+      file: false
     }).run();
   },
   getTreeFiles({ path, formatFilter }) {
@@ -126,15 +126,14 @@ export default {
     return new Iterator(path, {
       file: true,
       filter(name) {
-        console.log(formatFilter);
-        let image = formatFilter(name);
+        let image = isImage(name);
         let video = isVideo(name);
         return (
           (formatFilter.includes("image") && image) ||
           (formatFilter.includes("video") && video) ||
           (formatFilter.includes("other") && !image && !video)
         );
-      },
+      }
     }).run();
   },
   async getDictoryFolder({ path, deep }) {
@@ -148,7 +147,7 @@ export default {
     // return api.withPromise();
     return new Iterator(path, {
       file: false,
-      deep,
+      deep
     }).run();
   },
   cleanIterator({ type }) {
@@ -163,5 +162,5 @@ export default {
         if (err) return console.error(err);
       }
     );
-  },
+  }
 };

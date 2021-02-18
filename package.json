@@ -23,6 +23,7 @@
     "less-loader": "^7.0.1",
     "mux.js": "^5.8.0",
     "rage-edit": "^1.2.0",
+    "remixicon": "^2.5.0",
     "rimraf": "^3.0.2",
     "video.js": "^7.10.2",
     "vue": "^2.6.11",

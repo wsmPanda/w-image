@@ -18,13 +18,27 @@ const FileIconMap = {
   flv: "video",
   avi: "video",
   rmvb: "video",
+  mp3: "music",
+  xlsx: "excel_office",
+  xls: "excel_office",
+  docx: "word_office",
+  doc: "word_office",
+  pptx: "ppt_office",
+  ppt: "ppt_office",
+  css: "css",
+  pdf: "pdf",
+  zip: "zip",
+  rar: "rar",
+  "7z": "7z",
+  "001": "zip",
+  exe: "exe",
+  "": "unknown",
   default: "txt"
 };
 export default {
   props: { type: String },
   computed: {
     iconSymbol() {
-      console.log(this.type);
       return "#icon-file_" + (FileIconMap[this.type] || FileIconMap.default);
     }
   }
