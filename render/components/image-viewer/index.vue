@@ -2,16 +2,24 @@
   <div class="image-viewer">
     <div>
       <a @click="onNameClick">{{ data }}</a>
-      <div>
-        <!-- <Button @click="$main.cartAdd(data)">
+      <div class="file-info">
+        <Button
+          v-if="isImage"
+          class="file-expand"
+          @click="onFullScreen"
+          icon="md-expand"
+          size="small"
+        />
+        <div class="file-state">
+          <!-- <Button @click="$main.cartAdd(data)">
           <Icon type="ios-add"/><Icon type="md-cart"
         /></Button> -->
-        <Button @click.native="onDeleteClick">
+          <span v-if="info">{{ sizeText }}</span>
+        </div>
+        <Button @click.native="onDeleteClick" size="small">
           <Icon type="md-trash"></Icon>
         </Button>
-        <span v-if="info">{{ sizeText }}</span>
       </div>
-      <Button @click="onFullScreen" icon="md-expand" />
     </div>
     <PdfViewer v-if="isPdf" :src="data" />
     <Viewer
@@ -91,7 +99,9 @@ export default {
     onDeleteClick() {
       let path = this.data;
       this.data = null;
-      this.$connect.run("deleteFile", { path });
+      setTimeout(() => {
+        this.$connect.run("deleteFile", { path });
+      });
     }
   },
   created() {
@@ -102,12 +112,23 @@ export default {
 };
 </script>
 
-<style lanag="less">
+<style lang="less">
 .image-viewer {
   padding: 8px;
 }
 .image-viewer-img {
   width: 100%;
   height: auto;
+}
+.file-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  .file-state {
+    flex: 1;
+  }
+  .file-expand {
+    margin-right: 8px;
+  }
 }
 </style>

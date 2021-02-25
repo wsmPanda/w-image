@@ -1,8 +1,5 @@
 <template>
-  <div>
-    {{ src }}
-    <div id="webviewer" ref="viewer"></div>
-  </div>
+  <div class="webviewer" ref="viewer"></div>
 </template>
 
 <script>
@@ -27,7 +24,7 @@ export default {
 </script>
 
 <style>
-#webviewer {
+.webviewer {
   height: 800px;
 }
 </style>

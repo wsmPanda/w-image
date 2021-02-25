@@ -61,18 +61,22 @@ export default {
     onWidthResize(e, dict) {
       this.resizeWidthDict = dict;
       this.widthOffset = e.pageX;
-      window.addEventListener("mousemove", this.onMove);
-      window.addEventListener("mouseup", this.onReizeEnd);
+      window.addEventListener("mousemove", this.onMove, true);
+      window.addEventListener("mouseup", this.onReizeEnd, true);
     },
     onMove(e) {
+      if (!this.resizeWidthDict) {
+        return;
+      }
       let offset = e.pageX - this.widthOffset;
       this.widthOffset = e.pageX;
       this.config[(this.resizeWidthDict === 1 ? "left" : "right") + "Width"] +=
         offset * this.resizeWidthDict;
     },
     onReizeEnd() {
-      window.removeEventListener("mouseup", this.onReizeEnd);
-      window.removeEventListener("mousemove", this.onMove);
+      this.resizeWidthDict = null;
+      window.removeEventListener("mouseup", this.onReizeEnd, true);
+      window.removeEventListener("mousemove", this.onMove, true);
     }
   }
 };

@@ -90,7 +90,7 @@ export default {
   padding-bottom: 30px;
   box-sizing: border-box;
   position: relative;
-  // user-select: none;
+  user-select: none;
   .thumbnail-icon {
     font-size: 40px;
     display: flex;
