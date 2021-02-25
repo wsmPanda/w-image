@@ -454,7 +454,10 @@ export default {
       return list;
     },
     onResize() {
-      this.listHeight = this.$refs.layout && this.$refs.layout.$el.clientHeight;
+      this.$nextTick(() => {
+        this.listHeight =
+          this.$refs.layout && this.$refs.layout.$el.clientHeight;
+      });
     },
     onDictoryChange(e) {
       this.activeListDictory = e;

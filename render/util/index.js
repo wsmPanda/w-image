@@ -1,6 +1,39 @@
 const IMAGE_REGEXP = /\.(jpeg|jpg|gif|png|svg|webp|jfif|bmp|dpg)/i;
 const PDF_REGEXP = /\.(pdf)/i;
-
+const videoSuffix = [
+  "mp4",
+  "flv",
+  "f4v",
+  "webm",
+  "m4v",
+  "mov",
+  "3gp",
+  "3g2",
+  "rm",
+  "rmvb",
+  "wmv",
+  "avi",
+  "asf",
+  "mpg",
+  "mpeg",
+  "mpe",
+  // "ts",
+  // "div",
+  // "dv",
+  // "divx",
+  // "vob",
+  // "dat",
+  // "swf",
+  "mkv"
+  // "lavf",
+  // "cpk",
+  // "dirac",
+  // "ram",
+  // "qt",
+  // "fli",
+  // "flc",
+  // "mod",
+];
 export function getSuffix(name) {
   return name && name.split(".").pop();
 }
@@ -17,6 +50,9 @@ export function cloneJson(obj) {
     return obj;
   }
 }
+export function isVideo(name) {
+  return videoSuffix.includes(getSuffix(name));
+}
 // 合并对象，参数1数值优先级高于参数2,可作为补充默认值用
 // 不会改变原对象，会生成新对象
 export function mergeObject(o1, o2) {
@@ -28,7 +64,7 @@ export function mergeObject(o1, o2) {
       res = [...o1];
     } else {
       res = {
-        ...o1,
+        ...o1
       };
     }
     for (let key in o2) {

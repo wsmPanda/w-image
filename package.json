@@ -14,6 +14,7 @@
   "main": "background.js",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.20",
+    "@pdftron/webviewer": "^7.3.0",
     "core-js": "^3.6.5",
     "fdir": "^4.1.0",
     "fluent-ffmpeg": "^2.1.2",

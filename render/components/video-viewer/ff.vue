@@ -98,6 +98,9 @@ export default {
         path: this.data
       })
       .then((message) => {
+        if (!message) {
+          return;
+        }
         this.videoSource = message.videoSource;
         this.playerOptions = {
           techOrder: ["StreamPlay"],

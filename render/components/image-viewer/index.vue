@@ -13,13 +13,7 @@
       </div>
       <Button @click="onFullScreen" icon="md-expand" />
     </div>
-    <iframe
-      v-if="isPdf"
-      :src="'file://' + data"
-      type="application/pdf"
-      width="100%"
-      height="100%"
-    />
+    <PdfViewer v-if="isPdf" :src="data" />
     <Viewer
       v-else-if="isImage"
       :full="fullScreen"
@@ -27,26 +21,28 @@
       :data="data"
       @fullClose="fullScreen = false"
     />
-    <VideoViewer
-      v-else-if="videoViewerType !== 'ff'"
-      :key="data"
-      :data="data"
-    ></VideoViewer>
-    <VideoFFViewer v-else :key="data" :data="data"></VideoFFViewer>
+    <template v-else-if="isVideo">
+      <VideoViewer
+        v-if="videoViewerType !== 'ff'"
+        :key="data"
+        :data="data"
+      ></VideoViewer>
+      <VideoFFViewer v-else :key="data" :data="data"></VideoFFViewer
+    ></template>
   </div>
 </template>
 
 <script>
-import { isImage, isPdf } from "render/util";
+import { isImage, isPdf, isVideo } from "render/util";
 import VideoViewer from "../video-viewer/index";
 import VideoFFViewer from "../video-viewer/ff";
-
+import PdfViewer from "../pdf-viewer";
 import Viewer from "./viewer";
 export default {
   inject: ["$main"],
-  components: { VideoViewer, Viewer, VideoFFViewer },
+  components: { VideoViewer, Viewer, VideoFFViewer, PdfViewer },
   props: {
-    data: {},
+    data: {}
   },
   data() {
     return { info: null, fullScreen: false };
@@ -61,6 +57,9 @@ export default {
     },
     isImage() {
       return isImage(this.data);
+    },
+    isVideo() {
+      return isVideo(this.data);
     },
     isPdf() {
       return isPdf(this.data);
@@ -80,7 +79,7 @@ export default {
         text = "G";
       }
       return number.toFixed(2) + text;
-    },
+    }
   },
   methods: {
     onFullScreen() {
@@ -93,13 +92,13 @@ export default {
       let path = this.data;
       this.data = null;
       this.$connect.run("deleteFile", { path });
-    },
+    }
   },
   created() {
     this.$connect.run("getFileInfo", { path: this.data }).then((res) => {
       this.info = res;
     });
-  },
+  }
 };
 </script>
 

@@ -51,8 +51,8 @@ export default {
   components: { Icon },
   props: {
     config: {
-      type: Object,
-    },
+      type: Object
+    }
   },
   data() {
     return { resizeWidthDict: 1, widthOffset: 0 };
@@ -73,8 +73,8 @@ export default {
     onReizeEnd() {
       window.removeEventListener("mouseup", this.onReizeEnd);
       window.removeEventListener("mousemove", this.onMove);
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -107,6 +107,7 @@ export default {
   overflow: hidden;
   position: relative;
   transition: width 0.2s;
+  width: 8px;
 }
 .layout-slot-content {
   overflow: auto;
@@ -125,11 +126,15 @@ export default {
   position: relative;
   box-shadow: 2px 0 2px #eee;
   .layout-width-resizer {
-    right: -2px;
+    right: -4px;
   }
   .layout-fold {
     right: 4px;
     left: auto;
+    .ivu-icon {
+      z-index: 100;
+      position: relative;
+    }
   }
   .layout-slot-content {
     overflow: hidden;
@@ -142,6 +147,16 @@ export default {
   position: relative;
   box-shadow: -2px 0 2px #eee;
   z-index: 1000;
+  .layout-fold {
+    left: 0;
+    right: auto;
+    height: 20px;
+    .ivu-icon {
+      z-index: 100;
+      position: relative;
+    }
+  }
+
   .layout-width-resizer {
     left: -2px;
   }

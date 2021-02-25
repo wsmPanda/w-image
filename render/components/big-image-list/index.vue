@@ -19,7 +19,7 @@ export default {
           <div
             class="image-bigtable-list"
             style={{
-              height: this.listHeight + "px"
+              height: Math.min(this.height, this.listHeight) + "px"
             }}
           >
             <div
@@ -176,6 +176,7 @@ export default {
       };
     },
     dictoryHeight() {
+      console.log(this.dictorySetting.height);
       return Number(this.dictorySetting.height);
     },
     imageHeight() {
@@ -393,12 +394,13 @@ export default {
     getHeightList(data, columnCount = 0) {
       let list = [];
       let count = 0;
+      console.log(data);
       data.forEach((row) => {
         columnCount++;
         if (row && row.path) {
           count += this.dictoryHeight;
           // 目录元素清空行元素计数
-          this.columnCount = 0;
+          columnCount = 0;
         } else if (columnCount === 1 || count === 0) {
           // 对于图片元素只有首行才增加高度
           count += this.imageHeight;
@@ -409,6 +411,8 @@ export default {
         }
         list.push(count);
       });
+      console.log(list);
+
       return { list, columnCount };
     },
     async updateList() {
