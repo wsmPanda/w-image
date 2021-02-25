@@ -15,7 +15,7 @@ let win;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
-  { scheme: "app", privileges: { secure: true, standard: true } },
+  { scheme: "app", privileges: { secure: true, standard: true } }
 ]);
 
 function createWindow() {
@@ -34,6 +34,19 @@ function createWindow() {
   }
   win.webContents.openDevTools();
   protocol.interceptFileProtocol("file", (req, callback) => {
+    const url = req.url.substr(8);
+    try {
+      //callback(decodeURI(url));
+      callback(
+        fs.createReadStream(decodeURIComponent(url)).on("error", (e) => {
+          //console.log(e);
+        })
+      );
+    } catch (ex) {
+      //console.log(ex);
+    }
+  });
+  protocol.interceptFileProtocol("files", (req, callback) => {
     const url = req.url.substr(8);
     try {
       //callback(decodeURI(url));
