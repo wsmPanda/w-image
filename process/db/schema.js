@@ -68,21 +68,11 @@ export default [
   {
     name: "tags",
     init: [
-      {
-        name: "A"
-      },
-      {
-        name: "B"
-      },
-      {
-        name: "C"
-      },
-      {
-        name: "D"
-      },
-      {
-        name: "E"
-      }
+      { "name": "A", "color": "#2d8cf0" },
+      { "name": "B", "color": "#19be6b" },
+      { "name": "C", "color": "#ff9900" },
+      { "name": "D", "color": "#ed4014" },
+      { "name": "E", "color": "#dddddd" }
     ]
   },
   // 缓存数据
