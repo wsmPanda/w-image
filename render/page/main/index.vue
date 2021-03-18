@@ -232,6 +232,7 @@ export default {
   },
   data() {
     return {
+      tags: [],
       tabItems: [
         {
           value: "folder",
@@ -272,12 +273,19 @@ export default {
       activeListDictory: null,
       images: [],
       tree: [],
-      cartData: []
+      cartData: [],
+      fileInfo: {}
     };
   },
   computed: {
     viewComponent() {
       return ViewType[this.storage.viewType || "grid"];
+    },
+    tagMap() {
+      return this.tags.reduce((res, item) => {
+        res[item.name] = item;
+        return res;
+      }, {});
     }
   },
   watch: {
@@ -338,12 +346,37 @@ export default {
     refreshListData() {
       this.updateListData(this.storage.activeTree);
     },
+    async updateFileInfo() {
+      this.fileInfo = null;
+      if (this.storage.activeTree) {
+        let data = await Connect.run("getInfo", {
+          path: this.storage.activeTree.path
+        });
+        this.fileInfo = this.getInfoMap(
+          this.storage.activeTree.path,
+          data || {},
+          {}
+        );
+      }
+    },
+    getInfoMap(path, data = {}, res) {
+      if (data.data) {
+        res[path] = data.data;
+      }
+      if (data.sub) {
+        for (let name in data.sub) {
+          this.getInfoMap(path + "/" + name, data.sub[name], res);
+        }
+      }
+      return res;
+    },
     async updateListData(e, cache) {
       if (e.type === "set") {
         return;
       }
       this.$set(this.storage, "activeTree", e);
       this.imageLoading = true;
+      this.updateFileInfo();
       await Connect.run("cleanIterator");
       let m = 0;
       if (m) {
@@ -482,13 +515,41 @@ export default {
           this.$refs.imageList.setScroll(this.storage.listScroll);
         }
       }
+    },
+    getTags(path) {
+      return this.fileInfo && this.fileInfo[path] && this.fileInfo[path].tags;
     }
   },
   mounted() {
     this.onResize();
+    window.addEventListener("keyup", (e) => {
+      if (this.viewImage && this.tags[e.key - 1]) {
+        let tag = this.tags[e.key - 1];
+        let info = this.fileInfo && this.fileInfo[this.viewImage];
+        let tags = (info && info.tags) || [];
+        let index = tags.indexOf(tag.name);
+        if (index >= 0) {
+          tags.splice(index, 1);
+        } else {
+          tags.push(tag.name);
+        }
+        if (!info) {
+          this.fileInfo = this.fileInfo || {};
+          this.$set(this.fileInfo, this.viewImage, {
+            tags: tags
+          });
+        }
+        Connect.run("setInfo", {
+          path: this.viewImage,
+          value: tags,
+          code: "tags"
+        });
+      }
+    });
   },
   async created() {
     this.config = (await Connect.run("getConfig")) || {};
+    this.tags = await Connect.getData("tags");
     this.storage = (await Connect.run("getStorage")) || {};
     this.storage = mergeObject(this.storage, {
       viewType: "grid",

@@ -94,6 +94,7 @@ export default {
                         // current: index + this.startIndex === this.currentIndex,
                         // end: index === this.viewData.length - 1
                       }}
+                      active={this.activeImage === row}
                       nativeOn={{
                         click: () => this.onClick(row),
                         dblclick: () => this.onDbClick(row)
@@ -176,7 +177,6 @@ export default {
       };
     },
     dictoryHeight() {
-      console.log(this.dictorySetting.height);
       return Number(this.dictorySetting.height);
     },
     imageHeight() {
@@ -394,7 +394,6 @@ export default {
     getHeightList(data, columnCount = 0) {
       let list = [];
       let count = 0;
-      console.log(data);
       data.forEach((row) => {
         columnCount++;
         if (row && row.path) {
@@ -411,8 +410,6 @@ export default {
         }
         list.push(count);
       });
-      console.log(list);
-
       return { list, columnCount };
     },
     async updateList() {
@@ -537,6 +534,25 @@ export default {
             behavior: "smooth"
           });
       }
+    },
+    activeStep(v) {
+      let index = this.data.findIndex((item) => this.activeImage === item);
+      while (index >= 0 && index < this.data.length) {
+        index += v;
+        if (typeof this.data[index] === "string") {
+          this.onClick(this.data[index]);
+          break;
+        }
+      }
+    },
+    activeStepUp(v) {
+      let index = this.data.findIndex((item) => this.activeImage === item);
+      if (
+        typeof this.data[index + Number(this.imageSetting.column) * v] ===
+        "string"
+      ) {
+        this.onClick(this.data[index + Number(this.imageSetting.column) * v]);
+      }
     }
   },
   created() {
@@ -550,9 +566,13 @@ export default {
     window.addEventListener("keyup", (e) => {
       let code = e.keyCode;
       if (code === 37) {
-        this.pageUp();
+        this.activeStep(-1);
       } else if (code === 39) {
-        this.pageDown();
+        this.activeStep(+1);
+      } else if (code === 38) {
+        this.activeStepUp(-1);
+      } else if (code === 40) {
+        this.activeStepUp(+1);
       }
       if (e.key === "x") {
         this.$checkList.check(this.data[0].path);
