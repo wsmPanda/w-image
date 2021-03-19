@@ -1,4 +1,4 @@
-import Main from "render/page/main";
+import Main from "render/page";
 export default [
   {
     path: "*",

@@ -1,102 +1,6 @@
 <template>
   <div class="page-view" v-if="pageInit">
-    <div class="page-header">
-      <div class="page-header-left">
-        <Poptip transfer trigger="click">
-          <a href="javascript:void(0)">
-            <Button size="small" icon="md-settings"></Button>
-          </a>
-          <div slot="content">
-            <Config v-if="config" :data="config"></Config>
-          </div>
-        </Poptip>
-        <Input
-          v-if="config.image"
-          icon="md-barcode"
-          size="small"
-          style="width: 60px"
-          v-model="config.image.column"
-        />
-        <Input
-          v-if="config.image"
-          icon="md-resize"
-          size="small"
-          style="width: 70px"
-          v-model="config.image.height"
-        />
-
-        <Dropdown trigger="click" transfer>
-          <ButtonGroup
-            ><Button
-              @click.native.stop="showCheck = !showCheck"
-              :type="showCheck ? 'primary' : 'default'"
-              :ghost="showCheck"
-              icon="md-checkbox-outline"
-              size="small"
-            />
-            <Button icon="md-images" size="small">
-              <span v-if="checkList.length" class="badge">{{
-                checkList.length
-              }}</span>
-              <Icon type="md-arrow-dropdown" />
-            </Button>
-          </ButtonGroup>
-          <DropdownMenu slot="list">
-            <CheckList :data="checkList"></CheckList>
-          </DropdownMenu>
-        </Dropdown>
-        <Button icon="md-bookmark" size="small" @click="addBookmark" />
-        <ButtonGroup>
-          <Button icon="ios-funnel" size="small"> </Button>
-          <Button
-            icon="md-image"
-            size="small"
-            @click="filterSelect('image')"
-            :type="
-              storage.formatFilter && storage.formatFilter.includes('image')
-                ? 'primary'
-                : 'default'
-            "
-          >
-          </Button>
-          <Button
-            icon="md-videocam"
-            size="small"
-            @click="filterSelect('video')"
-            :type="
-              storage.formatFilter && storage.formatFilter.includes('video')
-                ? 'primary'
-                : 'default'
-            "
-          >
-          </Button>
-          <Button
-            icon="md-document"
-            size="small"
-            @click="filterSelect('other')"
-            :type="
-              storage.formatFilter && storage.formatFilter.includes('other')
-                ? 'primary'
-                : 'default'
-            "
-          >
-          </Button>
-        </ButtonGroup>
-        <Button icon="md-pricetags" size="small" />
-        <Button size="small">
-          <Icon type="ios-apps" /> <Icon type="md-arrow-dropdown" />
-        </Button>
-
-        <Button size="small" @click="$connect.run('selectDbPath')">
-          <Icon type="ios-apps" />
-        </Button>
-      </div>
-      <RadioGroup v-model="storage.viewType" type="button" size="small">
-        <Radio label="book"> <Icon type="md-book" /> </Radio>
-        <Radio label="grid"><Icon type="md-grid"/></Radio>
-        <Radio label="scroll"><Icon type="md-more"/></Radio>
-      </RadioGroup>
-    </div>
+    <Header></Header>
     <Layout class="page-content" ref="layout" :config="config.mainLayout || {}">
       <template slot="left">
         <div class="main-left">
@@ -121,7 +25,6 @@
                 @collectClick="collectOpen"
               ></CollectList
             ></template>
-
             <template slot="tags"><TagList ref="tag"></TagList></template>
           </Tabs>
         </div>
@@ -182,30 +85,36 @@
 </template>
 
 <script>
+import { Dropdown, DropdownMenu, Button, Icon } from "iview";
+
 import ImageList from "render/components/big-image-list";
 import ImageScroll from "render/components/big-image-list/scroll";
 import PageViewer from "render/components/page-viewer";
 import Layout from "render/layout";
 import Connect from "render/connect";
-import CheckMixins from "./check";
 import FileViewer from "render/components/image-viewer";
 import BookmarkList from "render/components/bookmark-list";
-import { Dropdown, DropdownMenu, Button, Icon } from "iview";
-import Config from "../config";
-import { functionDebounce, mergeObject } from "render/util";
-import CollectList from "./collect-list";
-import CheckList from "./check-list";
-import TagList from "./tag-list";
-import TreePanel from "./tree-panel";
 import Tabs from "render/components/tabs";
+
+import CheckMixins from "./main/check";
+import KeyListener from "./main/key-listener";
+
+import Header from "./header";
+
+import { functionDebounce, mergeObject } from "render/util";
+
+import CollectList from "./panel/collect-list";
+import TagList from "./panel/tag-list";
+import TreePanel from "./panel/tree-panel";
+
 import "./style.less";
+
 const { shell } = window.require("electron").remote;
 const ViewType = {
   scroll: ImageScroll,
   grid: ImageList,
   page: PageViewer
 };
-import KeyListener from "./key-listener";
 export default {
   mixins: [CheckMixins, KeyListener],
   provide() {
@@ -217,13 +126,12 @@ export default {
   components: {
     ImageList,
     Icon,
+    Header,
     Layout,
     Button,
     Dropdown,
-    Config,
     DropdownMenu,
     FileViewer,
-    CheckList,
     BookmarkList,
     TagList,
     CollectList,
