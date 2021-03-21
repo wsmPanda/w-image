@@ -203,7 +203,9 @@ export default {
   },
   methods: {
     filterSelect(v) {
-      this.storage.formatFilter = this.storage.formatFilter || [];
+      if (!this.storage.formatFilter) {
+        this.$set(this.storage, "formatFilter", []);
+      }
       let index = this.storage.formatFilter.indexOf(v);
       if (index >= 0) {
         this.storage.formatFilter.splice(index, 1);

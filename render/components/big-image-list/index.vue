@@ -19,7 +19,7 @@ export default {
           <div
             class="image-bigtable-list"
             style={{
-              height: Math.min(this.height, this.listHeight) + "px"
+              height: Math.max(this.height, this.listHeight) + "px"
             }}
           >
             <div

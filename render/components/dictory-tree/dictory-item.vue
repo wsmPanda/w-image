@@ -25,7 +25,7 @@
             'icon-set': data.type === 'set',
             'icon-error': data.error
           }"
-          type="md-folder"
+          :type="data.open ? 'ios-folder-open' : 'md-folder'"
         />
         {{ itemName }}</span
       >
