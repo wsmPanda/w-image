@@ -210,6 +210,7 @@ export default {
     word-break: break-all;
     display: flex;
     padding: 2px 0 2px 4px;
+    align-items: center;
     &:hover {
       background: #ebf1fa;
     }

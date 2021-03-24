@@ -20,8 +20,8 @@
         :type="field.type"
         size="small"
         @input="$set(value, field.key, $event)"
-        :v-bind="field.attr"
-        :v-on="field.on"
+        v-bind="field.attr"
+        v-on="field.on"
       />
       <component
         v-else
@@ -30,10 +30,11 @@
         size="small"
         :type="field.type"
         @input="$set(value, field.key, $event)"
-        :v-bind="field.attr"
-        :v-on="field.on"
-      ></component> </FormItem
-  ></Form>
+        v-bind="field.attr"
+        v-on="field.on"
+      ></component>
+    </FormItem>
+  </Form>
 </template>
 
 <script>

@@ -1,14 +1,14 @@
 <template>
-  <Modal :value="value" @input="$emit('input', $event)">
+  <Modal :value="value" @input="$emit('input', $event)" width="90%">
     <div class="batch-process">
       <div class="batch-process-config">
-        <div class="batch-process-selector">
+        <div class="batch-process-block batch-process-selector">
           <SelectorEditor v-model="selectors"></SelectorEditor>
         </div>
-        <div class="batch-process-filter">
+        <div class="batch-process-block batch-process-filter">
           <FilterEditor v-model="fitlers"></FilterEditor>
         </div>
-        <div class="batch-process-action">
+        <div class="batch-process-block batch-process-action">
           <ActionEditor v-model="actions"></ActionEditor>
         </div>
       </div>
@@ -28,6 +28,7 @@ import ActionEditor from "./action-editor";
 import SelectorEditor from "./selector-editor";
 import FilterEditor from "./filter-editor";
 import FileTable from "./file-table";
+import "./style.less";
 export default {
   components: {
     ActionEditor,
@@ -47,11 +48,3 @@ export default {
   methods: {}
 };
 </script>
-
-<style lang="less">
-.batch-process {
-  .batch-process-config {
-    display: flex;
-  }
-}
-</style>

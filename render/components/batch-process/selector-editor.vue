@@ -1,29 +1,31 @@
 <template>
-  <div>
-    <table class="selector-tale">
-      <tbody>
-        <colgroup>
-          <col />
-          <col />
-          <col width="30" />
-        </colgroup>
-        <tr v-for="(item, index) of value" :key="index">
-          <td>
-            <Icon :type="selectorMap[item.type].icon"></Icon>
-            {{ selectorMap[item.type].name }}
-          </td>
-          <td>
-            <Form
-              size="small"
-              :model="selectorMap[item.type].form"
-              v-model="item.options"
-            ></Form>
-          </td>
-          <td><Icon type="md-close" @click="value.splice(index, 1)" /></td>
-        </tr>
-      </tbody>
-    </table>
-
+  <div class="selector-panel">
+    <div class="selector-content">
+        <table class="selector-tale">
+          <tbody>
+            <colgroup>
+              <col />
+              <col />
+              <col width="30" />
+            </colgroup>
+            <tr v-for="(item, index) of value" :key="index">
+              <td class="cell-name">
+                <Icon :type="selectorMap[item.type].icon"></Icon>
+                {{ selectorMap[item.type].name }}
+              </td>
+              <td>
+                <Form
+                  :column="1"
+                  size="small"
+                  :model="selectorMap[item.type].form"
+                  v-model="item.options"
+                ></Form>
+              </td>
+              <td><Icon type="md-close" @click="value.splice(index, 1)" /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     <div class="selector-editor-add">
       <div
         v-for="item of selectors"
@@ -117,19 +119,3 @@ export default {
   }
 };
 </script>
-
-<style lang="less">
-.selector-tale {
-  width: 100%;
-}
-.selector-editor-add {
-  display: flex;
-}
-
-.selector-editor-add-item {
-  border: 1px solid #eee;
-  margin-right: 2px;
-  padding: 2px 8px;
-  cursor: pointer;
-}
-</style>

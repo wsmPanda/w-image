@@ -1,0 +1,50 @@
+.batch-process {
+  .batch-process-config {
+    display: flex;
+  }
+  .batch-process-block {
+    margin: 4px;
+    flex: 1;
+  }
+}
+
+.selector-panel {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  flex-direction: column;
+}
+.selector-content {
+  flex: 1;
+  overflow: auto;
+}
+.selector-tale {
+  width: 100%;
+  .cell-name {
+    white-space: nowrap;
+  }
+  .form-item {
+    margin-bottom: 0;
+
+    .ivu-input-wrapper {
+      width: 100%;
+    }
+  }
+  .ivu-form-item:after,
+  .ivu-form-item:before {
+    display: none;
+  }
+}
+.selector-editor-add {
+  display: flex;
+  padding: 8px 0;
+  border-top: 1px solid #eee;
+  flex-wrap: wrap;
+}
+
+.selector-editor-add-item {
+  border: 1px solid #eee;
+  margin: 2px;
+  padding: 2px 8px;
+  cursor: pointer;
+}
