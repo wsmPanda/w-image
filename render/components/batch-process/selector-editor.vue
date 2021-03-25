@@ -1,31 +1,31 @@
 <template>
   <div class="selector-panel">
     <div class="selector-content">
-        <table class="selector-tale">
-          <tbody>
-            <colgroup>
-              <col />
-              <col />
-              <col width="30" />
-            </colgroup>
-            <tr v-for="(item, index) of value" :key="index">
-              <td class="cell-name">
-                <Icon :type="selectorMap[item.type].icon"></Icon>
-                {{ selectorMap[item.type].name }}
-              </td>
-              <td>
-                <Form
-                  :column="1"
-                  size="small"
-                  :model="selectorMap[item.type].form"
-                  v-model="item.options"
-                ></Form>
-              </td>
-              <td><Icon type="md-close" @click="value.splice(index, 1)" /></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <table class="selector-tale">
+        <tbody>
+          <colgroup>
+            <col />
+            <col />
+            <col width="30" />
+          </colgroup>
+          <tr v-for="(item, index) of value" :key="index">
+            <td class="cell-name">
+              <Icon :type="selectorMap[item.type].icon"></Icon>
+              {{ selectorMap[item.type].name }}
+            </td>
+            <td>
+              <Form
+                :column="1"
+                size="small"
+                :model="selectorMap[item.type].form"
+                v-model="item.options"
+              ></Form>
+            </td>
+            <td><Icon type="md-close" @click="value.splice(index, 1)" /></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <div class="selector-editor-add">
       <div
         v-for="item of selectors"
@@ -56,6 +56,19 @@ export default {
     return {
       selectors: [
         {
+          name: "目录",
+          code: "dictory",
+          icon: "md-folder",
+          form: {
+            fields: [
+              {
+                key: "path",
+                type: "file"
+              }
+            ]
+          }
+        },
+        {
           name: "收藏夹",
           code: "collection",
           icon: "ios-archive",
@@ -77,19 +90,6 @@ export default {
               {
                 key: "tag",
                 type: "select"
-              }
-            ]
-          }
-        },
-        {
-          name: "目录",
-          code: "dictory",
-          icon: "md-folder",
-          form: {
-            fields: [
-              {
-                key: "path",
-                type: "file"
               }
             ]
           }

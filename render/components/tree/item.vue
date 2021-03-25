@@ -42,7 +42,10 @@ export default {
   props: { data: {} },
   data() {
     return {
-      open: this.data.open || false,
+      open:
+        this.data.open === undefined
+          ? this.$treeRoot.defaultOpen
+          : this.data.open,
       loading: false
     };
   },
@@ -57,7 +60,7 @@ export default {
       return this.data[this.$treeRoot.idKey];
     },
     hasSubData() {
-      if (this.$treeRoot.subGetter) {
+      if (!this.$treeRoot.subGetter) {
         return this.subData && this.subData.length;
       } else {
         return !this.data.hasRead || (this.subData && this.subData.length);
@@ -73,7 +76,7 @@ export default {
       this.$treeRoot.onItemClick(this.data);
     },
     async onOpen() {
-      if (!this.hasRead) {
+      if (!this.hasRead && this.$treeRoot.subGetter) {
         await this.getSubData();
         this.$set(this.data, "open", true);
         this.open = true;

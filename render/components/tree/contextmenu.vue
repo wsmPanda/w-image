@@ -1,11 +1,20 @@
 <template>
-  <div class="contextmenu">
+  <Popper ref="popper" class="contextmenu">
     CONTEXT MENU
-  </div>
+  </Popper>
 </template>
 
 <script>
-export default {};
+import Popper from "../popper";
+export default {
+  components: { Popper },
+  methods: {
+    show(e) {
+      this.$refs.popper.setPositionMouse(e);
+    }
+  },
+  created() {}
+};
 </script>
 
 <style lang="less">

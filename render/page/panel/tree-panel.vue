@@ -103,7 +103,20 @@ export default {
       processShow: false,
       formatFrom: "",
       formatTo: "",
-      addMode: false
+      addMode: false,
+      menu: [
+        {
+          name: "展开全部"
+        },
+        {
+          icon: "md-trash",
+          name: "删除目录"
+        },
+        {
+          icon: "md-refresh",
+          name: "刷新"
+        }
+      ]
     };
   },
   methods: {

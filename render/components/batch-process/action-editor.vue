@@ -61,6 +61,10 @@ export default {
     return {
       selectors: [
         {
+          name: "序号处理",
+          code: "aNumber"
+        },
+        {
           name: "删除",
           code: "delete",
           icon: "md-trash",

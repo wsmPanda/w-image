@@ -285,8 +285,8 @@ export default {
 .popper {
   z-index: 10;
   position: absolute;
-  background: #fff;
+  background: #fafafa;
   border: 1px solid #eee;
-  padding: 16px;
+  padding: 4px;
 }
 </style>

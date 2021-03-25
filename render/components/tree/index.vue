@@ -1,5 +1,5 @@
 <template>
-  <div class="tree tree-common">
+  <div class="tree tree-common" @contextmenu="onContextmenu">
     <TreeItem
       v-for="(item, index) of data"
       :data="item"
@@ -10,13 +10,13 @@
         <slot name="name" :data="data"></slot
       ></template>
     </TreeItem>
-    <Contextmenu v-if="menuShow"><slot name="menu"></slot></Contextmenu>
     <NameInput
       ref="nameInput"
       v-if="nameEditing"
       :value="editData[nameKey]"
       @blur="saveName"
     ></NameInput>
+    <Contextmenu ref="menu"><slot name="menu"></slot></Contextmenu>
   </div>
 </template>
 
@@ -34,6 +34,7 @@ export default {
   props: {
     data: Array,
     multipleSelect: Boolean,
+    defaultOpen: Boolean,
     selectable: { type: Boolean, default: true },
     idKey: { type: String, default: "path" },
     subKey: { type: String, default: "sub" },
@@ -77,6 +78,10 @@ export default {
     saveName(e) {
       this.$emit("on-remove", e);
       this.nameEditing = false;
+    },
+    onContextmenu(e) {
+      this.$refs.menu.show(e);
+      this.$emit("context-menu", e);
     }
   },
   created() {
