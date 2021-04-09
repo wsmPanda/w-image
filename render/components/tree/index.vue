@@ -72,7 +72,7 @@ export default {
       } else {
         this.selected.push(id);
       }
-      this.$emit("on-select");
+      this.$emit("on-select", this.selected);
     },
     scrollToActive() {},
     saveName(e) {

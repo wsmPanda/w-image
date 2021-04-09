@@ -12,4 +12,30 @@ export default function() {
       });
     }
   });
+  ipcMain.on("taskRespnose", async (event, payload) => {
+    let connectType = TaskType[payload.type];
+    if (connectType) {
+      connectType(payload, event, function(data) {
+        event.sender.send("taskRequest", {
+          id: payload.id,
+          data: data,
+          state: "pending"
+        });
+      })
+        .then((res) => {
+          event.sender.send("taskRequest", {
+            id: payload.id,
+            data: res,
+            state: "finish"
+          });
+        })
+        .catch((res) => {
+          event.sender.send("taskRequest", {
+            id: payload.id,
+            data: res,
+            state: "error"
+          });
+        });
+    }
+  });
 }

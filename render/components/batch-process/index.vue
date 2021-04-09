@@ -19,8 +19,21 @@
           <Button @click="onExecute" icon="md-play">执行</Button>
         </div>
         <FileTable v-model="fileList"></FileTable>
-      </div></div
-  ></Modal>
+        <div class="batch-process-progress">
+          <Progress
+            :percent="(progressCount / progressTotal) * 100"
+            hide-info
+          ></Progress>
+          <div>
+            {{ progressCount }}/{{ progressTotal }}
+            <span v-if="progressError"
+              ><Icon type="md-alert" />{{ progressError }}</span
+            >
+          </div>
+        </div>
+      </div>
+    </div></Modal
+  >
 </template>
 <script>
 import ActionEditor from "./action-editor";
@@ -39,6 +52,8 @@ export default {
   props: { value: Boolean },
   data() {
     return {
+      progressCount: 0,
+      progressTotal: 0,
       selectors: [],
       fitlers: [],
       actions: [],
@@ -69,6 +84,7 @@ export default {
       }
     },
     async onPreview() {
+      this.hasPreview = true;
       this.previewLoading = true;
       let data = await this.$connect.run("taskPreview", {
         selectors: this.selectors,
@@ -79,7 +95,24 @@ export default {
       this.previewLoading = false;
     },
     onSave() {},
-    onExecute() {}
+    async onExecute() {
+      if (!this.hasPreview) {
+        await this.onPreview();
+      }
+      this.$connect.task(
+        "batchProcess",
+        {
+          data: this.fieldList
+        },
+        this.onExecuteProgress
+      );
+    },
+    onExecuteProgress(data) {
+      this.fieldList = data.data;
+      this.progressCount = data.done;
+      this.progressError = data.error;
+      this.progressTotal = data.total;
+    }
   },
   created() {}
 };

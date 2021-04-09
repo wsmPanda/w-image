@@ -1,8 +1,7 @@
 import Selector from "./selector";
 import Filter from "./filter";
 import Action from "./action";
-import { rename } from "fs-extra";
-
+import operationExecute from "./operation";
 function getFileObject(data) {
   let res = {
     path: data.path,
@@ -15,7 +14,7 @@ function getFileObject(data) {
   data.files &&
     data.files.forEach((item) => {
       res.sub.push({
-        path: item,
+        path: data.path + "/" + item,
         type: "file"
       });
     });
@@ -33,13 +32,24 @@ async function walkFiles(data, func) {
     });
   }
 }
+async function walkSyncFiles(data, func) {
+  if (data.sub) {
+    for (let item of data.sub) {
+      if (item.type === "dictory") {
+        await walkSyncFiles(item, func);
+      } else {
+        await func(item);
+      }
+    }
+  }
+}
 
 export default {
   async taskPreview({ selectors = [], filters = [], actions = [] }) {
     let res = [];
     let fileList = [];
     for (let selector of selectors) {
-      fileList = await Selector[selector.type](selector.options);
+      fileList.push(await Selector[selector.type](selector.options));
     }
     res = getFileObject(fileList[0]);
     let actionsRuner = actions.map((action) =>
@@ -52,13 +62,55 @@ export default {
     });
     return res;
   },
-  async taskExecute({ data }) {
-    walkFiles(data, (item) => {
+  async taskExecute({ data, track }, event, callback) {
+    let promiseList = [];
+    let result = {
+      data: data,
+      errorList: [],
+      total: 0,
+      done: 0,
+      error: 0
+    };
+    track = track || 5;
+    let trackCount = 0;
+    let finishCallback;
+    function executeTrack() {
+      if (trackCount < track) {
+        return;
+      } else {
+        return new Promise((resolve) => {
+          finishCallback = resolve;
+        });
+      }
+    }
+    await walkSyncFiles(data, async (item) => {
+      await executeTrack();
       if (item.action && item.action.operate) {
-        if (item.action.operate === "rename") {
-          rename(data.path, item.action.params.newName);
-        }
+        trackCount++;
+        console.log(trackCount);
+        promiseList.push(
+          operationExecute(item)
+            .then((res) => {
+              if (res.action && res.action.error) {
+                result.errorList.push(item);
+                result.error++;
+              }
+              result.done++;
+            })
+            .catch((ex) => {
+              result.errorList.push(ex);
+              result.done++;
+              result.error++;
+            })
+            .finally(() => {
+              callback(result);
+              trackCount--;
+              finishCallback && finishCallback();
+            })
+        );
       }
     });
+    result.total = promiseList.length;
+    return data;
   }
 };

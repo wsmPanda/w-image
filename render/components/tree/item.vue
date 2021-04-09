@@ -9,6 +9,12 @@
     }"
   >
     <div @click="onClick" class="tree-item-name">
+      <Checkbox
+        v-if="$treeRoot.multipleSelect"
+        :value="$treeRoot.selected.indexOf(dataKey) >= 0"
+        @input="$treeRoot.onItemCheck(data)"
+        @click.stop
+      ></Checkbox>
       <i v-if="loading" class="ivu-load-loop ivu-icon ivu-icon-ios-loading"></i>
       <Icon
         v-else-if="hasSubData"
@@ -114,6 +120,9 @@ export default {
 
 <style lang="less">
 .tree-common {
+  .ivu-checkbox-wrapper {
+    margin-right: 2px;
+  }
   .tree-item {
     font-size: 12px;
     margin-left: 4px;

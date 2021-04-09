@@ -1,6 +1,13 @@
 <template>
   <div class="task-file-table">
-    <CommonTree v-if="value" :data="value" :defaultOpen="true">
+    <div>已选择{{ selected.length }}项</div>
+    <CommonTree
+      v-if="value"
+      :data="value"
+      :defaultOpen="true"
+      :selected="selected"
+      multipleSelect
+    >
       <template v-slot:name="{ data }">
         <Icon
           class="icon-fold"
@@ -35,6 +42,7 @@ export default {
   },
   data() {
     return {
+      selected: [],
       oparations: [
         {
           name: "删除",

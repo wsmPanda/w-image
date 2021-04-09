@@ -64,6 +64,13 @@ export default {
               {
                 key: "path",
                 type: "file"
+              },
+              {
+                key: "deep",
+                type: "number",
+                attr: {
+                  placeholder: "层级"
+                }
               }
             ]
           }

@@ -1,8 +1,12 @@
 import primise from "./promise";
+import task from "./task";
 import ConnectStream from "./connect-stream";
 const Connect = {
   run(event, payload = {}) {
     return primise(event, payload);
+  },
+  task(event, payload = {}, callback) {
+    return task(event, payload, callback);
   },
   addData(table, data) {
     return primise("addData", {

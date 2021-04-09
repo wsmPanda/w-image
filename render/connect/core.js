@@ -13,6 +13,14 @@ ipcRenderer.on("promiseConnectRequest", (event, { id, data }) => {
     }
   }
 });
+ipcRenderer.on("taskRequest", (event, { id, data, state }) => {
+  if (eventWatcher[id]) {
+    eventWatcher[id].callback(data, state);
+    if (state === "finish" || state === "error") {
+      eventWatcher[id] = null;
+    }
+  }
+});
 export default {
   getConnectId,
   addConnectWatcher(v) {

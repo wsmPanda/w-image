@@ -42,7 +42,11 @@ import { Form, FormItem, Input } from "iview";
 import radio from "./radio";
 import select from "./select";
 import file from "./file";
-const Fields = { radio, select, file };
+import color from "./color";
+import Switch from "./switch";
+import checkbox from "./checkbox";
+
+const Fields = { radio, select, file, color, switch: Switch, checkbox };
 export default {
   provide() {
     return {
@@ -53,6 +57,10 @@ export default {
   props: {
     model: Object,
     value: Object,
+    size: {
+      type: String,
+      default: "small"
+    },
     column: {
       type: Number,
       default: 2

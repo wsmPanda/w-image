@@ -12,6 +12,9 @@ export default {
   computed: {
     value() {
       return this.$form.value[this.code];
+    },
+    size() {
+      return this.$form.size;
     }
   },
   methods: {
