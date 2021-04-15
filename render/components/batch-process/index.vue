@@ -18,7 +18,6 @@
           <Button @click="onSave" icon="md-archive">保存</Button>
           <Button @click="onExecute" icon="md-play">执行</Button>
         </div>
-        <FileTable v-model="fileList"></FileTable>
         <div class="batch-process-progress">
           <Progress
             :percent="(progressCount / progressTotal) * 100"
@@ -31,9 +30,9 @@
             >
           </div>
         </div>
-      </div>
-    </div></Modal
-  >
+        <FileTable v-model="fileList"></FileTable>
+      </div></div
+  ></Modal>
 </template>
 <script>
 import ActionEditor from "./action-editor";
@@ -58,7 +57,8 @@ export default {
       fitlers: [],
       actions: [],
       fileList: [],
-      previewLoading: false
+      previewLoading: false,
+      progressError: false
     };
   },
   watch: {
@@ -100,15 +100,15 @@ export default {
         await this.onPreview();
       }
       this.$connect.task(
-        "batchProcess",
+        "taskExecute",
         {
-          data: this.fieldList
+          data: this.fileList[0]
         },
         this.onExecuteProgress
       );
     },
     onExecuteProgress(data) {
-      this.fieldList = data.data;
+      this.fileList = [data.data];
       this.progressCount = data.done;
       this.progressError = data.error;
       this.progressTotal = data.total;

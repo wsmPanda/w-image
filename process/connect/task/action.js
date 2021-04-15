@@ -23,7 +23,12 @@ export default {
         }
         let newPath = pathList.join("/") + newName + "." + format;
         if (nameMap[newPath]) {
-          newName += `-${nameMap[newPath]}`;
+          newName +=
+            pathList.join("/") +
+            newName +
+            `-${nameMap[newPath]}` +
+            "." +
+            format;
           nameMap[newPath]++;
         } else {
           nameMap[newPath] = 1;
@@ -32,7 +37,8 @@ export default {
           operate: "rename",
           message: match,
           params: {
-            path: newName
+            path,
+            newPath: newPath
           }
         };
       } else {

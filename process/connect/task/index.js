@@ -83,11 +83,16 @@ export default {
         });
       }
     }
+    callback(result);
+    walkFiles(data, (item) => {
+      if (item.action && item.action.operate) {
+        result.total++;
+      }
+    });
     await walkSyncFiles(data, async (item) => {
       await executeTrack();
       if (item.action && item.action.operate) {
         trackCount++;
-        console.log(trackCount);
         promiseList.push(
           operationExecute(item)
             .then((res) => {
@@ -103,14 +108,15 @@ export default {
               result.error++;
             })
             .finally(() => {
-              callback(result);
+              result.trackCount = trackCount;
               trackCount--;
               finishCallback && finishCallback();
+              callback(result);
             })
         );
       }
     });
-    result.total = promiseList.length;
-    return data;
+    await Promise.all(promiseList);
+    return result;
   }
 };
