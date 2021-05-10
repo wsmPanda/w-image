@@ -1,5 +1,14 @@
 export default {
-  async delete() {},
+  async delete() {
+    return function({ path }) {
+      return {
+        operate: "unlink",
+        params: {
+          path
+        }
+      };
+    };
+  },
   async rename() {},
   async clear() {},
   async format() {},
