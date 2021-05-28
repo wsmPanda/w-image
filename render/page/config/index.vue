@@ -50,22 +50,10 @@ export default {
       model: {
         image: {
           fields: [
-            {
-              key: "padding",
-              type: "number"
-            },
-            {
-              key: "margin",
-              type: "number"
-            },
-            {
-              key: "column",
-              type: "number"
-            },
-            {
-              key: "height",
-              type: "number"
-            },
+            { label: "padding", key: "padding", type: "number" },
+            { label: "margin", key: "margin", type: "number" },
+            { label: "文件列数", key: "column", type: "number" },
+            { label: "文件高度", key: "height", type: "number" },
             {
               label: "展示空目录",
               key: "showEmptyFolder",

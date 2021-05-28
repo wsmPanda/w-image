@@ -6,7 +6,7 @@
 
 <script>
 // land dom转移到的位置 parent dom定位位置
-import util from "./util";
+import util from "render/util/dom";
 export default {
   props: {
     value: {

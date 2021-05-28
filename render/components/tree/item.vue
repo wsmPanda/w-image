@@ -5,6 +5,7 @@
     :data-key="dataKey"
     :class="{
       active: dataKey === $treeRoot.active,
+      context: dataKey === $treeRoot.contextKey,
       single: !subData || !subData.length
     }"
   >
@@ -80,6 +81,15 @@ export default {
     onClick() {
       this.$emit("on-click");
       this.$treeRoot.onItemClick(this.data);
+    },
+    async onRefresh() {
+      let open = this.data.open;
+      this.$set(this.data, "hasRead", false);
+      await this.getSubData();
+      this.data.open = open;
+      if (this.dataKey === this.$treeRoot.active) {
+        this.$treeRoot.$emit("on-fresh", this.data);
+      }
     },
     async onOpen() {
       if (!this.hasRead && this.$treeRoot.subGetter) {
@@ -189,6 +199,12 @@ export default {
     &.active {
       > .tree-item-name {
         background: #ebf1fa;
+      }
+    }
+    &.context {
+      > .tree-item-name {
+        margin: -2px;
+        border: 2px solid #ebf1fa;
       }
     }
   }

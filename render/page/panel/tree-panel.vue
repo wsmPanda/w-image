@@ -25,9 +25,13 @@
     </div>
     <CommonTree
       class="tree-body"
+      ref="commonTree"
       :data="dictory"
+      :initActive="active"
       :subGetter="subGetter"
       @on-active="onTreeItemActive"
+      @on-fresh="onTreeFersh"
+      :menu="menu"
       v-if="dev"
     >
       <template v-slot:name="{ data }">
@@ -88,6 +92,7 @@
 import Tree from "render/components/dictory-tree";
 import CommonTree from "render/components/tree";
 import { functionDebounce, isMac } from "render/util";
+const { shell } = window.require("electron").remote;
 
 export default {
   inject: ["$main"],
@@ -96,6 +101,7 @@ export default {
     active: {}
   },
   data() {
+    let vm = this;
     return {
       dev: true,
       dictory: [],
@@ -104,22 +110,63 @@ export default {
       formatFrom: "",
       formatTo: "",
       addMode: false,
-      menu: [
+      foldMenu: [
         {
-          name: "展开全部"
-        },
-        {
-          icon: "md-trash",
-          name: "删除目录"
+          name: "在系统中打开",
+          icon: "md-open",
+          action({ path }) {
+            shell.openPath(path);
+          }
         },
         {
           icon: "md-refresh",
-          name: "刷新"
+          name: "刷新",
+          action({ path }) {
+            vm.$refs.commonTree.refreshNode(path);
+          }
+        },
+        {
+          name: "展开全部",
+          disabled: true,
+          action({ path }) {
+            vm.$refs.commonTree.openAll(path);
+          }
+        },
+        {
+          name: "收起全部",
+          disabled: true,
+          action({ path }) {
+            vm.$refs.commonTree.closeAll(path);
+          }
+        },
+
+        {
+          icon: "md-trash",
+          name: "删除",
+          disabled: true
+        },
+        {
+          name: "重命名",
+          disabled: true
         }
+        // {
+        //   name: "s",
+        //   children: [
+        //     {
+        //       name: "重命名"
+        //     },
+        //     {
+        //       name: "重命名"
+        //     }
+        //   ]
+        // }
       ]
     };
   },
   methods: {
+    menu() {
+      return this.foldMenu;
+    },
     async subGetter(data) {
       let res = await this.$connect.run("getDictoryFolder", {
         path: data.path,

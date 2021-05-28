@@ -16,7 +16,9 @@
       :value="editData[nameKey]"
       @blur="saveName"
     ></NameInput>
-    <Contextmenu ref="menu"><slot name="menu"></slot></Contextmenu>
+    <Contextmenu ref="menu" :params="contextData" :menu="currentMenu"
+      ><slot name="menu"></slot
+    ></Contextmenu>
   </div>
 </template>
 
@@ -24,6 +26,8 @@
 import Contextmenu from "./contextmenu";
 import NameInput from "../name-input";
 import TreeItem from "./item";
+import Dom from "render/util/dom";
+
 export default {
   provide() {
     return {
@@ -44,6 +48,7 @@ export default {
     rename: Boolean,
     dragable: Boolean,
     subGetter: Function,
+    initActive: {},
     selected: {
       type: Array,
       default() {
@@ -53,14 +58,18 @@ export default {
   },
   data() {
     return {
-      active: null,
+      active: this.initActive,
       nameEditing: false,
       editData: null,
-      menuShow: false
+      menuShow: false,
+      contextKey: null,
+      contextData: null,
+      currentMenu: []
     };
   },
   methods: {
     onItemClick(data) {
+      this.setContextNode();
       this.active = data[this.idKey];
       this.$emit("on-active", { id: this.active, data });
     },
@@ -79,7 +88,38 @@ export default {
       this.$emit("on-remove", e);
       this.nameEditing = false;
     },
+    setContextNode(key) {
+      this.contextKey = key;
+    },
+    getContextData(e) {
+      let data = null;
+      this.setContextNode();
+      let el = Dom.getParentEle(
+        e,
+        (item) => {
+          return item && item.classList.contains("tree-item");
+        },
+        this.$el
+      );
+      if (el) {
+        let key = el.dataset.key;
+        let node = this.node[key];
+        if (node) {
+          this.setContextNode(key);
+          data = node.data;
+        }
+      }
+      return data;
+    },
+    refreshNode(key) {
+      let node = this.node[key];
+      if (node) {
+        node.onRefresh();
+      }
+    },
     onContextmenu(e) {
+      this.contextData = this.getContextData(e.target);
+      this.currentMenu = this.menu && this.menu(this.contextData);
       this.$refs.menu.show(e);
       this.$emit("context-menu", e);
     }
