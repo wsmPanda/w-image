@@ -23,7 +23,32 @@
         ></Button>
       </div>
     </div>
+    <CommonTree
+      class="tree-body"
+      ref="commonTree"
+      :data="dictory"
+      :initActive="active"
+      :subGetter="subGetter"
+      @on-active="onTreeItemActive"
+      @on-fresh="onTreeFersh"
+      :menu="menu"
+      v-if="dev"
+    >
+      <template v-slot:name="{ data }">
+        <Icon
+          class="icon-fold"
+          :class="{
+            'icon-dictory': data.type === 'dictory',
+            'icon-set': data.type === 'set',
+            'icon-error': data.error
+          }"
+          :type="data.open ? 'ios-folder-open' : 'md-folder'"
+        />
+        {{ data.path.split(/\/|\\/).pop() }}</template
+      >
+    </CommonTree>
     <Tree
+      v-else
       ref="tree"
       class="tree-body"
       :initActive="active"
@@ -45,7 +70,7 @@
         <Button
           @click="
             $connect.run('clearEmpty', {
-              path: $main.storage.activeTree && $main.storage.activeTree.path,
+              path: $main.storage.activeTree && $main.storage.activeTree.path
             })
           "
           >清理空目录</Button
@@ -53,7 +78,7 @@
         <Button
           @click="
             $connect.run('shellFiles', {
-              path: $main.storage.activeTree && $main.storage.activeTree.path,
+              path: $main.storage.activeTree && $main.storage.activeTree.path
             })
           "
           >文件退壳</Button
@@ -65,25 +90,90 @@
 
 <script>
 import Tree from "render/components/dictory-tree";
+import CommonTree from "render/components/tree";
 import { functionDebounce, isMac } from "render/util";
+const { shell } = window.require("electron").remote;
 
 export default {
   inject: ["$main"],
-  components: { Tree },
+  components: { Tree, CommonTree },
   props: {
-    active: {},
+    active: {}
   },
   data() {
+    let vm = this;
     return {
+      dev: true,
       dictory: [],
       editing: false,
       processShow: false,
       formatFrom: "",
       formatTo: "",
       addMode: false,
+      foldMenu: [
+        {
+          name: "在系统中打开",
+          icon: "md-open",
+          action({ path }) {
+            shell.openPath(path);
+          }
+        },
+        {
+          icon: "md-refresh",
+          name: "刷新",
+          action({ path }) {
+            vm.$refs.commonTree.refreshNode(path);
+          }
+        },
+        {
+          name: "展开全部",
+          disabled: true,
+          action({ path }) {
+            vm.$refs.commonTree.openAll(path);
+          }
+        },
+        {
+          name: "收起全部",
+          disabled: true,
+          action({ path }) {
+            vm.$refs.commonTree.closeAll(path);
+          }
+        },
+
+        {
+          icon: "md-trash",
+          name: "删除",
+          disabled: true
+        },
+        {
+          name: "重命名",
+          disabled: true
+        }
+        // {
+        //   name: "s",
+        //   children: [
+        //     {
+        //       name: "重命名"
+        //     },
+        //     {
+        //       name: "重命名"
+        //     }
+        //   ]
+        // }
+      ]
     };
   },
   methods: {
+    menu() {
+      return this.foldMenu;
+    },
+    async subGetter(data) {
+      let res = await this.$connect.run("getDictoryFolder", {
+        path: data.path,
+        deep: 2
+      });
+      return res.sub;
+    },
     onProcessOk() {
       this.$connect.run("processBatch", {
         process: "format",
@@ -91,14 +181,14 @@ export default {
         to: this.formatTo,
         add: this.addMode,
         path:
-          this.$main.storage.activeTree && this.$main.storage.activeTree.path,
+          this.$main.storage.activeTree && this.$main.storage.activeTree.path
       });
     },
     onAddGroup() {
       let data = {
         name: "group",
         type: "group",
-        sub: [],
+        sub: []
       };
       this.dictory.push(data);
       this.$connect.addData("dictory", data);
@@ -131,6 +221,9 @@ export default {
     onTreeActive(data, cache) {
       this.$emit("on-active", { data, cache });
     },
+    onTreeItemActive(data) {
+      this.$emit("on-active", data);
+    },
     dictoryParse(data) {
       let list = [];
       for (let dictory of data) {
@@ -152,7 +245,7 @@ export default {
               name: item,
               path: pathText,
               type: index !== path.length - 1 ? "set" : "dictory",
-              sub: [],
+              sub: []
             };
             node.push(folder);
           }
@@ -183,7 +276,7 @@ export default {
               name: item,
               path: pathText,
               type: index !== path.length - 1 ? "set" : "dictory",
-              sub: [],
+              sub: []
             };
             node.push(folder);
           }
@@ -204,7 +297,7 @@ export default {
         }
       }
       return res;
-    },
+    }
   },
   async created() {
     this.onTreeChange = functionDebounce(() => {
@@ -217,10 +310,10 @@ export default {
         deep: true,
         handler() {
           this.onTreeChange();
-        },
+        }
       });
     });
-  },
+  }
 };
 </script>
 

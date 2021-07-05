@@ -1,11 +1,12 @@
 <template>
-  <Select size="small"></Select>
+  <Select :size="size"></Select>
 </template>
 
 <script>
 import Base from "./field";
 export default {
-  extends: Base
+  extends: Base,
+  computed: {}
 };
 </script>
 

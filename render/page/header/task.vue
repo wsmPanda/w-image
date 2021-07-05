@@ -5,7 +5,7 @@
         <Icon type="md-flash" />
         <Progress :percent="taskPercent" :stroke-width="3" hide-info />
         <div>0/{{ taskCount }}</div>
-        <Icon @click.native.stop="taskModal = true" type="md-add-circle" />
+        <Icon class="icon-add" @click.native.stop="taskModal = true" type="md-add-circle" />
       </div>
     </Button>
     <BatchProcess v-model="taskModal"></BatchProcess>

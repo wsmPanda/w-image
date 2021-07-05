@@ -1,14 +1,14 @@
 <template>
-  <RadioGroup 
+  <RadioGroup
     :value="value"
     size="small"
     @input="input"
     :v-bind="field.attr"
     :v-on="field.on"
   >
-    <Radio v-for="item of field.data" :key="item.value" :label="item.value">{{
-      item.name
-    }}</Radio>
+    <Radio v-for="item of field.data" :key="item.value" :label="item.value"
+      ><Icon v-if="item.icon" :type="item.icon" />{{ item.name }}</Radio
+    >
   </RadioGroup>
 </template>
 

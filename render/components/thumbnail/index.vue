@@ -1,5 +1,5 @@
 <template>
-  <div class="thumbnail" @mousedown="onDragstart">
+  <div class="thumbnail" @mousedown="onMousedown">
     <img
       v-if="isImage && loaded"
       @error="loaded = false"
@@ -94,12 +94,35 @@ export default {
     }
   },
   methods: {
+    onMousedown() {
+      let dragWatcher = () => {
+        this.onDragstart();
+        window.removeEventListener("mousemove", dragWatcher);
+        dragWatcher = null;
+        if (upWatcher) {
+          window.removeEventListener("mouseup", upWatcher);
+          upWatcher = null;
+        }
+      };
+      let upWatcher = () => {
+        if (dragWatcher) {
+          window.removeEventListener("mousemove", dragWatcher);
+          dragWatcher = null;
+        }
+        if (upWatcher) {
+          upWatcher = null;
+        }
+      };
+
+      window.addEventListener("mousemove", dragWatcher);
+      window.addEventListener("mouseup", upWatcher);
+    },
     onDragstart() {
       setTimeout(() => {
         this.$connect.run("fileDrag", {
           path: this.src
         });
-      }, 300);
+      });
     },
     onCheck() {
       this.$emit("check", this.check);

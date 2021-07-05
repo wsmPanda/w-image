@@ -20,8 +20,8 @@
         :type="field.type"
         size="small"
         @input="$set(value, field.key, $event)"
-        :v-bind="field.attr"
-        :v-on="field.on"
+        v-bind="field.attr"
+        v-on="field.on"
       />
       <component
         v-else
@@ -30,10 +30,11 @@
         size="small"
         :type="field.type"
         @input="$set(value, field.key, $event)"
-        :v-bind="field.attr"
-        :v-on="field.on"
-      ></component> </FormItem
-  ></Form>
+        v-bind="field.attr"
+        v-on="field.on"
+      ></component>
+    </FormItem>
+  </Form>
 </template>
 
 <script>
@@ -41,7 +42,11 @@ import { Form, FormItem, Input } from "iview";
 import radio from "./radio";
 import select from "./select";
 import file from "./file";
-const Fields = { radio, select, file };
+import color from "./color";
+import Switch from "./switch";
+import checkbox from "./checkbox";
+
+const Fields = { radio, select, file, color, switch: Switch, checkbox };
 export default {
   provide() {
     return {
@@ -52,6 +57,10 @@ export default {
   props: {
     model: Object,
     value: Object,
+    size: {
+      type: String,
+      default: "small"
+    },
     column: {
       type: Number,
       default: 2

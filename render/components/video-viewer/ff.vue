@@ -1,29 +1,13 @@
 <template>
   <div class="video-viewer">
-    <videoPlayer
-      v-if="videoReady"
-      ref="video"
-      class="video"
-      controls="1"
-      :muted="$main.storage.videoMuted"
-      :autoplay="$main.config.video.autoPlay"
-      @volumechange="onVolumechange"
-      :options="playerOptions"
-    >
-      <source :src="videoSource || 'file://' + data" type="video/mp4" />
-    </videoPlayer>
     <Button @click="snap">截图(F3)</Button>
     <canvas v-show="canvasShow" ref="canvas"></canvas>
   </div>
 </template>
 
 <script>
-import "video.js/dist/video-js.css";
-import { videoPlayer } from "vue-video-player";
-import "./StreamPlayTech";
 export default {
   inject: ["$main"],
-  components: { videoPlayer },
   props: {
     data: {}
   },
@@ -56,7 +40,7 @@ export default {
       let context = canvas.getContext("2d");
       context.fillRect(0, 0, this.videoWidth, this.videoHeight);
       context.drawImage(video, 0, 0, this.videoWidth, this.videoHeight);
-      canvas.toBlob((blob) => {
+      canvas.toBlob(blob => {
         let reader = new FileReader();
         reader.onload = () => {
           let buffer = new Buffer(reader.result);
@@ -70,7 +54,7 @@ export default {
               .shift()
           });
         };
-        reader.onerror = (err) => console.error(err);
+        reader.onerror = err => console.error(err);
         reader.readAsArrayBuffer(blob);
         this.$Message.success("截图成功");
       });
@@ -85,7 +69,7 @@ export default {
   },
   mounted() {
     // this.$refs.video.volume = this.$main.storage.videoVolume || 0;
-    this.onSnap = (e) => {
+    this.onSnap = e => {
       if (e.code === "F3") {
         this.snap();
       }
@@ -97,7 +81,7 @@ export default {
       .run("video", {
         path: this.data
       })
-      .then((message) => {
+      .then(message => {
         if (!message) {
           return;
         }
