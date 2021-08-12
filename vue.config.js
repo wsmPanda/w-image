@@ -6,7 +6,7 @@ function resolve(dir) {
 module.exports = {
   pages: {
     index: {
-      // page 的入口 2
+      // page 的入口 2 2
       entry: "render/main.js"
     }
   },
