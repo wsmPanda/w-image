@@ -71,11 +71,13 @@ export default {
   methods: {
     initData() {
       Object.assign(this.$data, this.$options.data());
-      if (this.$main.activeListDictory) {
+      console.log(this.$main.storage.activeTree.path);
+      if (this.$main.storage.activeTree.path) {
         this.selectors.push({
           type: "dictory",
           options: {
-            path: this.$main.activeListDictory.path
+            path: this.$main.storage.activeTree.path,
+            deep: 1
           }
         });
         this.actions.push({

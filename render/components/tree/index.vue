@@ -5,6 +5,7 @@
       :data="item"
       :key="index"
       :path="item.path"
+      @remove="removeChildren(index)"
     >
       <template v-slot:name="{ data }">
         <slot name="name" :data="data"></slot
@@ -96,7 +97,7 @@ export default {
       this.setContextNode();
       let el = Dom.getParentEle(
         e,
-        (item) => {
+        item => {
           return item && item.classList.contains("tree-item");
         },
         this.$el
@@ -122,6 +123,15 @@ export default {
       this.currentMenu = this.menu && this.menu(this.contextData);
       this.$refs.menu.show(e);
       this.$emit("context-menu", e);
+    },
+    removeNode(key) {
+      let node = this.node[key];
+      if (node) {
+        node.removeNode();
+      }
+    },
+    removeChildren(index) {
+      this.data.splice(index, 1);
     }
   },
   created() {

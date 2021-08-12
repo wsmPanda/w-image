@@ -290,7 +290,7 @@ export default {
       await Connect.run("cleanIterator");
       let m = 0;
       if (m) {
-        return Connect.run("allFileList", e).then((res) => {
+        return Connect.run("allFileList", e).then(res => {
           this.activeListDictory = e;
           this.$refs.imageList.setData(res);
           this.allList = res;
@@ -301,7 +301,7 @@ export default {
         this.imageLoadingMore = true;
         return this.fileStream
           .next()
-          .then((res) => {
+          .then(res => {
             this.$refs.imageList.setData([]);
             this.$refs.imageList.appendData(res);
           })
@@ -313,7 +313,7 @@ export default {
         return Connect.run("getTreeFiles", {
           ...e,
           formatFilter: this.storage.formatFilter || ["image", "video"]
-        }).then((res) => {
+        }).then(res => {
           this.activeListDictory = e;
           let list = this.floaFileTree(
             res,
@@ -337,7 +337,7 @@ export default {
         step: Number(this.config.image.readStep),
         cache
       });
-      this.fileStream.onFinish((ctx) => {
+      this.fileStream.onFinish(ctx => {
         this.imageLoadingMore = false;
         if (ctx === this.fileStream) {
           this.listLoadFinish = true;
@@ -353,7 +353,7 @@ export default {
         !this.fileStream.loading
       ) {
         this.imageLoadingMore = true;
-        this.fileStream.next().then((res) => {
+        this.fileStream.next().then(res => {
           this.imageLoadingMore = false;
           if (res) {
             this.$refs.imageList.appendData(res);
@@ -368,11 +368,11 @@ export default {
           name: data.path.split(/\\|\//).pop()
         }
       ];
-      list = list.concat(data.files.map((p) => (path || data.path) + "/" + p));
+      list = list.concat(data.files.map(p => (path || data.path) + "/" + p));
       if (data.sub && data.sub.length) {
         let totalList = [];
         let subCount = 0;
-        data.sub.forEach((item) => {
+        data.sub.forEach(item => {
           let subPath = (path || data.path) + "/" + item.path;
           // 临时处理
           subPath = item.name;
@@ -410,7 +410,7 @@ export default {
       this.$set(this.storage, "listScroll", v);
     },
     waitNextTick() {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         this.$nextTick(() => {
           resolve();
         });
@@ -432,7 +432,7 @@ export default {
   },
   mounted() {
     this.onResize();
-    window.addEventListener("keyup", (e) => {
+    window.addEventListener("keyup", e => {
       if (this.viewImage && this.tags[e.key - 1]) {
         let tag = this.tags[e.key - 1];
         let info = this.fileInfo && this.fileInfo[this.viewImage];
@@ -466,8 +466,8 @@ export default {
       leftTab: "folder"
     });
     this.pageInit = true;
-    let setStorage = functionDebounce((e) => Connect.run("setStorage", e));
-    let setConfig = functionDebounce((e) => Connect.run("setConfig", e));
+    let setStorage = functionDebounce(e => Connect.run("setStorage", e));
+    let setConfig = functionDebounce(e => Connect.run("setConfig", e));
     this.$watch("config", {
       deep: true,
       handler(v) {

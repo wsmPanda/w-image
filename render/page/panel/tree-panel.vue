@@ -44,7 +44,7 @@
           }"
           :type="data.open ? 'ios-folder-open' : 'md-folder'"
         />
-        {{ data.path.split(/\/|\\/).pop() }}</template
+        {{ data.path && data.path.split(/\/|\\/).pop() }}</template
       >
     </CommonTree>
     <Tree
@@ -142,8 +142,10 @@ export default {
 
         {
           icon: "md-trash",
-          name: "删除",
-          disabled: true
+          name: "库中删除",
+          action({ path }) {
+            vm.$refs.commonTree.removeNode(path);
+          }
         },
         {
           name: "重命名",
@@ -172,6 +174,7 @@ export default {
         path: data.path,
         deep: 2
       });
+
       return res.sub;
     },
     onProcessOk() {
@@ -222,12 +225,12 @@ export default {
       this.$emit("on-active", { data, cache });
     },
     onTreeItemActive(data) {
-      this.$emit("on-active", data);
+      this.$emit("on-active", { ...data, path: data.id });
     },
     dictoryParse(data) {
       let list = [];
       for (let dictory of data) {
-        let path = dictory.path.split(/\\|\//);
+        let path = (dictory.path || "").split(/\\|\//);
         if (path[0] === "") {
           path.splice(0, 1);
         }
@@ -237,7 +240,7 @@ export default {
           pathText = "/";
         }
         path.forEach((item, index) => {
-          let folder = node.find((i) => i.name === item);
+          let folder = node.find(i => i.name === item);
           pathText += (pathText ? "/" : "") + item;
           if (!folder) {
             folder = {
@@ -266,8 +269,9 @@ export default {
       }
       path.forEach((item, index) => {
         pathText += (pathText ? "/" : "") + item;
+        console.log(node);
         let folder = node.find(
-          (i) => i.name === item || i.path.indexOf(pathText) === 0
+          i => i.name === item || (i.path && i.path.indexOf(pathText) === 0)
         );
         if (!folder || folder.path === pathText) {
           if (!folder) {
@@ -301,7 +305,6 @@ export default {
   },
   async created() {
     this.onTreeChange = functionDebounce(() => {
-      console.warn(this.dictory);
       this.$connect.run("saveDictoryCache", { data: this.dictory });
     });
     await this.updateDictoryCache();

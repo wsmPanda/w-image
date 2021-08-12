@@ -23,7 +23,10 @@ export default {
       let nameList = name.split(".");
       let format = nameList.pop();
       let str = nameList.join(".");
-      let match = str.match(/([A-Za-z]{2,6})-?([0-9]){1,6}([-_]?[a-d1-9])?/);
+      let match =
+        str.match(/([A-Za-z]{2,6})-([0-9]){1,6}([-_]?0?[a-d1-9])?/) ||
+        str.match(/([A-Za-z]{2,6})-?([0-9]){1,6}([-_]?0?[A_Da-d1-9])?/) ||
+        str.match(/([A-Za-z]{1,6})-?([0-9]){1,6}([-_]?0?[A_Da-d1-9])?/);
       if (match && match[1]) {
         let code = match[1].toUpperCase();
         let newName = code + "-" + match[2];

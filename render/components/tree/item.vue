@@ -32,7 +32,11 @@
       v-show="open"
       class="tree-item-sub"
     >
-      <TreeItem v-for="(item, index) of subData" :data="item" :key="index"
+      <TreeItem
+        v-for="(item, index) of subData"
+        :data="item"
+        :key="index"
+        @remove="removeChildren(index)"
         ><template v-slot:name="{ data }">
           <slot name="name" :data="data"></slot></template
       ></TreeItem>
@@ -112,11 +116,18 @@ export default {
         } else {
           data.error = false;
         }
-        this.$set(this.data, this.subKey, this.subData);
+        this.$set(this.data, this.subKey, this.currentSubData);
       } finally {
         this.loading = false;
         this.data.hasRead = true;
       }
+    },
+    removeNode() {
+      console.log(this.data, this.index);
+      this.$emit("remove", { index: this.index, data: this.data });
+    },
+    removeChildren(index) {
+      this.data[this.subKey] && this.data[this.subKey].splice(index, 1);
     }
   },
   destroyed() {

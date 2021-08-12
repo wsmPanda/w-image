@@ -31,7 +31,7 @@ export default {
       .showOpenDialog({
         properties: ["openDirectory"]
       })
-      .then((files) => {
+      .then(files => {
         let path = files.filePaths[0];
         console.log(path);
         fs.writeFileSync(
@@ -45,7 +45,7 @@ export default {
       .showOpenDialog({
         properties: ["openFile", "openDirectory"]
       })
-      .then((files) => {
+      .then(files => {
         let path = files.filePaths[0];
         let nameMap = {};
         let index = 0;
@@ -66,12 +66,39 @@ export default {
         return shell.showItemInFolder(path + "\\" + data[0].split("/").pop());
       });
   },
+  moveToDictory({ data }) {
+    return dialog
+      .showOpenDialog({
+        properties: ["openFile", "openDirectory"]
+      })
+      .then(files => {
+        let path = files.filePaths[0];
+        let nameMap = {};
+        let index = 0;
+        if (data && data.length) {
+          for (let item of data) {
+            let name = item.split("/").pop();
+            if (nameMap[name]) {
+              name = index + name;
+            }
+            nameMap[name] = true;
+            index++;
+            path = path.replace(/\//g, "\\");
+
+            fs.rename(item, path + "\\" + name, e => {
+              console.log(e);
+            });
+          }
+        }
+        return shell.showItemInFolder(path + "\\" + data[0].split("/").pop());
+      });
+  },
   selectDictory() {
     return dialog
       .showOpenDialog({
         properties: ["openFile", "openDirectory"]
       })
-      .then((files) => {
+      .then(files => {
         return files.filePaths[0];
       });
   },
@@ -79,7 +106,7 @@ export default {
     return selectTable("dictory").add({ path, name: path.split("/").pop() });
   },
   deleteDictory({ path }) {
-    return selectTable("dictory").delete((item) => item.path === path);
+    return selectTable("dictory").delete(item => item.path === path);
   },
   openDictory({ path }) {
     shell.openItem;
@@ -109,7 +136,7 @@ export default {
   },
   selectFile({ path }) {
     let list = [];
-    walkFilesAsync(path, (x) => {
+    walkFilesAsync(path, x => {
       if (isImage(x)) {
         list.push(x);
       }
@@ -145,6 +172,7 @@ export default {
     //   .withMaxDepth(deep)
     //   .crawl(path);
     // return api.withPromise();
+
     return new Iterator(path, {
       file: false,
       deep
@@ -158,7 +186,7 @@ export default {
       `${path("snap")}/${name}==${time || +new Date()}.png`,
       file,
       {},
-      (err) => {
+      err => {
         if (err) return console.error(err);
       }
     );

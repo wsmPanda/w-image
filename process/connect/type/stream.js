@@ -17,7 +17,7 @@ export default {
     }
     let api = new fdir()
       .withFullPaths()
-      .filter((path) => {
+      .filter(path => {
         return isImage(path) || isVideo(path);
       })
       //.withDirs()
@@ -33,6 +33,7 @@ export default {
     formatFilter = formatFilter || ["image", "video"];
     if (iteratorId && Iterator.map[iteratorId]) {
       let cacheTable = selectFilesTable("files_cache");
+      cache = false;
       if (cache !== false) {
         let cacheData = await cacheTable.get(
           path.replace(/\//g, "==").replace(/\:/g, "++")
@@ -44,7 +45,7 @@ export default {
             iteratorId,
             data: cacheData.list,
             finish: true,
-            page: 1,
+            page: 1
           };
         }
       } else {
@@ -64,7 +65,7 @@ export default {
         iteratorId,
         data: data.list,
         finish: iterator.finish,
-        page: iterator.stepPage,
+        page: iterator.stepPage
       };
     } else {
       iterator = new Iterator(path, {
@@ -79,13 +80,14 @@ export default {
             (formatFilter.includes("video") && video) ||
             (formatFilter.includes("other") && !image && !video)
           );
-        },
+        }
       });
+      console.log();
       return {
         path,
         iteratorId: iterator.id,
-        data: [],
+        data: []
       };
     }
-  },
+  }
 };

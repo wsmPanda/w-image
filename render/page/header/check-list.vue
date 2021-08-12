@@ -14,7 +14,7 @@
     <div class="checklist-tool">
       <Button icon="ios-archive" size="small" @click="onCollect">收藏</Button>
       <Button icon="md-download" size="small" @click="onOutput">复制</Button>
-      <Button icon="md-return-right" size="small">移动</Button>
+      <Button icon="md-return-right" size="small" @click="onMove">移动</Button>
       <Button icon="ios-undo" size="small" @click="onUndo">恢复</Button>
 
       <Button icon="md-trash" size="small" @click="onClear">清空</Button>
@@ -32,11 +32,11 @@ export default {
   inject: ["$config", "$main", "$checkList"],
   components: { Thumbnail },
   props: {
-    data: {},
+    data: {}
   },
   data() {
     return {
-      checkZoom: 2,
+      checkZoom: 2
     };
   },
   computed: {
@@ -51,9 +51,9 @@ export default {
         marginBottom: `${this.imageConfig.margin}px`,
         height: `${this.imageConfig.height / this.checkZoom}px`,
         minHeight: `${this.imageConfig.height / this.checkZoom}px`,
-        width: `${100 / this.imageConfig.column / this.checkZoom}%`,
+        width: `${100 / this.imageConfig.column / this.checkZoom}%`
       };
-    },
+    }
   },
   methods: {
     cleanCheck() {
@@ -67,7 +67,7 @@ export default {
       this.$connect.addData("collect", {
         name: `${Time.toTime(new Date())}`,
         files: this.data,
-        createTime: +new Date(),
+        createTime: +new Date()
       });
       this.$main.$emit("collectChange");
       this.cleanCheck();
@@ -76,7 +76,7 @@ export default {
       let row = this.data[index];
       this.$connect.deleteData("collect", {
         code: "createTime",
-        value: row.createTime,
+        value: row.createTime
       });
       this.data.splice(index, 1);
     },
@@ -84,25 +84,35 @@ export default {
       this.$connect.run("copyToDictory", { data: this.data });
       this.cleanCheck();
     },
+    onMove() {
+      this.$connect.run("moveToDictory", { data: this.data });
+      // this.cleanCheck();
+    },
     onClear() {
       this.cleanCheck();
     },
     onDeleteFile() {
       this.$connect.run("deleteFiles", { data: this.data });
       this.cleanCheck();
-    },
-  },
+    }
+  }
 };
 </script>
 
 <style lang="less">
 .checklist {
   width: 80vw;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
 }
 .checklist-box {
   display: flex;
   width: 100%;
   flex-wrap: wrap;
-  overflow: hidden;
+  overflow: auto;
+}
+.checklist-tool {
+  padding: 8px 8px 4px;
 }
 </style>
