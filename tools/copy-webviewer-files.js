@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
-// t1 t1 t1
+// t1
 const copyFiles = async () => {
   const sourcePath = path.resolve('./node_modules/@pdftron/webviewer/public');
   const destPath = path.resolve('./public/webviewer/');
