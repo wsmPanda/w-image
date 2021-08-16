@@ -1,16 +1,33 @@
 <template>
-  <div class="checklist">
-    <div class="checklist-box" v-if="$main.config && $main.config.image">
-      <Thumbnail
-        v-for="(item, index) of data"
-        :key="item"
-        :src="item"
-        :style="thumbnailStyle"
-        :showCheck="false"
-        showDelete
-        @delete="onDelete(index)"
-      ></Thumbnail>
-    </div>
+  <div class="checklist" @click.stop>
+    <Tabs type="card" :value="value" @input="$emit('input', $event)">
+      <TabPane
+        v-for="(tab, tabIndex) of data"
+        :key="tabIndex"
+        :label="(tabIndex + 1).toString()"
+        :name="tabIndex.toString()"
+      >
+        <div class="checklist-box" v-if="$main.config && $main.config.image">
+          <Thumbnail
+            v-for="(item, index) of tab"
+            :key="item"
+            :src="item"
+            :style="thumbnailStyle"
+            :showCheck="false"
+            showDelete
+            @delete="onDelete(index)"
+          ></Thumbnail>
+        </div>
+      </TabPane>
+      <TabPane
+        v-if="!(data[data.length - 1] && !data[data.length - 1].length)"
+        :key="data.length"
+        :label="(data.length + 1).toString()"
+        :name="data.length.toString()"
+      >
+      </TabPane>
+    </Tabs>
+
     <div class="checklist-tool">
       <Button icon="ios-archive" size="small" @click="onCollect">收藏</Button>
       <Button icon="md-download" size="small" @click="onOutput">复制</Button>
@@ -32,11 +49,19 @@ export default {
   inject: ["$config", "$main", "$checkList"],
   components: { Thumbnail },
   props: {
-    data: {}
+    value: {},
+    data: {
+      type: Array,
+      default() {
+        return [];
+      }
+    }
   },
   data() {
     return {
-      checkZoom: 2
+      activeTab: 0,
+      checkZoom: 2,
+      backData: []
     };
   },
   computed: {
@@ -57,11 +82,13 @@ export default {
   },
   methods: {
     cleanCheck() {
-      this.backData = [...this.data];
+      this.backData = [...this.data[this.value]];
       this.$checkList.cleanCheck();
     },
     onUndo() {
-      this.$checkList.setCheckDataValue(this.backData || []);
+      if (this.backData[this.value]) {
+        this.$checkList.resetData(this.backData[this.value] || []);
+      }
     },
     onCollect() {
       this.$connect.addData("collect", {
@@ -95,7 +122,8 @@ export default {
       this.$connect.run("deleteFiles", { data: this.data });
       this.cleanCheck();
     }
-  }
+  },
+  created() {}
 };
 </script>
 

@@ -1,134 +1,107 @@
 <template>
-  <div class="image-viewer">
-    <div>
-      <a @click="onNameClick">{{ data }}</a>
-      <div class="file-info">
-        <Button
-          v-if="isImage"
-          class="file-expand"
-          @click="onFullScreen"
-          icon="md-expand"
-          size="small"
-        />
-        <div class="file-state">
-          <!-- <Button @click="$main.cartAdd(data)">
-          <Icon type="ios-add"/><Icon type="md-cart"
-        /></Button> -->
-          <span v-if="info">{{ sizeText }}</span>
-        </div>
-        <Button @click.native="onDeleteClick" size="small">
-          <Icon type="md-trash"></Icon>
-        </Button>
-      </div>
-    </div>
-    <PdfViewer v-if="isPdf" :src="data" />
-    <Viewer
-      v-else-if="isImage"
-      :full="fullScreen"
+  <div
+    class="image-viewer-container"
+    :class="className"
+    @click="outClick"
+    @mousewheel="onScroll"
+  >
+    <img
       class="image-viewer-img"
-      :data="data"
-      @fullClose="fullScreen = false"
+      @mousedown="onDrag"
+      @mouseup="onDragEnd"
+      @mousemove="onMove"
+      @click.stop
+      :src="'file://' + data"
+      :style="imageStyle"
     />
-    <template v-else-if="isVideo">
-      <VideoViewer
-        v-if="videoViewerType !== 'ff'"
-        :key="data"
-        :data="data"
-      ></VideoViewer>
-      <VideoFFViewer v-else :key="data" :data="data"></VideoFFViewer
-    ></template>
   </div>
 </template>
 
 <script>
-import { isImage, isPdf, isVideo } from "render/util";
-import VideoViewer from "../video-viewer/index";
-import VideoFFViewer from "../video-viewer/ff";
-import PdfViewer from "../pdf-viewer";
-import Viewer from "./viewer";
 export default {
-  inject: ["$main"],
-  components: { VideoViewer, Viewer, VideoFFViewer, PdfViewer },
   props: {
-    data: {}
+    data: String,
+    full: Boolean
   },
   data() {
-    return { info: null, fullScreen: false };
+    return {
+      scale: 1,
+      top: 0,
+      left: 0,
+      draging: false,
+      x: 0,
+      y: 0
+    };
   },
   computed: {
-    videoViewerType() {
-      return (
-        this.$main.config &&
-        this.$main.config.video &&
-        this.$main.config.video.player
-      );
+    className() {
+      return {
+        full: this.full,
+        draging: this.draging
+      };
     },
-    isImage() {
-      return isImage(this.data);
-    },
-    isVideo() {
-      return isVideo(this.data);
-    },
-    isPdf() {
-      return isPdf(this.data);
-    },
-    sizeText() {
-      let text = "";
-      let size = (this.info && this.info.size) || 0;
-      let number = size;
-      if (size <= 1024 * 1024) {
-        number = size / 1024;
-        text = "K";
-      } else if (size <= 1024 * 1024 * 1024) {
-        number = size / (1024 * 1024);
-        text = "M";
-      } else {
-        number = size / (1024 * 1024 * 1024);
-        text = "G";
-      }
-      return number.toFixed(2) + text;
+    imageStyle() {
+      return {
+        transform:
+          this.full &&
+          `translate(${this.left}px, ${this.top}px) scale(${this.scale})`
+      };
     }
   },
   methods: {
-    onFullScreen() {
-      this.fullScreen = true;
+    onScroll(e) {
+      if (this.full) {
+        this.scale -= e.deltaY * 0.0008;
+        if (this.scale < 0) {
+          this.scale = 0.01;
+        }
+      }
     },
-    onNameClick() {
-      this.$connect.run("openDictory", { path: this.data });
+    reset() {
+      Object.assign(this.$data, this.$options.data());
     },
-    onDeleteClick() {
-      let path = this.data;
-      this.data = null;
-      setTimeout(() => {
-        this.$connect.run("deleteFile", { path });
-      });
+    outClick() {
+      this.draging = false;
+      this.$emit("fullClose");
+    },
+    onDrag(e) {
+      if (this.full) {
+        this.draging = true;
+        this.x = e.clientX;
+        this.y = e.clientY;
+      }
+    },
+    onDragEnd() {
+      this.draging = false;
+    },
+    onMove(e) {
+      if (this.draging) {
+        this.top += e.movementY;
+        this.left += e.movementX;
+        this.y = this.top;
+        this.x = this.left;
+      }
     }
-  },
-  created() {
-    this.$connect.run("getFileInfo", { path: this.data }).then((res) => {
-      this.info = res;
-    });
   }
 };
 </script>
 
 <style lang="less">
-.image-viewer {
-  padding: 8px;
-}
-.image-viewer-img {
-  width: 100%;
-  height: auto;
-}
-.file-info {
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-  .file-state {
-    flex: 1;
+.image-viewer-container {
+  &.full {
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.1);
+    padding: 10%;
+    cursor: grab;
   }
-  .file-expand {
-    margin-right: 8px;
+  img {
+    user-select: none;
+    -webkit-user-drag: none;
   }
 }
 </style>

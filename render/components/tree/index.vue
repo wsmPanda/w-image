@@ -65,6 +65,7 @@ export default {
       menuShow: false,
       contextKey: null,
       contextData: null,
+      activeReady: true,
       currentMenu: []
     };
   },
@@ -136,6 +137,9 @@ export default {
   },
   created() {
     this.node = {};
+    if (this.initActive) {
+      this.activeReady = false;
+    }
   }
 };
 </script>
