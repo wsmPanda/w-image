@@ -92,7 +92,7 @@ import ImageScroll from "render/components/big-image-list/scroll";
 import PageViewer from "render/components/page-viewer";
 import Layout from "render/layout";
 import Connect from "render/connect";
-import FileViewer from "render/components/image-viewer";
+import FileViewer from "render/components/file-viewer";
 import BookmarkList from "render/components/bookmark-list";
 import Tabs from "render/components/tabs";
 
@@ -170,7 +170,8 @@ export default {
       viewImage: null,
       storage: {
         viewType: "grid",
-        formatFilter: ["image", "video"]
+        formatFilter: ["image", "video"],
+        tabIndex: 0
       },
       configShow: false,
       imageLoading: false,

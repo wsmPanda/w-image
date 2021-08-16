@@ -1,39 +1,56 @@
 export default {
   provide() {
     return {
-      $checkList: this,
+      $checkList: this
     };
   },
   data() {
     return {
-      checkList: [],
+      checkList: [[]]
     };
   },
   methods: {
-    check(data) {
+    getActiveCheckList(index) {
+      if (!index && index !== 0) {
+        index = this.storage.checkIndex;
+      }
+      let list = this.checkList[index];
+      if (!list) {
+        list = [];
+        this.checkList.push(list);
+      }
+      return list;
+    },
+    check(data, index) {
+      let list = this.getActiveCheckList(index);
       if (this.isCheck(data)) {
-        this.checkList.splice(this.checkList.indexOf(data), 1);
+        list.splice(list.indexOf(data), 1);
       } else {
-        this.checkList.push(data);
+        list.push(data);
       }
       this.setCheckData();
     },
     cleanCheck() {
-      this.$set(this, "checkList", []);
+      this.$set(this.checkList, this.storage.checkIndex || [], []);
       this.setCheckData();
     },
-    isCheck(data) {
-      return this.checkList.indexOf(data) >= 0;
+    isCheck(data, index) {
+      if (!index && index !== 0) {
+        index = this.storage.checkIndex;
+      }
+      let list = this.checkList[index] || [];
+      return list.indexOf(data) >= 0;
     },
     setCheckData() {
+      console.log(this.checkList);
       this.$connect.setData("check_list", this.checkList);
     },
-    setCheckDataValue(data) {
-      this.$set(this, "checkList", data);
+    resetData(data) {
+      this.$set(this.checkList, this.storage.checkIndex, data);
       this.setCheckData();
-    },
+    }
   },
   async created() {
-    this.checkList = (await this.$connect.getData("check_list")) || [];
-  },
+    this.checkList = (await this.$connect.getData("check_list")) || [[]];
+  }
 };

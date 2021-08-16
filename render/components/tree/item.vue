@@ -123,7 +123,6 @@ export default {
       }
     },
     removeNode() {
-      console.log(this.data, this.index);
       this.$emit("remove", { index: this.index, data: this.data });
     },
     removeChildren(index) {
@@ -132,6 +131,12 @@ export default {
   },
   destroyed() {
     this.$treeRoot.node[this.dataKey] = null;
+  },
+  mounted() {
+    if (this.dataKey === this.$treeRoot.active && !this.activeReady) {
+      this.activeReady = true;
+      this.$el.scrollIntoViewIfNeeded();
+    }
   },
   created() {
     this.$treeRoot.node[this.dataKey] = this;

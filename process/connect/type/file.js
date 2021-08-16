@@ -113,12 +113,15 @@ export default {
     if (isWindows()) {
       path = path.replace(/\//g, "\\");
     }
+    path = path.replace(/\\\\/g, "\\");
+    path = path.replace(/\/\//g, "/");
     return shell.showItemInFolder(path);
   },
   openFile({ path }) {
     if (isWindows()) {
       path = path.replace(/\//g, "\\");
     }
+
     return shell.openItem(path);
   },
   deleteFile({ path }) {

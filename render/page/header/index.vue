@@ -33,15 +33,25 @@
             icon="md-checkbox-outline"
             size="small"
           />
-          <Button icon="md-images" size="small">
-            <span v-if="$main.checkList.length" class="badge">{{
-              $main.checkList.length
-            }}</span>
+          <Button size="small">
+            <span>{{ Number($main.storage.checkIndex || 0) + 1 }}</span>
+            <Icon class="icon-checktool" type="md-images"></Icon>
+            <span
+              v-if="
+                $main.checkList[$main.storage.checkIndex] &&
+                  $main.checkList[$main.storage.checkIndex].length
+              "
+              class="badge"
+              >{{ $main.checkList[$main.storage.checkIndex].length }}</span
+            >
             <Icon type="md-arrow-dropdown" />
           </Button>
         </ButtonGroup>
         <DropdownMenu slot="list">
-          <CheckList :data="$main.checkList"></CheckList>
+          <CheckList
+            v-model="$main.storage.checkIndex"
+            :data="$main.checkList"
+          ></CheckList>
         </DropdownMenu>
       </Dropdown>
       <Button icon="md-bookmark" size="small" @click="$main.addBookmark" />

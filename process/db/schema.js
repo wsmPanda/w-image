@@ -58,7 +58,12 @@ export default [
   // 状态缓存
   {
     name: "storage",
-    type: "object"
+    type: "object",
+    init: {
+      viewType: "grid",
+      formatFilter: ["image", "video"],
+      tabIndex: 0
+    }
   },
   // 收藏
   {
@@ -68,11 +73,11 @@ export default [
   {
     name: "tags",
     init: [
-      { "name": "A", "color": "#2d8cf0" },
-      { "name": "B", "color": "#19be6b" },
-      { "name": "C", "color": "#ff9900" },
-      { "name": "D", "color": "#ed4014" },
-      { "name": "E", "color": "#dddddd" }
+      { name: "A", color: "#2d8cf0" },
+      { name: "B", color: "#19be6b" },
+      { name: "C", color: "#ff9900" },
+      { name: "D", color: "#ed4014" },
+      { name: "E", color: "#dddddd" }
     ]
   },
   // 缓存数据

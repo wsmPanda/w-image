@@ -27,7 +27,7 @@
       class="tree-body"
       ref="commonTree"
       :data="dictory"
-      :initActive="active"
+      :initActive="active && active.path"
       :subGetter="subGetter"
       @on-active="onTreeItemActive"
       @on-fresh="onTreeFersh"
