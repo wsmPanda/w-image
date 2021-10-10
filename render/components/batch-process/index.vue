@@ -101,13 +101,14 @@ export default {
       if (!this.hasPreview) {
         await this.onPreview();
       }
-      this.$connect.task(
-        "taskExecute",
-        {
-          data: this.fileList[0]
-        },
-        this.onExecuteProgress
-      );
+      console.log(this.fileList);
+      // this.$connect.task(
+      //   "taskExecute",
+      //   {
+      //     data: this.fileList[0]
+      //   },
+      //   this.onExecuteProgress
+      // );
     },
     onExecuteProgress(data) {
       this.fileList = [data.data];

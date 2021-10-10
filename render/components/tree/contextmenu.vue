@@ -7,7 +7,8 @@
           class="contextmenu-item"
           :key="index"
           :class="{
-            disabled: item.disabled
+            disabled: item.disabled,
+            hide: itemHide(item)
           }"
           @click="onClick(item)"
         >
@@ -29,7 +30,8 @@
             <div
               v-for="(child, index) of item.children"
               :class="{
-                disabled: item.disabled
+                disabled: item.disabled,
+                hide: itemHide(item)
               }"
               class="contextmenu-item"
               :key="index"
@@ -69,6 +71,15 @@ export default {
         item.action(this.params);
         this.close();
       }
+    },
+    itemHide(item) {
+      if (item.show === false) {
+        return true;
+      }
+      if (typeof item.show === "function") {
+        return item.show(this.params);
+      }
+      return false;
     }
   },
   created() {}

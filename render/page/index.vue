@@ -73,10 +73,10 @@
       </template>
       <template slot="right">
         <FileViewer
-          :key="viewImage"
-          v-if="viewImage"
+          :key="storage.active"
+          v-if="storage.active"
           class="main-image-viewer"
-          :data="viewImage"
+          :data="storage.active"
         ></FileViewer>
         <div v-else>空</div>
       </template>
@@ -167,11 +167,11 @@ export default {
       config: {},
       showCheck: true,
       listLoadFinish: false,
-      viewImage: null,
       storage: {
         viewType: "grid",
         formatFilter: ["image", "video"],
-        tabIndex: 0
+        tabIndex: 0,
+        active: null
       },
       configShow: false,
       imageLoading: false,
@@ -197,11 +197,6 @@ export default {
       }, {});
     }
   },
-  watch: {
-    "storage.formatFilter"() {
-      this.refreshListData();
-    }
-  },
   methods: {
     filterSelect(v) {
       if (!this.storage.formatFilter) {
@@ -213,6 +208,7 @@ export default {
       } else {
         this.storage.formatFilter.push(v);
       }
+      this.refreshListData();
     },
     toBookmark({ dictory, scrollTop }) {
       this.updateListData(dictory).then(() => {
@@ -240,7 +236,7 @@ export default {
       shell.openPath(v);
     },
     onActiveImageChange(v) {
-      this.viewImage = v;
+      this.$set(this.storage, "active", v);
     },
     onDictoryClick(v) {
       Connect.run("openDictory", v);
@@ -282,6 +278,7 @@ export default {
       return res;
     },
     async updateListData(e, cache) {
+      console.error("updateListData");
       if (e.type === "set") {
         return;
       }
@@ -418,6 +415,7 @@ export default {
       });
     },
     async afterInit() {
+      console.log("init");
       if (this.storage.activeTree) {
         await this.waitNextTick();
         await this.updateListData(this.storage.activeTree);
@@ -434,9 +432,9 @@ export default {
   mounted() {
     this.onResize();
     window.addEventListener("keyup", e => {
-      if (this.viewImage && this.tags[e.key - 1]) {
+      if (this.storage.active && this.tags[e.key - 1]) {
         let tag = this.tags[e.key - 1];
-        let info = this.fileInfo && this.fileInfo[this.viewImage];
+        let info = this.fileInfo && this.fileInfo[this.storage.active];
         let tags = (info && info.tags) || [];
         let index = tags.indexOf(tag.name);
         if (index >= 0) {
@@ -446,12 +444,12 @@ export default {
         }
         if (!info) {
           this.fileInfo = this.fileInfo || {};
-          this.$set(this.fileInfo, this.viewImage, {
+          this.$set(this.fileInfo, this.storage.active, {
             tags: tags
           });
         }
         Connect.run("setInfo", {
-          path: this.viewImage,
+          path: this.storage.active,
           value: tags,
           code: "tags"
         });

@@ -1,6 +1,6 @@
 export default {
   async delete() {
-    return function({ path }) {
+    return function ({ path }) {
       return {
         operate: "unlink",
         params: {
@@ -9,15 +9,15 @@ export default {
       };
     };
   },
-  async rename() {},
-  async clear() {},
-  async format() {},
-  async hull() {},
-  async move() {},
-  async cpoy() {},
+  async rename() { },
+  async clear() { },
+  async format() { },
+  async hull() { },
+  async move() { },
+  async cpoy() { },
   aNumber() {
     let nameMap = {};
-    return function({ path }) {
+    return function ({ path }) {
       let pathList = path.split(/\\|\//);
       let name = pathList.pop();
       let nameList = name.split(".");
@@ -49,7 +49,7 @@ export default {
           operate: "rename",
           message: match,
           params: {
-            path,
+            path, code,
             newPath: newPath
           }
         };

@@ -14,7 +14,7 @@ export default {
           ref="listWrapper"
           class="image-bigtable-list-wrapper"
           style={{ height: this.height + "px" }}
-          on={{ scroll: (e) => this.onScroll(e) }}
+          on={{ scroll: e => this.onScroll(e) }}
         >
           <div
             class="image-bigtable-list"
@@ -100,7 +100,7 @@ export default {
                         dblclick: () => this.onDbClick(row)
                       }}
                       on={{
-                        check: (e) => this.onCheck({ data: row, e })
+                        check: e => this.onCheck({ data: row, e })
                       }}
                       showCheck={this.$main.showCheck}
                       check={this.$checkList.isCheck(row)}
@@ -154,8 +154,9 @@ export default {
   },
   data() {
     return {
-      activeImage: null,
-      scrollTarget: null
+      activeImage: this.$main.storage.active,
+      scrollTarget: null,
+      hasInitActive: false
     };
   },
   computed: {
@@ -288,7 +289,7 @@ export default {
       this.data.splice(index + 1, 0, ...row.sub);
       // 高度变化值
       let heightList = this.getHeightList(row.sub).list.map(
-        (item) => item + this.heightList[index]
+        item => item + this.heightList[index]
       );
       let dHeight = heightList[heightList.length - 1] - this.heightList[index];
       this.heightList.splice(index + 1, 0, ...heightList);
@@ -307,7 +308,13 @@ export default {
       }
       this.updateHeightList();
       this.updateList();
-      this.autoClick();
+      if (data.length) {
+        if (!this.hasInitActive) {
+          this.hasInitActive = true;
+        } else {
+          this.autoClick();
+        }
+      }
     },
     autoClick() {
       setTimeout(() => {
@@ -364,7 +371,7 @@ export default {
     },
     appendHeightList(data) {
       let count = this.heightList[this.data.length - 1] || 0;
-      data.forEach((row) => {
+      data.forEach(row => {
         this.columnCount++;
         if (row && row.path) {
           count += this.dictoryHeight;
@@ -394,7 +401,7 @@ export default {
     getHeightList(data, columnCount = 0) {
       let list = [];
       let count = 0;
-      data.forEach((row) => {
+      data.forEach(row => {
         columnCount++;
         if (row && row.path) {
           count += this.dictoryHeight;
@@ -536,7 +543,7 @@ export default {
       }
     },
     activeStep(v) {
-      let index = this.data.findIndex((item) => this.activeImage === item);
+      let index = this.data.findIndex(item => this.activeImage === item);
       while (index >= 0 && index < this.data.length) {
         index += v;
         if (typeof this.data[index] === "string") {
@@ -546,7 +553,7 @@ export default {
       }
     },
     activeStepUp(v) {
-      let index = this.data.findIndex((item) => this.activeImage === item);
+      let index = this.data.findIndex(item => this.activeImage === item);
       if (
         typeof this.data[index + Number(this.imageSetting.column) * v] ===
         "string"
@@ -563,7 +570,7 @@ export default {
     this.startIndex = 0;
     this.currentIndex = 0;
     this.scrollTop = 0;
-    window.addEventListener("keyup", (e) => {
+    window.addEventListener("keyup", e => {
       let code = e.keyCode;
       if (code === 37) {
         this.activeStep(-1);

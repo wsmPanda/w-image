@@ -30,6 +30,9 @@
 
     <div class="checklist-tool">
       <Button icon="ios-archive" size="small" @click="onCollect">收藏</Button>
+      <Button icon="ios-archive" size="small" @click="onCollect"
+        >移出收藏</Button
+      >
       <Button icon="md-download" size="small" @click="onOutput">复制</Button>
       <Button icon="md-return-right" size="small" @click="onMove">移动</Button>
       <Button icon="ios-undo" size="small" @click="onUndo">恢复</Button>
@@ -59,7 +62,6 @@ export default {
   },
   data() {
     return {
-      activeTab: 0,
       checkZoom: 2,
       backData: []
     };
@@ -78,6 +80,9 @@ export default {
         minHeight: `${this.imageConfig.height / this.checkZoom}px`,
         width: `${100 / this.imageConfig.column / this.checkZoom}%`
       };
+    },
+    activeData() {
+      return this.data[this.value];
     }
   },
   methods: {
@@ -93,33 +98,40 @@ export default {
     onCollect() {
       this.$connect.addData("collect", {
         name: `${Time.toTime(new Date())}`,
-        files: this.data,
+        files: this.activeData,
         createTime: +new Date()
       });
       this.$main.$emit("collectChange");
       this.cleanCheck();
     },
     onDelete(index) {
-      let row = this.data[index];
+      let row = this.activeData[index];
       this.$connect.deleteData("collect", {
         code: "createTime",
         value: row.createTime
       });
-      this.data.splice(index, 1);
+      this.activeData.splice(index, 1);
+    },
+    getPathList(list) {
+      return list.map(item => item.path || item);
     },
     onOutput() {
-      this.$connect.run("copyToDictory", { data: this.data });
+      this.$connect.run("copyToDictory", {
+        data: this.getPathList(this.activeData)
+      });
       this.cleanCheck();
     },
     onMove() {
-      this.$connect.run("moveToDictory", { data: this.data });
+      this.$connect.run("moveToDictory", {
+        data: this.getPathList(this.activeData)
+      });
       // this.cleanCheck();
     },
     onClear() {
       this.cleanCheck();
     },
     onDeleteFile() {
-      this.$connect.run("deleteFiles", { data: this.data });
+      this.$connect.run("deleteFiles", { data: this.getPathList(this.activeData) });
       this.cleanCheck();
     }
   },

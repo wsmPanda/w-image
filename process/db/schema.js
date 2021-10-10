@@ -100,5 +100,10 @@ export default [
   {
     name: "info",
     type: "object"
+  },
+  // 序号映射
+  {
+    name: "number_map",
+    type: "object"
   }
 ];

@@ -26,16 +26,23 @@ export function readTable(name) {
   }
 }
 export function writeTable(name, data) {
-  fs.writeFile(
-    tablePath(name),
-    typeof data === "object" ? JSON.stringify(data, null, 2) : data,
-    () => {}
-  );
+  try {
+    let dataString = typeof data === "object" ? JSON.stringify(data, null, 2) : data.toString();
+    fs.writeFile(
+      tablePath(name),
+      dataString,
+      () => { }
+    );
+  } catch (ex) {
+    console.error('data stringify error:')
+    console.error(data)
+    console.error('ex')
+  }
 }
 
 export function removeTable(name) {
   try {
-    fs.unlink(tablePath(name), () => {});
+    fs.unlink(tablePath(name), () => { });
   } catch (ex) {
     console.error(ex);
   }

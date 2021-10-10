@@ -7,8 +7,8 @@
       :path="item.path"
       @remove="removeChildren(index)"
     >
-      <template v-slot:name="{ data }">
-        <slot name="name" :data="data"></slot
+      <template v-slot:name="{ data, deep, open }">
+        <slot name="name" :data="data" :deep="deep" :open="open"></slot
       ></template>
     </TreeItem>
     <NameInput
@@ -80,10 +80,38 @@ export default {
       let index = this.selected.indexOf(id);
       if (index >= 0) {
         this.selected.splice(index, 1);
+        this.unselectSubItems(data[this.subKey]);
       } else {
         this.selected.push(id);
+        if (data[this.subKey]) {
+          this.selectSubItems(data[this.subKey]);
+        }
       }
       this.$emit("on-select", this.selected);
+    },
+    unselectSubItems(list = []) {
+      list.forEach(data => {
+        let id = data[this.idKey];
+        let index = this.selected.indexOf(id);
+        if (index >= 0) {
+          this.selected.splice(index, 1);
+        }
+        if (data[this.subKey]) {
+          this.unselectSubItems(data[this.subKey]);
+        }
+      });
+    },
+    selectSubItems(list = []) {
+      list.forEach(data => {
+        let id = data[this.idKey];
+        let index = this.selected.indexOf(id);
+        if (index < 0) {
+          this.selected.push(id);
+          if (data[this.subKey]) {
+            this.selectSubItems(data[this.subKey]);
+          }
+        }
+      });
     },
     scrollToActive() {},
     saveName(e) {

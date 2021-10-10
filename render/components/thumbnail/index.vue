@@ -35,6 +35,7 @@
       v-show="showCheck"
       @click.native.stop="onCheck"
       @dblclick.native.stop
+      @mousedown.native.stop
       class="thumbnail-check"
       :class="{ uncheck: !this.check }"
       :type="'md-checkmark-circle'"

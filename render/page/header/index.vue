@@ -36,14 +36,6 @@
           <Button size="small">
             <span>{{ Number($main.storage.checkIndex || 0) + 1 }}</span>
             <Icon class="icon-checktool" type="md-images"></Icon>
-            <span
-              v-if="
-                $main.checkList[$main.storage.checkIndex] &&
-                  $main.checkList[$main.storage.checkIndex].length
-              "
-              class="badge"
-              >{{ $main.checkList[$main.storage.checkIndex].length }}</span
-            >
             <Icon type="md-arrow-dropdown" />
           </Button>
         </ButtonGroup>

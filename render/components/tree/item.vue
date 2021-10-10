@@ -24,7 +24,7 @@
       ></Icon>
       <span>
         <!-- <Icon class="icon-fold" type="md-folder" /> -->
-        <slot name="name" :data="data"></slot>
+        <slot name="name" :data="data" :deep="deep" :open="open"></slot>
       </span>
     </div>
     <div
@@ -36,9 +36,15 @@
         v-for="(item, index) of subData"
         :data="item"
         :key="index"
+        :deep="deep + 1"
         @remove="removeChildren(index)"
-        ><template v-slot:name="{ data }">
-          <slot name="name" :data="data"></slot></template
+        ><template v-slot:name="{ data, deep, open }">
+          <slot
+            name="name"
+            :data="data"
+            :deep="deep"
+            :open="open"
+          ></slot></template
       ></TreeItem>
     </div>
   </div>
@@ -50,7 +56,13 @@ export default {
   name: "TreeItem",
   inject: ["$treeRoot"],
   components: { Icon },
-  props: { data: {} },
+  props: {
+    data: {},
+    deep: {
+      type: Number,
+      default: 0
+    }
+  },
   data() {
     return {
       open:

@@ -36,6 +36,7 @@ export default {
   },
 
   addData({ table, data }) {
+    console.log(data)
     return selectTable(table).add(data);
   },
   async editData({ table, data }) {

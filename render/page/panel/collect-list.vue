@@ -11,6 +11,22 @@
       <span ref="name" class="collect-name">{{ item.name }}</span>
       <Icon type="md-close" @click.native.stop="onDelete(item, index)"></Icon>
     </div>
+
+    <CommonTree class="tree-body" ref="commonTree" :data="data">
+      <template v-slot:name="{ data, open }">
+        <Icon
+          class="icon-fold"
+          :class="{
+            'collect-icon': true
+          }"
+          :type="open ? 'ios-folder-open' : 'md-folder'"
+        />
+        {{
+          data.name || (data.path && data.path.split(/\/|\\/).pop())
+        }}</template
+      >
+    </CommonTree>
+
     <NameInput
       ref="nameInput"
       v-if="nameEditing && data && data[editIndex]"
@@ -21,10 +37,11 @@
 </template>
 
 <script>
+import CommonTree from "render/components/tree";
 import NameInput from "../../components/name-input";
 export default {
   inject: ["$config", "$main"],
-  components: { NameInput },
+  components: { NameInput, CommonTree },
   props: {
     edit: Boolean
   },
@@ -33,7 +50,21 @@ export default {
       nameEditing: false,
       active: null,
       editIndex: null,
-      data: []
+      data: [],
+      foldMenu: [
+        {
+          name: "删除",
+          icon: "md-open"
+        },
+        {
+          name: "重命名",
+          icon: "md-open"
+        },
+        {
+          name: "添加刀片",
+          icon: "md-open"
+        }
+      ]
     };
   },
   methods: {
@@ -52,7 +83,7 @@ export default {
     editName() {
       this.nameEditing = true;
       this.editIndex = this.data.findIndex(
-        (item) => item.createTime === this.active
+        item => item.createTime === this.active
       );
       this.$nextTick(() => {
         this.$refs.nameInput.setLink(this.$refs.name[this.editIndex]);
@@ -60,7 +91,16 @@ export default {
     },
     async update() {
       this.data = (await this.$connect.getData("collect")) || {};
+      this.data.forEach(item => {
+        if (!item.path) {
+          item.path = item.createTime;
+        }
+        if (!item.sub) {
+          item.sub = item.files || [];
+        }
+      });
     },
+    isFile() {},
     async onDelete(data, index) {
       this.data.splice(index, 1);
       this.$connect.deleteData("collect", {
@@ -82,7 +122,7 @@ export default {
     this.$main.$on("collectChange", () => {
       this.update();
     });
-    this.$main.addListenerKeyup(this, (e) => {
+    this.$main.addListenerKeyup(this, e => {
       if (e.key === "F2" || e.key === "Enter") {
         if (this.active && !this.nameEditing) {
           this.editName();
@@ -102,7 +142,7 @@ export default {
   border: 0;
 }
 .collect-list {
-  padding: 8px 8px;
+  padding: 8px 0;
 }
 .collect-item {
   display: flex;
@@ -126,7 +166,7 @@ export default {
   overflow: hidden;
   white-space: nowrap;
 }
-.collect-icon {
-  color: #79bee6;
+.icon-fold.collect-icon {
+  color: #79bee6 !important;
 }
 </style>
