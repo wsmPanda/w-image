@@ -66,8 +66,20 @@ export default {
           form: {
             fields: [
               {
-                key: "collection",
-                type: "select"
+                key: "type",
+                type: "select",
+                data: [
+                  {
+                    name: "视频",
+                    value: "video",
+                    icon: "md-videocam"
+                  },
+                  {
+                    name: "图片",
+                    value: "image",
+                    icon: "md-image"
+                  }
+                ]
               }
             ]
           }

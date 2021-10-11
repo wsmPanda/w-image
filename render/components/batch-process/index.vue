@@ -6,7 +6,7 @@
           <SelectorEditor v-model="selectors"></SelectorEditor>
         </div>
         <div class="batch-process-block batch-process-filter">
-          <FilterEditor v-model="fitlers"></FilterEditor>
+          <FilterEditor v-model="filters"></FilterEditor>
         </div>
         <div class="batch-process-block batch-process-action">
           <ActionEditor v-model="actions"></ActionEditor>
@@ -30,7 +30,7 @@
             >
           </div>
         </div>
-        <FileTable v-model="fileList"></FileTable>
+        <FileTable ref="table" v-model="fileList"></FileTable>
       </div></div
   ></Modal>
 </template>
@@ -54,7 +54,7 @@ export default {
       progressCount: 0,
       progressTotal: 0,
       selectors: [],
-      fitlers: [],
+      filters: [],
       actions: [],
       fileList: [],
       previewLoading: false,
@@ -71,17 +71,22 @@ export default {
   methods: {
     initData() {
       Object.assign(this.$data, this.$options.data());
-      console.log(this.$main.storage.activeTree.path);
       if (this.$main.storage.activeTree.path) {
         this.selectors.push({
           type: "dictory",
           options: {
             path: this.$main.storage.activeTree.path,
-            deep: 1
+            deep: 2
           }
         });
         this.actions.push({
           type: "aNumber"
+        });
+        this.filters.push({
+          type: "format",
+          options: {
+            type: "video"
+          }
         });
       }
     },
@@ -90,25 +95,30 @@ export default {
       this.previewLoading = true;
       let data = await this.$connect.run("taskPreview", {
         selectors: this.selectors,
-        fitlers: this.fitlers,
+        filters: this.filters,
         actions: this.actions
       });
       this.fileList = [data];
       this.previewLoading = false;
+      this.$nextTick(() => {
+        this.$refs.table && this.$refs.table.resetSelect();
+      });
     },
     onSave() {},
     async onExecute() {
       if (!this.hasPreview) {
         await this.onPreview();
       }
-      console.log(this.fileList);
-      // this.$connect.task(
-      //   "taskExecute",
-      //   {
-      //     data: this.fileList[0]
-      //   },
-      //   this.onExecuteProgress
-      // );
+      console.log(this.$refs.table && this.$refs.table.getSelected());
+      let result = await this.$connect.task(
+        "taskExecute",
+        {
+          data: this.fileList[0],
+          selected: this.$refs.table && this.$refs.table.getSelected()
+        },
+        this.onExecuteProgress
+      );
+      console.log(result);
     },
     onExecuteProgress(data) {
       this.fileList = [data.data];

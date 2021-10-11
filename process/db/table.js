@@ -32,6 +32,7 @@ export function selectTable(name) {
     },
     async merge(data) {
       let oldData = await this.get();
+      console.log(data, oldData);
       return writeTable(name, { ...oldData, ...data });
     },
     async add(data) {

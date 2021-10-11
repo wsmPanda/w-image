@@ -2,17 +2,20 @@ import Selector from "./selector";
 import Filter from "./filter";
 import Action from "./action";
 import operationExecute from "./operation";
+import { selectTable } from "../../db";
+import { unlink } from "fs-extra";
+
 function getFileObject(data) {
   let res = {
     path: data.path,
     sub: [],
     type: "dictory"
   };
-  data.sub.forEach((item) => {
+  data.sub.forEach(item => {
     res.sub.push(getFileObject(item));
   });
   data.files &&
-    data.files.forEach((item) => {
+    data.files.forEach(item => {
       res.sub.push({
         path: data.path + "/" + item,
         type: "file"
@@ -23,7 +26,7 @@ function getFileObject(data) {
 
 async function walkFiles(data, func) {
   if (data.sub) {
-    data.sub.forEach((item) => {
+    data.sub.forEach(item => {
       if (item.type === "dictory") {
         walkFiles(item, func);
       } else {
@@ -48,21 +51,31 @@ export default {
   async taskPreview({ selectors = [], filters = [], actions = [] }) {
     let res = [];
     let fileList = [];
+    let fliterList = filters.map(filter => {
+      if (filter.type && Filter[filter.type]) {
+        return Filter[filter.type](filter.options);
+      } else {
+        return () => true;
+      }
+    });
     for (let selector of selectors) {
-      fileList.push(await Selector[selector.type](selector.options));
+      fileList.push(
+        await Selector[selector.type](selector.options, fliterList)
+      );
     }
     res = getFileObject(fileList[0]);
-    let actionsRuner = actions.map((action) =>
-      Action[action.type](action.options)
+    let numberMap = await selectTable("number_map").get();
+    let actionsRuner = actions.map(action =>
+      Action[action.type](action.options, numberMap)
     );
-    walkFiles(res, (data) => {
-      actionsRuner.forEach((action) => {
+    walkFiles(res, data => {
+      actionsRuner.forEach(action => {
         data.action = action(data);
       });
     });
     return res;
   },
-  async taskExecute({ data, track }, event, callback) {
+  async taskExecute({ data, track, selected }, event, callback) {
     let promiseList = [];
     let result = {
       data: data,
@@ -78,45 +91,71 @@ export default {
       if (trackCount < track) {
         return;
       } else {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
           finishCallback = resolve;
         });
       }
     }
     callback(result);
-    walkFiles(data, (item) => {
-      if (item.action && item.action.operate) {
+    walkFiles(data, item => {
+      if (
+        item.action &&
+        item.action.operate &&
+        (!selected || selected.indexOf(item.path) >= 0)
+      ) {
         result.total++;
       }
     });
-    await walkSyncFiles(data, async (item) => {
+    let aNumberMap = {};
+    await walkSyncFiles(data, async item => {
       await executeTrack();
       if (item.action && item.action.operate) {
-        trackCount++;
-        promiseList.push(
-          operationExecute(item)
-            .then((res) => {
-              if (res.action && res.action.error) {
-                result.errorList.push(item);
+        if (!selected || selected.indexOf(item.path) >= 0) {
+          trackCount++;
+          promiseList.push(
+            operationExecute(item)
+              .then(res => {
+                if (res.action && res.action.error) {
+                  result.errorList.push(item);
+                  result.error++;
+                }
+                if (
+                  item.action &&
+                  item.action.extra &&
+                  item.action.operate === "rename"
+                ) {
+                  if (item.action.extra === "aNumber") {
+                    aNumberMap[item.action.params.newName] =
+                      item.action.params.newPath;
+                    if (
+                      item.action.params.current &&
+                      item.action.params.current !== item.path
+                    ) {
+                      unlink(item.action.params.current);
+                    }
+                  }
+                }
+                result.done++;
+              })
+              .catch(ex => {
+                result.errorList.push(ex);
+                result.done++;
                 result.error++;
-              }
-              result.done++;
-            })
-            .catch((ex) => {
-              result.errorList.push(ex);
-              result.done++;
-              result.error++;
-            })
-            .finally(() => {
-              result.trackCount = trackCount;
-              trackCount--;
-              finishCallback && finishCallback();
-              callback(result);
-            })
-        );
+              })
+              .finally(() => {
+                result.trackCount = trackCount;
+                trackCount--;
+                finishCallback && finishCallback();
+                callback(result);
+              })
+          );
+        }
       }
     });
     await Promise.all(promiseList);
+    if (Object.keys(aNumberMap).length) {
+      selectTable("number_map").merge(aNumberMap);
+    }
     return result;
   }
 };

@@ -70,6 +70,9 @@ export default {
     };
   },
   methods: {
+    getSelected() {
+      return this.selected;
+    },
     onItemClick(data) {
       this.setContextNode();
       this.active = data[this.idKey];

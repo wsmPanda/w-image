@@ -7,6 +7,7 @@
       :defaultOpen="true"
       :selected="selected"
       multipleSelect
+      ref="tree"
     >
       <template v-slot:name="{ data }">
         <Icon
@@ -25,7 +26,32 @@
           class="tree-action"
           :class="{ error: data.action.error }"
         >
-          {{ data.action.message }}
+          {{ data.action.params && data.action.params.newName }}
+          <template
+            v-if="
+              data.action.params &&
+                data.action.params.current &&
+                data.path !== data.action.params.current
+            "
+          >
+            <a
+              @click="
+                $connect.run('openDictory', {
+                  path: data.action.params.current
+                })
+              "
+              >{{ data.action.params.current }}</a
+            >
+            -
+            <a
+              @click="
+                $connect.run('openDictory', {
+                  path: data.path
+                })
+              "
+              >{{ data.path }}</a
+            >
+          </template>
         </div>
       </template>
     </CommonTree>
@@ -42,6 +68,7 @@ export default {
   },
   data() {
     return {
+      numberMap: {},
       selected: [],
       oparations: [
         {
@@ -63,8 +90,17 @@ export default {
       ]
     };
   },
-  methods: {},
-  created() {}
+  methods: {
+    resetSelect() {
+      this.selected = [];
+    },
+    getSelected() {
+      return this.selected;
+    }
+  },
+  async created() {
+    this.numberMap = await this.$connect.getData("number_map");
+  }
 };
 </script>
 
@@ -73,12 +109,15 @@ export default {
   .tree-item-name span {
     display: flex;
   }
-  .tree-common .tree-item .tree-item-name {
-    font-size: 12px;
-    padding-top: 0;
-    padding-bottom: 0;
-    .ivu-icon-md-document {
-      color: rgb(196, 209, 252);
+  .tree-common {
+    overflow: auto;
+    .tree-item .tree-item-name {
+      font-size: 12px;
+      padding-top: 0;
+      padding-bottom: 0;
+      .ivu-icon-md-document {
+        color: rgb(196, 209, 252);
+      }
     }
   }
 }
