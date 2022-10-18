@@ -40,6 +40,7 @@
           :class="{
             'icon-dictory': data.type === 'dictory',
             'icon-set': data.type === 'set',
+            'icon-empty': data.hasRead && (!data.sub || !data.sub.length),
             'icon-error': data.error
           }"
           :type="data.open ? 'ios-folder-open' : 'md-folder'"
@@ -264,15 +265,16 @@ export default {
       }
       let node = this.dictory;
       let pathText = "";
+      let currentFolder;
       if (isMac) {
         pathText = "/";
       }
       path.forEach((item, index) => {
         pathText += (pathText ? "/" : "") + item;
-        console.log(node);
         let folder = node.find(
           i => i.name === item || (i.path && i.path.indexOf(pathText) === 0)
         );
+
         if (!folder || folder.path === pathText) {
           if (!folder) {
             folder = {
@@ -285,7 +287,12 @@ export default {
             node.push(folder);
           }
           node = folder.sub;
+          this.$set(folder, "open", true);
+          currentFolder = folder;
         }
+      });
+      setTimeout(() => {
+        this.$main.onDictoryChange(currentFolder);
       });
     },
     mergeDictoryList(list) {

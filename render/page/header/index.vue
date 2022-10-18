@@ -93,6 +93,11 @@
       </Button>
       <Task></Task>
     </div>
+    <RadioGroup v-model="$main.config.mainLayout.layoutType" type="button" size="small">
+      <Radio label="right"> <Icon type="md-arrow-dropright" /> </Radio>
+      <Radio label="bottom"><Icon type="md-arrow-dropdown"/></Radio>
+    </RadioGroup>
+
     <RadioGroup v-model="$main.storage.viewType" type="button" size="small">
       <Radio label="book"> <Icon type="md-book" /> </Radio>
       <Radio label="grid"><Icon type="md-grid"/></Radio>

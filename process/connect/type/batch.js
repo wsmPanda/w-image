@@ -1,6 +1,7 @@
 import Iterator from "../../util/iterator";
 import fs from "fs";
 import path from "path";
+import { exec } from "child_process"; // 输出当前目录（不一定是代码所在的目录）下的文件和文件夹
 
 var fse = require("fs-extra");
 
@@ -39,7 +40,7 @@ function rmdir(dir, callback) {
 async function shellFiles(data) {
   let files = getFileList(data);
   let nameMap = {};
-  files.forEach((name) => {
+  files.forEach(name => {
     let newName = name.split("/").pop();
     if (nameMap[newName] || !newName) {
       newName = name.replace(data.path + "/", "").replace(/\//g, "_");
@@ -48,10 +49,10 @@ async function shellFiles(data) {
     }
     fse
       .rename(name, data.path + "/" + newName)
-      .then((res) => {
+      .then(res => {
         console.log("rename:", newName);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   });
@@ -60,12 +61,12 @@ async function shellFiles(data) {
 function getFileList(data) {
   let res = [];
   if (data.files) {
-    data.files.forEach((name) => {
+    data.files.forEach(name => {
       res.push(data.path + "/" + name);
     });
   }
   if (data.sub) {
-    data.sub.forEach((item) => {
+    data.sub.forEach(item => {
       res = res.concat(getFileList(item));
     });
   }
@@ -92,7 +93,7 @@ async function clearEmpty(dir) {
   }
   if (count === 0) {
     try {
-      await rmdir(dir, (e) => {
+      await rmdir(dir, e => {
         if (e) {
           console.log(e);
         } else {
@@ -113,7 +114,7 @@ export default {
     });
 
     await iterator.run();
-    iterator.dataList.forEach((path) => {
+    iterator.dataList.forEach(path => {
       if (typeof path === "string") {
         let l = path.split(".");
         let format = "";
@@ -128,7 +129,7 @@ export default {
           res = l.join(".");
         }
 
-        fs.rename(path, res, (err) => {
+        fs.rename(path, res, err => {
           if (err) {
             console.error(err);
           }
@@ -149,11 +150,11 @@ export default {
   async MoveFiles() {},
   async deleteFiles({ data }) {
     data &&
-      data.forEach((path) => {
+      data.forEach(path => {
         // rmdir(path, () => {
         //   console.log("DELETE:", path);
         // });
-        fs.rmdir(path, { recursive: true }, (error) => {
+        fs.rmdir(path, { recursive: true }, error => {
           if (path) {
             clearEmpty(path);
             console.log("DELETE:", path);
@@ -161,6 +162,42 @@ export default {
             console.error(error);
           }
         });
+      });
+  },
+  async removeFiles({ data }) {
+    data &&
+      data.forEach(path => {
+        path = path.replace(/\//g, "\\");
+        if (path.indexOf(".") > 0) {
+          exec(`del /a/f/q "${path}"`, (err, stdout, stderr) => {
+            if (err) {
+              console.log(err);
+              return;
+            } else {
+              console.log("DELETE:", path);
+            }
+          });
+        } else {
+          exec(`rd /s/q "${path}"`, (err, stdout, stderr) => {
+            if (err) {
+              console.log(err);
+              return;
+            } else {
+              console.log("DELETE:", path);
+            }
+          });
+        }
+        // rmdir(path, () => {
+        //
+        // });
+        // fs.unlink(path, (error) => {
+        //   if (path) {
+        //     clearEmpty(path);
+        //     console.log("DELETE:", path);
+        //   } else {
+        //     console.error(error);
+        //   }
+        // });
       });
   }
 };

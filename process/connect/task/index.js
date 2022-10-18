@@ -29,6 +29,7 @@ async function walkFiles(data, func) {
     data.sub.forEach(item => {
       if (item.type === "dictory") {
         walkFiles(item, func);
+        func(item);
       } else {
         func(item);
       }
@@ -68,6 +69,7 @@ export default {
     let actionsRuner = actions.map(action =>
       Action[action.type](action.options, numberMap)
     );
+    console.log(actionsRuner)
     walkFiles(res, data => {
       actionsRuner.forEach(action => {
         data.action = action(data);

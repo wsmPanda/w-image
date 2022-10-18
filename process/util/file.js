@@ -16,7 +16,7 @@ const videoSuffix = [
   "mpg",
   "mpeg",
   "mpe",
-  // "ts",
+  "ts",
   // "div",
   // "dv",
   // "divx",

@@ -1,5 +1,5 @@
 <template>
-  <div class="layout">
+  <div class="layout" :class="layoutClass">
     <div
       class="layout-slot layout-slot-left"
       :style="{ width: config.leftFold ? '8px' : config.leftWidth + 'px' }"
@@ -57,6 +57,13 @@ export default {
   data() {
     return { resizeWidthDict: 1, widthOffset: 0 };
   },
+  computed: {
+    layoutClass() {
+      return {
+        "layout-right-bottom": this.config.layoutType === "bottom"
+      };
+    }
+  },
   methods: {
     onWidthResize(e, dict) {
       this.resizeWidthDict = dict;
@@ -98,6 +105,21 @@ export default {
     margin-top: -6px;
     &:hover {
       color: #888;
+    }
+  }
+  &.layout-right-bottom {
+    flex-wrap: wrap;
+    .layout-center {
+      height: 50%;
+    }
+    .layout-slot-left {
+      min-width: 20%;
+      height: 50%;
+    }
+    .layout-slot-right {
+      width: 100% !important;
+      height: 50%;
+      overflow: auto;
     }
   }
 }

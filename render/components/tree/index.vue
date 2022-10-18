@@ -76,7 +76,15 @@ export default {
     onItemClick(data) {
       this.setContextNode();
       this.active = data[this.idKey];
+
       this.$emit("on-active", { id: this.active, data });
+    },
+    toNext() {
+      const item = this.node[this.active];
+      if (item.$parent && item.$parent.subData[item.index + 1]) {
+        console.log(item.$parent.subData[item.index + 1]);
+        this.onItemClick(item.$parent.subData[item.index + 1]);
+      }
     },
     onItemCheck(data) {
       let id = data[this.idKey];
@@ -171,6 +179,11 @@ export default {
     if (this.initActive) {
       this.activeReady = false;
     }
+    window.addEventListener("keyup", e => {
+      if (e.key === "x" || e.key === "z") {
+        this.toNext();
+      }
+    });
   }
 };
 </script>

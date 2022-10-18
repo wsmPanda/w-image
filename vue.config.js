@@ -26,7 +26,12 @@ module.exports = {
       },
       externals: ["ffmpeg", "@ffmpeg-installer/ffmpeg", "fluent-ffmpeg"],
       mainProcessWatch: ["process/main", "process"],
-      mainProcessFile: "process/main"
+      mainProcessFile: "process/main",
+      builderOptions: {
+        win: {
+          requestedExecutionLevel: "requireAdministrator"
+        }
+      }
     }
   },
   chainWebpack: config => {

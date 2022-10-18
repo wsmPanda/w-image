@@ -36,6 +36,7 @@
         v-for="(item, index) of subData"
         :data="item"
         :key="index"
+        :index="index"
         :deep="deep + 1"
         @remove="removeChildren(index)"
         ><template v-slot:name="{ data, deep, open }">
@@ -58,6 +59,7 @@ export default {
   components: { Icon },
   props: {
     data: {},
+    index: Number,
     deep: {
       type: Number,
       default: 0
@@ -175,6 +177,9 @@ export default {
       }
       &.icon-error {
         color: #d9dadc;
+      }
+      &.icon-empty {
+        color: #fbc87671;
       }
     }
 

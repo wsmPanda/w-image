@@ -87,7 +87,7 @@ export default {
   },
   methods: {
     cleanCheck() {
-      this.backData = [...this.data[this.value]];
+      this.backData[this.value] = [...this.data[this.value]];
       this.$checkList.cleanCheck();
     },
     onUndo() {
@@ -131,7 +131,9 @@ export default {
       this.cleanCheck();
     },
     onDeleteFile() {
-      this.$connect.run("deleteFiles", { data: this.getPathList(this.activeData) });
+      this.$connect.run("removeFiles", {
+        data: this.getPathList(this.activeData)
+      });
       this.cleanCheck();
     }
   },

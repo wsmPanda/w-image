@@ -80,7 +80,7 @@ export default {
           }
         });
         this.actions.push({
-          type: "aNumber"
+          type: "resort"
         });
         this.filters.push({
           type: "format",

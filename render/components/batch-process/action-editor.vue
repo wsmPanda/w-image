@@ -65,6 +65,10 @@ export default {
           code: "aNumber"
         },
         {
+          name: "排重",
+          code: "resort"
+        },
+        {
           name: "删除",
           code: "delete",
           icon: "md-trash",
