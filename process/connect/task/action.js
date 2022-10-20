@@ -1,8 +1,12 @@
-let nameMap = {};
+import fs from 'fs'
+function readJson (name) {
+  let data = fs.readFileSync(name);
+  return JSON.parse(data.toString());
+}
 
 export default {
-  async delete() {
-    return function({ path }) {
+  async delete () {
+    return function ({ path }) {
       return {
         operate: "unlink",
         params: {
@@ -11,47 +15,42 @@ export default {
       };
     };
   },
-  async rename() {},
-  async clear() {},
-  async format() {},
-  async hull() {},
-  async move() {},
-  async cpoy() {},
-  resort(options, aNumberMap = {}) {
-    return function(data) {
-      let path = data.path;
-      let pathList = path.split(/\\|\//);
-      let str = pathList.pop();
-
-      if (nameMap[str]) {
-        return {
-          operate: "rename",
-          message: "",
-          params: {
-            path,
-            newPath: path,
-            newName: str + " " + nameMap[str]
-          },
-          extra: "aNumber"
-        };
-      } else {
-        nameMap[str] = path;
-        return {
-          operate: "rename",
-          message: null,
-          params: {
-            path,
-            newPath: path,
-            newName: "xxxx"
-          },
-          extra: "aNumber"
-        };
+  async rename () { },
+  async clear () { },
+  async format () { },
+  async hull () { },
+  async move () { },
+  async cpoy () { },
+  aNumberCompare (options, aNumberMap = {}) {
+    // let nameMap = {};
+    return function ({ path }) {
+      const cMap = (readJson(path))
+      const res = {
+        operate: "batch",
+        data: []
       }
-    };
+      for (let name in aNumberMap) {
+        if (cMap[name]) {
+          res.data.push({
+            path: aNumberMap[name],
+            operate: "unlink",
+            params: {
+              current: cMap[name],
+              path: aNumberMap[name],
+              name,
+              newPath: aNumberMap[name],
+              newName: name
+            }
+          })
+        }
+      }
+      return res
+
+    }
   },
-  aNumber(options, aNumberMap = {}) {
+  aNumber (options, aNumberMap = {}) {
     let nameMap = {};
-    return function({ path }) {
+    return function ({ path }) {
       let pathList = path.split(/\\|\//);
       let name = pathList.pop();
       let nameList = name.split(".");

@@ -5,15 +5,23 @@ import operationExecute from "./operation";
 import { selectTable } from "../../db";
 import { unlink } from "fs-extra";
 
-function getFileObject(data) {
+function getFileObject (data) {
   let res = {
     path: data.path,
     sub: [],
     type: "dictory"
   };
-  data.sub.forEach(item => {
-    res.sub.push(getFileObject(item));
-  });
+  if (data.sub) {
+    data.sub.forEach(item => {
+      res.sub.push(getFileObject(item));
+    });
+  }
+  if (data.type === 'file') {
+    res.sub.push({
+      path: data.path,
+      type: "file"
+    });
+  }
   data.files &&
     data.files.forEach(item => {
       res.sub.push({
@@ -24,7 +32,7 @@ function getFileObject(data) {
   return res;
 }
 
-async function walkFiles(data, func) {
+async function walkFiles (data, func) {
   if (data.sub) {
     data.sub.forEach(item => {
       if (item.type === "dictory") {
@@ -36,7 +44,7 @@ async function walkFiles(data, func) {
     });
   }
 }
-async function walkSyncFiles(data, func) {
+async function walkSyncFiles (data, func) {
   if (data.sub) {
     for (let item of data.sub) {
       if (item.type === "dictory") {
@@ -49,7 +57,7 @@ async function walkSyncFiles(data, func) {
 }
 
 export default {
-  async taskPreview({ selectors = [], filters = [], actions = [] }) {
+  async taskPreview ({ selectors = [], filters = [], actions = [] }) {
     let res = [];
     let fileList = [];
     let fliterList = filters.map(filter => {
@@ -75,9 +83,27 @@ export default {
         data.action = action(data);
       });
     });
+    if (res.sub) {
+      const sub = res.sub
+      res.sub = []
+      sub.forEach(item => {
+        console.log(item)
+        if (item.action && item.action.operate === 'batch') {
+          item.action.data.forEach(d => res.sub.push(({
+            path: d.path,
+            type: 'file',
+            action: d
+          })))
+        }
+        else {
+          res.sub.push(item)
+        }
+      })
+    }
+    console.log(res)
     return res;
   },
-  async taskExecute({ data, track, selected }, event, callback) {
+  async taskExecute ({ data, track, selected }, event, callback) {
     let promiseList = [];
     let result = {
       data: data,
@@ -89,7 +115,7 @@ export default {
     track = track || 5;
     let trackCount = 0;
     let finishCallback;
-    function executeTrack() {
+    function executeTrack () {
       if (trackCount < track) {
         return;
       } else {

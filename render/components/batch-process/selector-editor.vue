@@ -49,8 +49,8 @@ export default {
       type: Array,
       default() {
         return [];
-      }
-    }
+      },
+    },
   },
   data() {
     return {
@@ -63,17 +63,30 @@ export default {
             fields: [
               {
                 key: "path",
-                type: "file"
+                type: "file",
               },
               {
                 key: "deep",
                 type: "number",
                 attr: {
-                  placeholder: "层级"
-                }
-              }
-            ]
-          }
+                  placeholder: "层级",
+                },
+              },
+            ],
+          },
+        },
+        {
+          name: "文件",
+          code: "file",
+          icon: "md-file",
+          form: {
+            fields: [
+              {
+                key: "path",
+                type: "file",
+              },
+            ],
+          },
         },
         {
           name: "收藏夹",
@@ -83,10 +96,10 @@ export default {
             fields: [
               {
                 key: "collection",
-                type: "select"
-              }
-            ]
-          }
+                type: "select",
+              },
+            ],
+          },
         },
         {
           name: "标签",
@@ -96,12 +109,12 @@ export default {
             fields: [
               {
                 key: "tag",
-                type: "select"
-              }
-            ]
-          }
-        }
-      ]
+                type: "select",
+              },
+            ],
+          },
+        },
+      ],
     };
   },
   computed: {
@@ -110,19 +123,19 @@ export default {
         res[item.code] = item;
         return res;
       }, {});
-    }
+    },
   },
   methods: {
     addSelector(selector) {
       this.value.push({
         type: selector.code,
-        options: {}
+        options: {},
       });
     },
-    initSelector() {}
+    initSelector() {},
   },
   created() {
     this.initSelector();
-  }
+  },
 };
 </script>

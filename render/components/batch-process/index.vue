@@ -46,7 +46,7 @@ export default {
     ActionEditor,
     SelectorEditor,
     FilterEditor,
-    FileTable
+    FileTable,
   },
   props: { value: Boolean },
   data() {
@@ -58,7 +58,7 @@ export default {
       actions: [],
       fileList: [],
       previewLoading: false,
-      progressError: false
+      progressError: false,
     };
   },
   watch: {
@@ -66,7 +66,7 @@ export default {
       if (v) {
         this.initData();
       }
-    }
+    },
   },
   methods: {
     initData() {
@@ -76,17 +76,17 @@ export default {
           type: "dictory",
           options: {
             path: this.$main.storage.activeTree.path,
-            deep: 2
-          }
+            deep: 2,
+          },
         });
         this.actions.push({
-          type: "resort"
+          type: "aNumber",
         });
         this.filters.push({
           type: "format",
           options: {
-            type: "video"
-          }
+            type: "video",
+          },
         });
       }
     },
@@ -96,7 +96,7 @@ export default {
       let data = await this.$connect.run("taskPreview", {
         selectors: this.selectors,
         filters: this.filters,
-        actions: this.actions
+        actions: this.actions,
       });
       this.fileList = [data];
       this.previewLoading = false;
@@ -114,7 +114,7 @@ export default {
         "taskExecute",
         {
           data: this.fileList[0],
-          selected: this.$refs.table && this.$refs.table.getSelected()
+          selected: this.$refs.table && this.$refs.table.getSelected(),
         },
         this.onExecuteProgress
       );
@@ -125,8 +125,8 @@ export default {
       this.progressCount = data.done;
       this.progressError = data.error;
       this.progressTotal = data.total;
-    }
+    },
   },
-  created() {}
+  created() {},
 };
 </script>

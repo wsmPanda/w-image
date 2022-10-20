@@ -54,15 +54,19 @@ export default {
       type: Array,
       default() {
         return [];
-      }
-    }
+      },
+    },
   },
   data() {
     return {
       selectors: [
         {
           name: "序号处理",
-          code: "aNumber"
+          code: "aNumber",
+        },
+        {
+          name: "序号比较",
+          code: "aNumberCompare",
         },
         {
           name: "排重",
@@ -76,10 +80,10 @@ export default {
             fields: [
               {
                 key: "collection",
-                type: "select"
-              }
-            ]
-          }
+                type: "select",
+              },
+            ],
+          },
         },
         {
           name: "批量重命名",
@@ -89,14 +93,14 @@ export default {
             fields: [
               {
                 key: "match",
-                type: "select"
+                type: "select",
               },
               {
                 key: "result",
-                type: "select"
-              }
-            ]
-          }
+                type: "select",
+              },
+            ],
+          },
         },
         {
           name: "重命名",
@@ -106,10 +110,10 @@ export default {
             fields: [
               {
                 key: "tag",
-                type: "select"
-              }
-            ]
-          }
+                type: "select",
+              },
+            ],
+          },
         },
         {
           name: "后缀替换",
@@ -119,10 +123,10 @@ export default {
             fields: [
               {
                 key: "path",
-                type: "file"
-              }
-            ]
-          }
+                type: "file",
+              },
+            ],
+          },
         },
         {
           name: "退壳",
@@ -133,10 +137,10 @@ export default {
             fields: [
               {
                 key: "path",
-                type: "file"
-              }
-            ]
-          }
+                type: "file",
+              },
+            ],
+          },
         },
         {
           name: "移动",
@@ -147,10 +151,10 @@ export default {
             fields: [
               {
                 key: "path",
-                type: "file"
-              }
-            ]
-          }
+                type: "file",
+              },
+            ],
+          },
         },
         {
           name: "复制",
@@ -161,12 +165,12 @@ export default {
             fields: [
               {
                 key: "path",
-                type: "file"
-              }
-            ]
-          }
-        }
-      ]
+                type: "file",
+              },
+            ],
+          },
+        },
+      ],
     };
   },
   computed: {
@@ -175,19 +179,19 @@ export default {
         res[item.code] = item;
         return res;
       }, {});
-    }
+    },
   },
   methods: {
     addSelector(selector) {
       this.value.push({
         type: selector.code,
-        options: {}
+        options: {},
       });
     },
-    initSelector() {}
+    initSelector() {},
   },
   created() {
     this.initSelector();
-  }
+  },
 };
 </script>
