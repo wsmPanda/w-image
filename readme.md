@@ -1,24 +1,30 @@
-# w-image
+## Recommended IDE Setup
 
-## Project setup
-```
-npm install
-```
+- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Project Setup
 
-### Compiles and minifies for production
-```
-npm run build
+### Install
+
+```bash
+$ npm install
 ```
 
-### Lints and fixes files
-```
-npm run lint
+### Development
+
+```bash
+$ npm run dev
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Build
+
+```bash
+# For windows
+$ npm run build:win
+
+# For macOS
+$ npm run build:mac
+
+# For Linux
+$ npm run build:linux
+```
