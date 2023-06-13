@@ -1,10 +1,12 @@
 import promise from "./promise"
 import EventEmitter from "./event-emitter"
+import { toRawData } from "./raw"
+
 export default class ConnectStream extends EventEmitter {
   constructor(event, payload, options) {
     super()
     this.event = event
-    this.payload = payload
+    this.payload = toRawData(payload)
     this.options = options
     this.finish = false
     this.loading = false

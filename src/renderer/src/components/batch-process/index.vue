@@ -1,5 +1,5 @@
 <template>
-  <Modal :value="value" @input="$emit('update:value', $event)" width="90%">
+  <Modal :modelValue="value" @update:modelValue="$emit('update:value', $event)" width="90%">
     <div class="batch-process">
       <div class="batch-process-config">
         <div class="batch-process-block batch-process-selector">

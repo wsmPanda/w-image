@@ -22,7 +22,7 @@
       </div>
     </div>
     <div class="file-check">
-      <Checkbox
+      <!-- <Checkbox
         v-for="(item, index) of $main.checkList"
         :key="index"
         :value="$main.isCheck(data, index)"
@@ -32,7 +32,7 @@
         :key="$main.checkList.length"
         :value="$main.isCheck(data, $main.checkList.length)"
         @click.native.prevent="$main.check(data, $main.checkList.length)"
-      ></Checkbox>
+      ></Checkbox> -->
     </div>
     <PdfViewer v-if="isPdf" :src="data" />
     <ImageViewer

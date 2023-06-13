@@ -1,6 +1,5 @@
 <template>
   <div class="page-view" v-if="pageInit">
-    1{{ storage.active }}1
     <Header></Header>
     <Layout class="page-content" ref="layout" :config="config.mainLayout || {}">
       <template v-slot:left>
@@ -417,7 +416,8 @@ export default {
       this.storage = (await window.ConnectRun("getStorage")) || {}
       this.storage = mergeObject(this.storage, {
         viewType: "grid",
-        leftTab: "folder"
+        leftTab: "folder",
+        checkIndex: 0
       })
       this.pageInit = true
       let setStorage = functionDebounce((e) => window.ConnectRun("setStorage", e))

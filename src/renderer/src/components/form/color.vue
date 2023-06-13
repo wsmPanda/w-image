@@ -1,8 +1,8 @@
 <template>
   <ColorPicker
     ref="input"
-    :value="value || ''"
-    @input="input"
+    :modelValue="value || ''"
+    @update:modelValue="input"
     transfer
   ></ColorPicker>
 </template>

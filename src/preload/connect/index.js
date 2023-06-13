@@ -1,6 +1,7 @@
 import primise from "./promise"
 import task from "./task"
 import ConnectStream from "./connect-stream"
+
 const Connect = {
   run(event, payload = {}) {
     return primise(event, payload)

@@ -27,11 +27,7 @@
         <slot name="name" :data="data" :deep="deep" :open="open"></slot>
       </span>
     </div>
-    <div
-      v-if="data && subData && subData.length"
-      v-show="open"
-      class="tree-item-sub"
-    >
+    <div v-if="data && subData && subData.length" v-show="open" class="tree-item-sub">
       <TreeItem
         v-for="(item, index) of subData"
         :data="item"
@@ -40,19 +36,14 @@
         :deep="deep + 1"
         @remove="removeChildren(index)"
         ><template v-slot:name="{ data, deep, open }">
-          <slot
-            name="name"
-            :data="data"
-            :deep="deep"
-            :open="open"
-          ></slot></template
+          <slot name="name" :data="data" :deep="deep" :open="open"></slot></template
       ></TreeItem>
     </div>
   </div>
 </template>
 
 <script>
-import { Icon } from "view-ui-plus";
+import { Icon } from "view-ui-plus"
 export default {
   name: "TreeItem",
   inject: ["$treeRoot"],
@@ -67,95 +58,92 @@ export default {
   },
   data() {
     return {
-      open:
-        this.data.open === undefined
-          ? this.$treeRoot.defaultOpen
-          : this.data.open,
+      open: this.data.open === undefined ? this.$treeRoot.defaultOpen : this.data.open,
       loading: false
-    };
+    }
   },
   computed: {
     subData() {
-      return this.data && this.data[this.subKey];
+      return this.data && this.data[this.subKey]
     },
     subKey() {
-      return this.$treeRoot.subKey;
+      return this.$treeRoot.subKey
     },
     dataKey() {
-      return this.data[this.$treeRoot.idKey];
+      return this.data[this.$treeRoot.idKey]
     },
     hasSubData() {
       if (!this.$treeRoot.subGetter) {
-        return this.subData && this.subData.length;
+        return this.subData && this.subData.length
       } else {
-        return !this.data.hasRead || (this.subData && this.subData.length);
+        return !this.data.hasRead || (this.subData && this.subData.length)
       }
     },
     hasRead() {
-      return this.data.hasRead || (this.subData && this.subData.length > 0);
+      return this.data.hasRead || (this.subData && this.subData.length > 0)
     }
   },
   methods: {
     onClick() {
-      this.$emit("on-click");
-      this.$treeRoot.onItemClick(this.data);
+      this.$emit("on-click")
+      this.$treeRoot.onItemClick(this.data)
     },
     async onRefresh() {
-      let open = this.data.open;
-      this.$set(this.data, "hasRead", false);
-      await this.getSubData();
-      this.data.open = open;
+      let open = this.data.open
+      this.$set(this.data, "hasRead", false)
+      await this.getSubData()
+      this.data.open = open
       if (this.dataKey === this.$treeRoot.active) {
-        this.$treeRoot.$emit("on-fresh", this.data);
+        this.$treeRoot.$emit("on-fresh", this.data)
       }
     },
     async onOpen() {
       if (!this.hasRead && this.$treeRoot.subGetter) {
-        await this.getSubData();
-        this.$set(this.data, "open", true);
-        this.open = true;
+        await this.getSubData()
+        this.$set(this.data, "open", true)
+        this.open = true
       } else {
-        this.$set(this.data, "open", !this.data.open);
-        this.open = this.data.open;
+        this.$set(this.data, "open", !this.data.open)
+        this.open = this.data.open
       }
     },
     async getSubData() {
-      this.loading = true;
+      this.loading = true
       try {
-        this.currentSubData = [];
-        let data = await this.$treeRoot.subGetter(this.data);
-        this.currentSubData = data || [];
+        this.currentSubData = []
+        let data = await this.$treeRoot.subGetter(this.data)
+        this.currentSubData = data || []
         if (data.error) {
-          this.$set(this.data, "error", true);
+          this.$set(this.data, "error", true)
         } else {
-          data.error = false;
+          data.error = false
         }
-        this.$set(this.data, this.subKey, this.currentSubData);
+        this.$set(this.data, this.subKey, this.currentSubData)
       } finally {
-        this.loading = false;
-        this.data.hasRead = true;
+        this.loading = false
+        this.data.hasRead = true
       }
     },
     removeNode() {
-      this.$emit("remove", { index: this.index, data: this.data });
+      this.$emit("remove", { index: this.index, data: this.data })
     },
     removeChildren(index) {
-      this.data[this.subKey] && this.data[this.subKey].splice(index, 1);
+      this.data[this.subKey] && this.data[this.subKey].splice(index, 1)
     }
   },
   destroyed() {
-    this.$treeRoot.node[this.dataKey] = null;
+    this.$treeRoot.node[this.dataKey] = null
   },
   mounted() {
     if (this.dataKey === this.$treeRoot.active && !this.activeReady) {
-      this.activeReady = true;
-      this.$el.scrollIntoViewIfNeeded();
+      this.activeReady = true
+      this.$el.scrollIntoViewIfNeeded()
     }
   },
   beforeMount() {
-    this.$treeRoot.node[this.dataKey] = this;
+    this.$treeRoot.node[this.dataKey] = this
   }
-};
+}
 </script>
 
 <style lang="less">

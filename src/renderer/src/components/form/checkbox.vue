@@ -1,8 +1,8 @@
 <template>
   <CheckboxGroup
-    :value="value || []"
+    :modelValue="value || []"
     size="small"
-    @input="input"
+    @update:modelValue="input"
     :v-bind="field.attr"
     :v-on="field.on"
   >

@@ -70,7 +70,7 @@ export default {
                     </div>
                   )
                 } else {
-                  return (
+                  return [
                     <Thumbnail
                       class={{
                         "image-list-item": true,
@@ -93,7 +93,7 @@ export default {
                       src={row}
                       style={this.thumbnailStyle}
                     ></Thumbnail>
-                  )
+                  ]
                 }
               })}
             </div>

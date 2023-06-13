@@ -1,5 +1,5 @@
 <template>
-  <i-input  size="small" :value="value" @input="input">
+  <i-input  size="small" :modelValue="value" @update:modelValue="input">
     <Icon slot="append" type="md-folder"></Icon>
   </i-input>
 </template>

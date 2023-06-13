@@ -106,4 +106,4 @@ export default [
     name: "number_map",
     type: "object"
   }
-];
+]

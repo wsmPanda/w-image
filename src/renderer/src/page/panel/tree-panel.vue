@@ -14,7 +14,6 @@
         <Button @click="updateDictory" icon="md-refresh" size="small"></Button>
         <Button icon="md-briefcase" @click="processShow = true" size="small" />
       </div>
-
       <div class="tree-header-right">
         <Button @click="updateDictory" icon="md-git-network" size="small"></Button>
       </div>
@@ -54,14 +53,14 @@
       :data="dictory"
       :edit="editing"
     ></Tree>
-    <Modal v-model:value="processShow" title="批量处理" @on-ok="onProcessOk">
+    <Modal v-model="processShow" title="批量处理" @on-ok="onProcessOk">
       <div>
         <div>后缀修改</div>
         <div>
-          <Input v-model:value="formatFrom" />->
-          <Input v-model:value="formatTo" />
+          <Input v-model="formatFrom" />->
+          <Input v-model="formatTo" />
         </div>
-        <Checkbox v-model:value="addMode">添加后缀</Checkbox>
+        <Checkbox v-model="addMode">添加后缀</Checkbox>
       </div>
       <div>
         <Button

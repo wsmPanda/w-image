@@ -1,7 +1,6 @@
 import { join } from "path"
 import icon from "../../resources/icon.png?asset"
-
-export default {
+const options: Electron.BrowserWindowConstructorOptions = {
   width: 1600,
   height: 600,
   show: false,
@@ -9,10 +8,10 @@ export default {
   ...(process.platform === "linux" ? { icon } : {}),
   webPreferences: {
     nodeIntegration: true,
-    contextIsolation: true,
+    contextIsolation: false,
     webSecurity: false,
-    enableRemoteModule: true,
     preload: join(__dirname, "../preload/index.js"),
     sandbox: false
   }
 }
+export default options

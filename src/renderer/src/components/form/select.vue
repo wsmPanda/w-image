@@ -1,8 +1,8 @@
 <template>
   <Select
     transfer
-    :value="value"
-    @input="input"
+    :modelValue="value"
+    @update:modelValue="input"
     :v-bind="field.attr"
     :v-on="field.on"
     :size="size"

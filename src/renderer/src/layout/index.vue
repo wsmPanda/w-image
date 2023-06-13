@@ -1,17 +1,24 @@
 <template>
   <div class="layout" :class="layoutClass">
     <div
+      v-if="!config.leftFold"
+      class="layout-width-resizer layout-width-resizer-left"
+      :style="{ left: config.leftWidth + 'px' }"
+      @mousedown="onWidthResize($event, 1)"
+    ></div>
+    <div
+      v-if="!config.rightFold"
+      class="layout-width-resizer ayout-width-resizer-right"
+      :style="{ right: config.rightWidth + 'px' }"
+      @mousedown="onWidthResize($event, -1)"
+    ></div>
+
+    <div
       class="layout-slot layout-slot-left"
       :style="{ width: config.leftFold ? '8px' : config.leftWidth + 'px' }"
     >
-      <div
-        class="layout-width-resizer"
-        @mousedown="onWidthResize($event, 1)"
-      ></div>
       <div class="layout-fold" @click="config.leftFold = !config.leftFold">
-        <Icon
-          :type="config.leftFold ? 'md-arrow-dropright' : 'md-arrow-dropleft'"
-        />
+        <Icon :type="config.leftFold ? 'md-arrow-dropright' : 'md-arrow-dropleft'" />
       </div>
       <div v-show="!config.leftFold" class="layout-slot-content">
         <slot name="left"></slot>
@@ -26,14 +33,8 @@
       class="layout-slot layout-slot-right"
       :style="{ width: config.rightFold ? '8px' : config.rightWidth + 'px' }"
     >
-      <div
-        class="layout-width-resizer"
-        @mousedown="onWidthResize($event, -1)"
-      ></div>
       <div class="layout-fold" @click="config.rightFold = !config.rightFold">
-        <Icon
-          :type="config.rightFold ? 'md-arrow-dropleft' : 'md-arrow-dropright'"
-        />
+        <Icon :type="config.rightFold ? 'md-arrow-dropleft' : 'md-arrow-dropright'" />
       </div>
       <div v-show="!config.rightFold" class="layout-slot-content">
         <slot name="right"></slot>
@@ -43,7 +44,7 @@
 </template>
 
 <script>
-import { Icon } from "view-ui-plus";
+import { Icon } from "view-ui-plus"
 /*
 TODO：寻找合适滚动条样式/插件
 */
@@ -55,38 +56,38 @@ export default {
     }
   },
   data() {
-    return { resizeWidthDict: 1, widthOffset: 0 };
+    return { resizeWidthDict: 1, widthOffset: 0 }
   },
   computed: {
     layoutClass() {
       return {
         "layout-right-bottom": this.config.layoutType === "bottom"
-      };
+      }
     }
   },
   methods: {
     onWidthResize(e, dict) {
-      this.resizeWidthDict = dict;
-      this.widthOffset = e.pageX;
-      window.addEventListener("mousemove", this.onMove, true);
-      window.addEventListener("mouseup", this.onReizeEnd, true);
+      this.resizeWidthDict = dict
+      this.widthOffset = e.pageX
+      window.addEventListener("mousemove", this.onMove, true)
+      window.addEventListener("mouseup", this.onReizeEnd, true)
     },
     onMove(e) {
       if (!this.resizeWidthDict) {
-        return;
+        return
       }
-      let offset = e.pageX - this.widthOffset;
-      this.widthOffset = e.pageX;
+      let offset = e.pageX - this.widthOffset
+      this.widthOffset = e.pageX
       this.config[(this.resizeWidthDict === 1 ? "left" : "right") + "Width"] +=
-        offset * this.resizeWidthDict;
+        offset * this.resizeWidthDict
     },
     onReizeEnd() {
-      this.resizeWidthDict = null;
-      window.removeEventListener("mouseup", this.onReizeEnd, true);
-      window.removeEventListener("mousemove", this.onMove, true);
+      this.resizeWidthDict = null
+      window.removeEventListener("mouseup", this.onReizeEnd, true)
+      window.removeEventListener("mousemove", this.onMove, true)
     }
   }
-};
+}
 </script>
 
 <style lang="less">
@@ -94,6 +95,7 @@ export default {
   display: flex;
   height: 100%;
   width: 100%;
+  position: relative;
   .layout-fold {
     cursor: pointer;
     font-size: 12px;
@@ -145,6 +147,7 @@ export default {
   top: 0;
   bottom: 0;
   width: 6px;
+  z-index: 1000;
   cursor: col-resize;
 }
 .layout-slot-left {

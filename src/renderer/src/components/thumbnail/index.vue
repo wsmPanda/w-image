@@ -37,7 +37,7 @@
       @dblclick.native.stop
       @mousedown.native.stop
       class="thumbnail-check"
-      :class="{ uncheck: !this.check }"
+      :class="{ uncheck: !check }"
       :type="'md-checkmark-circle'"
     />
     <Icon
@@ -51,10 +51,10 @@
 </template>
 
 <script>
-import { isImage, getSuffix } from 'render/util'
-import FileIcon from '../file-icon/index.vue'
+import { isImage, getSuffix } from "render/util"
+import FileIcon from "../file-icon/index.vue"
 export default {
-  inject: ['$main'],
+  inject: ["$main"],
   components: { FileIcon },
   props: {
     src: String,
@@ -82,7 +82,7 @@ export default {
   },
   computed: {
     name() {
-      return this.src && this.src.split('/').pop()
+      return this.src && this.src.split("/").pop()
     },
     isImage() {
       return isImage(this.src)
@@ -98,16 +98,16 @@ export default {
     onMousedown() {
       let dragWatcher = () => {
         this.onDragstart()
-        window.removeEventListener('mousemove', dragWatcher)
+        window.removeEventListener("mousemove", dragWatcher)
         dragWatcher = null
         if (upWatcher) {
-          window.removeEventListener('mouseup', upWatcher)
+          window.removeEventListener("mouseup", upWatcher)
           upWatcher = null
         }
       }
       let upWatcher = () => {
         if (dragWatcher) {
-          window.removeEventListener('mousemove', dragWatcher)
+          window.removeEventListener("mousemove", dragWatcher)
           dragWatcher = null
         }
         if (upWatcher) {
@@ -115,21 +115,21 @@ export default {
         }
       }
 
-      window.addEventListener('mousemove', dragWatcher)
-      window.addEventListener('mouseup', upWatcher)
+      window.addEventListener("mousemove", dragWatcher)
+      window.addEventListener("mouseup", upWatcher)
     },
     onDragstart() {
       setTimeout(() => {
-        window.ConnectRun('fileDrag', {
+        window.ConnectRun("fileDrag", {
           path: this.src
         })
       })
     },
     onCheck() {
-      this.$emit('check', this.check)
+      this.$emit("check", this.check)
     },
     onDelete() {
-      this.$emit('delete', this.data)
+      this.$emit("delete", this.data)
     }
   }
 }
@@ -227,7 +227,7 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  direction: rtl;
+  direction: ltr;
   text-align: center;
 }
 </style>

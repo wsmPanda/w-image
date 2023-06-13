@@ -160,7 +160,7 @@ export default {
 }
 .collect-name {
   flex: 1;
-  direction: rtl;
+  direction: ltr;
   text-align: left;
   text-overflow: ellipsis;
   overflow: hidden;

@@ -1,5 +1,5 @@
 <template>
-  <i-Switch :value="value" @input="input"></i-Switch>
+  <i-Switch :modelValue="value" @update:modelValue="input"></i-Switch>
 </template>
 
 <script>

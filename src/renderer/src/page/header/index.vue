@@ -14,14 +14,14 @@
         icon="md-barcode"
         size="small"
         style="width: 60px"
-        v-model:value="$main.config.image.column"
+        v-model="$main.config.image.column"
       />
       <Input
         v-if="$main.config.image"
         icon="md-resize"
         size="small"
         style="width: 70px"
-        v-model:value="$main.config.image.height"
+        v-model="$main.config.image.height"
       />
 
       <Dropdown trigger="click" transfer>
@@ -42,7 +42,7 @@
         <template v-slot:list>
           <DropdownMenu>
             <CheckList
-              v-model:value="$main.storage.checkIndex"
+              v-model="$main.storage.checkIndex"
               :data="$main.checkList"
             ></CheckList> </DropdownMenu
         ></template>
@@ -91,12 +91,12 @@
       </Button>
       <Task></Task>
     </div>
-    <RadioGroup v-model:value="$main.config.mainLayout.layoutType" type="button" size="small">
+    <RadioGroup v-model="$main.config.mainLayout.layoutType" type="button" size="small">
       <Radio label="right"> <Icon type="md-arrow-dropright" /> </Radio>
       <Radio label="bottom"><Icon type="md-arrow-dropdown" /></Radio>
     </RadioGroup>
 
-    <RadioGroup v-model:value="$main.storage.viewType" type="button" size="small">
+    <RadioGroup v-model="$main.storage.viewType" type="button" size="small">
       <Radio label="book"> <Icon type="md-book" /> </Radio>
       <Radio label="grid"><Icon type="md-grid" /></Radio>
       <Radio label="scroll"><Icon type="md-more" /></Radio>
