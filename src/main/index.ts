@@ -1,11 +1,11 @@
-import { app, shell, BrowserWindow } from "electron"
+import { app, shell, BrowserWindow, protocol } from "electron"
 import { join } from "path"
 import { electronApp, is } from "@electron-toolkit/utils"
-
+import url from "url"
 import ProcessCreate from "./create"
 import ProcessReady from "./ready"
 import WindowConfig from "./window"
-
+import "./video/service"
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow(WindowConfig)
@@ -35,6 +35,13 @@ function createWindow(): void {
 app.whenReady().then(() => {
   // Set app user model id for windows
   electronApp.setAppUserModelId("com.electron")
+
+  app.whenReady().then(() => {
+    protocol.registerFileProtocol("image", (request, callback) => {
+      const filePath = url.fileURLToPath("file://" + request.url.slice("image://".length))
+      callback(filePath)
+    })
+  })
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.

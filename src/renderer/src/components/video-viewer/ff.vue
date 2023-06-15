@@ -1,5 +1,15 @@
 <template>
   <div class="video-viewer">
+    <video
+      ref="video"
+      class="video"
+      controls="1"
+      preload
+      :muted="$main.storage.videoMuted"
+      :autoplay="$main.config.video.autoPlay"
+      @volumechange="onVolumechange"
+      :src="videoSrc"
+    ></video>
     <Button @click="snap">截图(F3)</Button>
     <canvas v-show="canvasShow" ref="canvas"></canvas>
   </div>
@@ -16,95 +26,88 @@ export default {
       videoReady: false,
       videoSource: null,
       playerOptions: {
-        sources: [
-          {
-            type: "video/mp4",
-            src: "file://" + this.data
-          }
-        ]
+        sources: []
       },
       canvasShow: false,
       videoWidth: 0,
       videoHeight: 0
-    };
+    }
+  },
+  computed: {
+    videoSrc() {
+      return (
+        "http://127.0.0.1:6789/video?video=" + encodeURIComponent(this.data.replace(/\\/g, "/"))
+      )
+    }
   },
   methods: {
     snap() {
-      let canvas = this.$refs.canvas;
-      let video = this.$refs.video;
-      this.ratio = video.videoWidth / video.videoHeight;
-      this.videoWidth = video.videoWidth - 100;
-      this.videoHeight = parseInt(this.videoWidth / this.ratio, 10);
-      canvas.width = this.videoWidth;
-      canvas.height = this.videoHeight;
-      let context = canvas.getContext("2d");
-      context.fillRect(0, 0, this.videoWidth, this.videoHeight);
-      context.drawImage(video, 0, 0, this.videoWidth, this.videoHeight);
-      canvas.toBlob(blob => {
-        let reader = new FileReader();
+      let canvas = this.$refs.canvas
+      let video = this.$refs.video
+      this.ratio = video.videoWidth / video.videoHeight
+      this.videoWidth = video.videoWidth - 100
+      this.videoHeight = parseInt(this.videoWidth / this.ratio, 10)
+      canvas.width = this.videoWidth
+      canvas.height = this.videoHeight
+      let context = canvas.getContext("2d")
+      context.fillRect(0, 0, this.videoWidth, this.videoHeight)
+      context.drawImage(video, 0, 0, this.videoWidth, this.videoHeight)
+      canvas.toBlob((blob) => {
+        let reader = new FileReader()
         reader.onload = () => {
-          let buffer = new Buffer(reader.result);
+          let buffer = new Buffer(reader.result)
           window.ConnectRun("saveBlob", {
             file: buffer,
             time: video.currentTime,
-            name: this.data
-              .split(/\/|\\/)
-              .pop()
-              .split(".")
-              .shift()
-          });
-        };
-        reader.onerror = err => console.error(err);
-        reader.readAsArrayBuffer(blob);
-        this.$Message.success("截图成功");
-      });
+            name: this.data.split(/\/|\\/).pop().split(".").shift()
+          })
+        }
+        reader.onerror = (err) => console.error(err)
+        reader.readAsArrayBuffer(blob)
+        this.$Message.success("截图成功")
+      })
     },
     onVolumechange() {
-      this.$set(this.$main.storage, "videoVolume", this.$refs.video.volume);
-      this.$set(this.$main.storage, "videoMuted", this.$refs.video.muted);
+      this.$set(this.$main.storage, "videoVolume", this.$refs.video.volume)
+      this.$set(this.$main.storage, "videoMuted", this.$refs.video.muted)
     }
   },
   beforeDestroy() {
-    window.removeEventListener("keyup", this.onSnap);
+    window.removeEventListener("keyup", this.onSnap)
   },
   mounted() {
     // this.$refs.video.volume = this.$main.storage.videoVolume || 0;
-    this.onSnap = e => {
+    this.onSnap = (e) => {
       if (e.code === "F3") {
-        this.snap();
+        this.snap()
       }
-    };
-    window.addEventListener("keyup", this.onSnap);
+    }
+    window.addEventListener("keyup", this.onSnap)
   },
   beforeMount() {
-    this.$connect
-      .run("video", {
-        path: this.data
-      })
-      .then(message => {
-        if (!message) {
-          return;
-        }
-        this.videoSource = message.videoSource;
-        this.playerOptions = {
-          techOrder: ["StreamPlay"],
-          StreamPlay: { duration: message.duration },
-          sources: [
-            {
-              type: "video/mp4",
-              src: message.videoSource
-            }
-          ]
-        };
-        this.videoReady = true;
-        setTimeout(() => {
-          if (this.$main.config.video.autoPlay) {
-            this.$refs.video.player.play();
-          }
-        });
-      });
+    // this.$connect
+    //   .run("video", {
+    //     path: this.data
+    //   })
+    //   .then((message) => {
+    //     if (!message) {
+    //       return
+    //     }
+    //     this.videoSource = message.videoSource
+    //     this.playerOptions = {
+    //       techOrder: ["StreamPlay"],
+    //       StreamPlay: { duration: message.duration },
+    //       sources: [
+    //         {
+    //           type: "video/mp4",
+    //           src: message.videoSource
+    //         }
+    //       ]
+    //     }
+    //     this.videoReady = true
+    //   })
   }
-};
+}
 </script>
 
 <style lang="less">

@@ -11,7 +11,7 @@
       @mouseup="onDragEnd"
       @mousemove="onMove"
       @click.stop
-      :src="'file://' + data"
+      :src="'image://' + data"
       :style="imageStyle"
     />
   </div>

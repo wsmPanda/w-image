@@ -4,7 +4,7 @@
       v-if="isImage && loaded"
       @error="loaded = false"
       class="thumbnail-img"
-      :src="'file://' + src"
+      :src="'image://' + src"
     />
     <div class="thumbnail-icon" v-else>
       <FileIcon :type="suffix"></FileIcon>
