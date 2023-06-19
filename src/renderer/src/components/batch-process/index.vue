@@ -16,11 +16,7 @@
         <div class="batch-process-tool">
           <Button @click="onPreview" icon="md-eye">预览</Button>
           <Button @click="onSave" icon="md-archive">保存</Button>
-          <Button
-            @click="onExecute"
-            icon="md-play"
-            :disbaled="data.done"
-            :loading="executing && !done"
+          <Button @click="onExecute" icon="md-play" :disabled="finish" :loading="executing && !finish"
             >执行</Button
           >
         </div>
@@ -70,6 +66,11 @@ export default {
       }
     }
   },
+  computed: {
+    finish() {
+      return this.progressTotal && this.progressTotal === this.progressCount
+    }
+  },
   methods: {
     initData() {
       Object.assign(this.$data, this.$options.data())
@@ -111,6 +112,7 @@ export default {
       if (!this.hasPreview) {
         await this.onPreview()
       }
+      this.progressCount = 0
       this.executing = false
       console.log(this.$refs.table && this.$refs.table.getSelected())
       let result = await this.$connect.task(
@@ -127,7 +129,7 @@ export default {
       this.progressCount = data.done
       this.progressError = data.error
       this.progressTotal = data.total
-      if (data.done || data.error) {
+      if (this.finish || data.error) {
         this.executing = false
       }
     }
