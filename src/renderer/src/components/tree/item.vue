@@ -12,8 +12,8 @@
     <div @click="onClick" class="tree-item-name">
       <Checkbox
         v-if="$treeRoot.multipleSelect"
-        :value="$treeRoot.selected.indexOf(dataKey) >= 0"
-        @input="$treeRoot.onItemCheck(data)"
+        :modelValue="$treeRoot.selected.indexOf(dataKey) >= 0"
+        @update:modelValue="$treeRoot.onItemCheck(data)"
         @click.stop
       ></Checkbox>
       <i v-if="loading" class="ivu-load-loop ivu-icon ivu-icon-ios-loading"></i>

@@ -16,7 +16,13 @@
         <div class="batch-process-tool">
           <Button @click="onPreview" icon="md-eye">预览</Button>
           <Button @click="onSave" icon="md-archive">保存</Button>
-          <Button @click="onExecute" icon="md-play">执行</Button>
+          <Button
+            @click="onExecute"
+            icon="md-play"
+            :disbaled="data.done"
+            :loading="executing && !done"
+            >执行</Button
+          >
         </div>
         <div class="batch-process-progress">
           <Progress :percent="(progressCount / progressTotal) * 100" hide-info></Progress>
@@ -30,13 +36,13 @@
   ></Modal>
 </template>
 <script>
-import ActionEditor from './action-editor.vue'
-import SelectorEditor from './selector-editor.vue'
-import FilterEditor from './filter-editor.vue'
-import FileTable from './file-table.vue'
-import './style.less'
+import ActionEditor from "./action-editor.vue"
+import SelectorEditor from "./selector-editor.vue"
+import FilterEditor from "./filter-editor.vue"
+import FileTable from "./file-table.vue"
+import "./style.less"
 export default {
-  inject: ['$main'],
+  inject: ["$main"],
   components: {
     ActionEditor,
     SelectorEditor,
@@ -53,7 +59,8 @@ export default {
       actions: [],
       fileList: [],
       previewLoading: false,
-      progressError: false
+      progressError: false,
+      executing: false
     }
   },
   watch: {
@@ -68,19 +75,19 @@ export default {
       Object.assign(this.$data, this.$options.data())
       if (this.$main.storage.activeTree.path) {
         this.selectors.push({
-          type: 'dictory',
+          type: "dictory",
           options: {
             path: this.$main.storage.activeTree.path,
             deep: 2
           }
         })
         this.actions.push({
-          type: 'aNumber'
+          type: "aNumber"
         })
         this.filters.push({
-          type: 'format',
+          type: "format",
           options: {
-            type: 'video'
+            type: "video"
           }
         })
       }
@@ -88,7 +95,7 @@ export default {
     async onPreview() {
       this.hasPreview = true
       this.previewLoading = true
-      let data = await window.ConnectRun('taskPreview', {
+      let data = await window.ConnectRun("taskPreview", {
         selectors: this.selectors,
         filters: this.filters,
         actions: this.actions
@@ -104,22 +111,25 @@ export default {
       if (!this.hasPreview) {
         await this.onPreview()
       }
+      this.executing = false
       console.log(this.$refs.table && this.$refs.table.getSelected())
       let result = await this.$connect.task(
-        'taskExecute',
+        "taskExecute",
         {
           data: this.fileList[0],
           selected: this.$refs.table && this.$refs.table.getSelected()
         },
         this.onExecuteProgress
       )
-      console.log(result)
     },
     onExecuteProgress(data) {
       this.fileList = [data.data]
       this.progressCount = data.done
       this.progressError = data.error
       this.progressTotal = data.total
+      if (data.done || data.error) {
+        this.executing = false
+      }
     }
   },
   beforeMount() {}
