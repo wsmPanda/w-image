@@ -1,6 +1,13 @@
 <template>
-  <div class="tree tree-common" @contextmenu="onContextmenu">
+  <div
+    class="tree tree-common"
+    :class="{
+      'tree-name-wrap': nameWrap
+    }"
+    @contextmenu="onContextmenu"
+  >
     <TreeItem
+      ref="items"
       v-for="(item, index) of data"
       :data="item"
       :key="index"
@@ -43,6 +50,7 @@ export default {
     selectable: { type: Boolean, default: true },
     idKey: { type: String, default: "path" },
     subKey: { type: String, default: "sub" },
+    nameWrap: { type: Boolean, default: false },
     nameKey: { type: String },
     menu: Function,
     icon: {},
@@ -172,6 +180,20 @@ export default {
     },
     removeChildren(index) {
       this.data.splice(index, 1)
+    },
+    async openAll(path) {
+      if (path) {
+        this.node[path]?.openAll()
+      } else if (this.$refs.items?.length) {
+        Promise.all(this.$refs.items.map((r) => r.openAll()))
+      }
+    },
+    async closeAll(path) {
+      if (path) {
+        this.node[path]?.closeAll()
+      } else if (this.$refs.items?.length) {
+        Promise.all(this.$refs.items.map((r) => r.closeAll()))
+      }
     }
   },
   beforeMount() {

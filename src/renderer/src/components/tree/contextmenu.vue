@@ -12,12 +12,22 @@
           }"
           @click="onClick(item)"
         >
-          <Icon class="contextmenu-item-icon" v-if="item.icon" :type="item.icon"></Icon
-          >{{ item.name }}
+          <Icon
+            class="contextmenu-item-icon"
+            v-if="item.icon?.indexOf('md-') === 0"
+            :type="item.icon"
+          ></Icon>
+          <i v-else-if="item.icon" :class="[item.icon]" />
+          {{ item.name }}
         </div>
         <div v-else class="contextmenu-item" :key="'x' + index">
-          <Icon class="contextmenu-item-icon" v-if="item.icon" :type="item.icon"></Icon
-          >{{ item.name }}<Icon type="md-arrow-dropright" />
+          <Icon
+            class="contextmenu-item-icon"
+            v-if="item.icon?.indexOf('md-') === 0"
+            :type="item.icon"
+          ></Icon>
+          <i v-else-if="item.icon" :class="[item.icon]" />
+          {{ item.name }}<Icon type="md-arrow-dropright" />
           <div class="contextmenu-item-children">
             <div
               v-for="(child, index) of item.children"

@@ -50,7 +50,8 @@ module.exports = {
     "@typescript-eslint/no-redeclare": ["error"],
     "linebreak-style": ["error", "unix"],
     "class-methods-use-this": "off",
-    "vue/attributes-order": "off"
+    "vue/attributes-order": "off",
+    "vue/no-reactive-component-props": "off"
   },
   settings: {},
   globals: {

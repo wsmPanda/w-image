@@ -13,9 +13,27 @@
         ></Button>
         <Button @click="updateDictory" icon="md-refresh" size="small"></Button>
         <Button icon="md-briefcase" @click="processShow = true" size="small" />
+        <Button @click="openAll" size="small"><i class="ri-expand-up-down-line"></i></Button>
+        <Button @click="closeAll" size="small"><i class="ri-contract-up-down-line"></i></Button>
       </div>
       <div class="tree-header-right">
-        <Button @click="updateDictory" icon="md-git-network" size="small"></Button>
+        <!-- <Button @click="updateDictory" icon="md-git-network" size="small"></Button> -->
+        <ButtonGroup>
+          <Button
+            size="small"
+            @click.native.stop="$main.storage.folderListMode = 'tree'"
+            :type="$main.storage.folderListMode === 'tree' ? 'primary' : 'default'"
+          >
+            <i class="ri-node-tree"></i>
+          </Button>
+          <Button
+            size="small"
+            @click.native.stop="$main.storage.folderListMode = 'list'"
+            :type="$main.storage.folderListMode !== 'tree' ? 'primary' : 'default'"
+          >
+            <i class="ri-list-check-2"></i
+          ></Button>
+        </ButtonGroup>
       </div>
     </div>
     <CommonTree
@@ -24,10 +42,10 @@
       :data="dictory"
       :initActive="active && active.path"
       :subGetter="subGetter"
+      :nameWrap="$main.config.image.folderNameWrap"
       @on-active="onTreeItemActive"
       @on-fresh="onTreeFersh"
       :menu="menu"
-      v-if="dev"
     >
       <template v-slot:name="{ data }">
         <Icon
@@ -43,16 +61,6 @@
         {{ data.path && data.path.split(/\/|\\/).pop() }}</template
       >
     </CommonTree>
-    <Tree
-      v-else
-      ref="tree"
-      class="tree-body"
-      :initActive="active"
-      @on-active="onTreeActive"
-      @on-fresh="onTreeFersh"
-      :data="dictory"
-      :edit="editing"
-    ></Tree>
     <Modal v-model="processShow" title="批量处理" @on-ok="onProcessOk">
       <div>
         <div>后缀修改</div>
@@ -85,13 +93,12 @@
 </template>
 
 <script>
-import Tree from "render/components/dictory-tree/index.vue"
 import CommonTree from "render/components/tree/index.vue"
 import { functionDebounce, isMac } from "render/util"
 
 export default {
   inject: ["$main"],
-  components: { Tree, CommonTree },
+  components: { CommonTree },
   props: {
     active: {}
   },
@@ -121,15 +128,15 @@ export default {
           }
         },
         {
+          icon: "ri-expand-up-down-line",
           name: "展开全部",
-          disabled: true,
           action({ path }) {
             vm.$refs.commonTree.openAll(path)
           }
         },
         {
+          icon: "ri-contract-up-down-line",
           name: "收起全部",
-          disabled: true,
           action({ path }) {
             vm.$refs.commonTree.closeAll(path)
           }
@@ -209,8 +216,8 @@ export default {
       this.addDictory(path)
     },
     async updateDictory() {
-      let dictoryList = await window.ConnectRun("getDictory")
-      this.dictory = this.dictoryParse(dictoryList)
+      this.dictoryList = await window.ConnectRun("getDictory")
+      this.dictory = this.dictoryParse(this.dictoryList)
     },
     onTreeFersh(data) {
       this.onTreeActive(data, false)
@@ -222,6 +229,9 @@ export default {
       this.$emit("on-active", { ...data, path: data.id })
     },
     dictoryParse(data) {
+      if (this.$main.storage.folderListMode !== "tree") {
+        return this.dictoryList
+      }
       let list = []
       for (let dictory of data) {
         let path = (dictory.path || "").split(/\\|\//)
@@ -299,14 +309,26 @@ export default {
         }
       }
       return res
+    },
+    openAll() {
+      this.$refs.commonTree.openAll()
+    },
+    closeAll() {
+      this.$refs.commonTree.closeAll()
     }
   },
+
   async beforeMount() {
     this.onTreeChange = functionDebounce(() => {
-      console.warn("???", { data: JSON.parse(JSON.stringify(this.dictory)) })
       window.ConnectRun("saveDictoryCache", { data: JSON.parse(JSON.stringify(this.dictory)) })
     })
     await this.updateDictoryCache()
+    this.$watch("$main.storage.folderListMode", {
+      deep: true,
+      handler() {
+        this.updateDictory()
+      }
+    })
     setTimeout(() => {
       this.$watch("dictory", {
         deep: true,

@@ -13,8 +13,10 @@
 
 <script>
 import DataForm from "render/components/form/index.vue"
-import { Switch } from "view-ui-plus"
+import { Switch as _Switch } from "view-ui-plus"
 import Tabs from "render/components/tabs/index.vue"
+import { markRaw } from "vue"
+const Switch = markRaw(_Switch)
 export default {
   components: { DataForm, Tabs },
   props: {
@@ -51,6 +53,11 @@ export default {
             {
               label: "展示空目录",
               key: "showEmptyFolder",
+              component: Switch
+            },
+            {
+              label: "目录折行显示",
+              key: "folderNameWrap",
               component: Switch
             },
             {

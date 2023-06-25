@@ -16,7 +16,7 @@
         <div class="batch-process-tool">
           <Button @click="onPreview" icon="md-eye">预览</Button>
           <Button @click="onSave" icon="md-archive">保存</Button>
-          <Button @click="onExecute" icon="md-play" :disabled="finish" :loading="executing && !finish"
+          <Button @click="onExecute" icon="md-play" :disabled="!!finish" :loading="executing && !finish"
             >执行</Button
           >
         </div>

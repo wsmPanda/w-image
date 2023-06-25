@@ -224,7 +224,6 @@ export default {
       shell.openPath(v)
     },
     onActiveImageChange(v) {
-      console.log(this.storage, "active", v)
       this.$set(this.storage, "active", v)
     },
     onDictoryClick(v) {

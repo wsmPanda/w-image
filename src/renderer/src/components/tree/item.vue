@@ -6,7 +6,7 @@
     :class="{
       active: dataKey === $treeRoot.active,
       context: dataKey === $treeRoot.contextKey,
-      single: !subData || !subData.length
+      single: (!subData || !subData.length) && !hasSubData
     }"
   >
     <div @click="onClick" class="tree-item-name">
@@ -20,15 +20,16 @@
       <Icon
         v-else-if="hasSubData"
         @click.native.stop="onOpen"
-        :type="open ? 'ios-arrow-up' : 'ios-arrow-forward'"
+        :type="open && subData && subData.length ? 'ios-arrow-up' : 'ios-arrow-forward'"
       ></Icon>
-      <span>
+      <span class="name-container">
         <!-- <Icon class="icon-fold" type="md-folder" /> -->
         <slot name="name" :data="data" :deep="deep" :open="open"></slot>
       </span>
     </div>
     <div v-if="data && subData && subData.length" v-show="open" class="tree-item-sub">
       <TreeItem
+        ref="items"
         v-for="(item, index) of subData"
         :data="item"
         :key="index"
@@ -107,6 +108,21 @@ export default {
         this.open = this.data.open
       }
     },
+    async openAll() {
+      await this.onOpen()
+      this.$nextTick(() => {
+        if (this.$refs.items?.length) {
+          Promise.all(this.$refs.items.map((r) => r.openAll()))
+        }
+      })
+    },
+    async closeAll() {
+      this.open = false
+      this.data.open = false
+      if (this.$refs.items?.length) {
+        Promise.all(this.$refs.items.map((r) => r.closeAll()))
+      }
+    },
     async getSubData() {
       this.loading = true
       try {
@@ -147,6 +163,13 @@ export default {
 </script>
 
 <style lang="less">
+.tree-name-wrap {
+  .name-container {
+    width: 100%;
+    padding-right: 8px;
+    white-space: normal;
+  }
+}
 .tree-common {
   .ivu-checkbox-wrapper {
     margin-right: 2px;

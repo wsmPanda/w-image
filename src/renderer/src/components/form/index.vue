@@ -16,12 +16,12 @@
       ></component>
       <Input
         v-else-if="!field.component"
-        :modelValue="value[field.key]"
+        :modelValue="(value[field.key] || '').toString()"
         :type="field.type"
         size="small"
         @update:modelValue="$set(value, field.key, $event)"
         v-bind="field.attr"
-        v-on="field.on"
+        v-on="field.on || {}"
       />
       <component
         v-else
@@ -31,7 +31,7 @@
         :type="field.type"
         @update:modelValue="$set(value, field.key, $event)"
         v-bind="field.attr"
-        v-on="field.on"
+        v-on="field.on || {}"
       ></component>
     </FormItem>
   </Form>
@@ -45,8 +45,9 @@ import file from "./file.vue"
 import color from "./color.vue"
 import Switch from "./switch.vue"
 import checkbox from "./checkbox.vue"
+import { markRaw } from "vue"
 
-const Fields = { radio, select, file, color, switch: Switch, checkbox }
+const Fields = markRaw({ radio, select, file, color, switch: Switch, checkbox })
 export default {
   provide() {
     return {

@@ -119,3 +119,8 @@ export default {
   }
 }
 </script>
+<style lang="less">
+.ivu-btn-group {
+  margin: 0 4px;
+}
+</style>
