@@ -1,6 +1,5 @@
 <template>
   <div class="checklist" @click.stop>
-    {{ value }}
     <Tabs type="card" :modelValue="value" @update:modelValue="$emit('update:value', $event)">
       <TabPane
         v-for="(tab, tabIndex) of data"

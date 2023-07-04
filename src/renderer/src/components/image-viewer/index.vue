@@ -1,15 +1,11 @@
 <template>
-  <div
-    class="image-viewer-container"
-    :class="className"
-    @click="outClick"
-    @mousewheel="onScroll"
-  >
+  <div class="image-viewer-container" :class="className" @click="outClick" @mousewheel="onScroll">
     <img
       class="image-viewer-img"
       @mousedown="onDrag"
       @mouseup="onDragEnd"
       @mousemove="onMove"
+      @load="onLoad"
       @click.stop
       :src="'image://' + data"
       :style="imageStyle"
@@ -31,59 +27,74 @@ export default {
       draging: false,
       x: 0,
       y: 0
-    };
+    }
   },
   computed: {
     className() {
       return {
         full: this.full,
         draging: this.draging
-      };
+      }
     },
     imageStyle() {
       return {
-        transform:
-          this.full &&
-          `translate(${this.left}px, ${this.top}px) scale(${this.scale})`
-      };
+        transform: this.full
+          ? `translate(${this.left}px, ${this.top}px) scale(${this.scale})`
+          : null
+      }
+    }
+  },
+  watch: {
+    full(v) {
+      // if (window.naturalHeight > window.innerHeight * 0.8) {
+      // }
+      // window.innerHeight
     }
   },
   methods: {
     onScroll(e) {
       if (this.full) {
-        this.scale -= e.deltaY * 0.0008;
+        this.scale -= e.deltaY * 0.0008
         if (this.scale < 0) {
-          this.scale = 0.01;
+          this.scale = 0.01
         }
       }
     },
     reset() {
-      Object.assign(this.$data, this.$options.data());
+      Object.assign(this.$data, this.$options.data())
     },
     outClick() {
-      this.draging = false;
-      this.$emit("fullClose");
+      this.draging = false
+      Object.assign(this, {
+        scale: 1,
+        top: 0,
+        left: 0,
+        draging: false,
+        x: 0,
+        y: 0
+      })
+      this.$emit("fullClose")
     },
     onDrag(e) {
       if (this.full) {
-        this.draging = true;
-        this.x = e.clientX;
-        this.y = e.clientY;
+        this.draging = true
+        this.x = e.clientX
+        this.y = e.clientY
       }
     },
     onDragEnd() {
-      this.draging = false;
+      this.draging = false
     },
     onMove(e) {
       if (this.draging) {
-        this.top += e.movementY;
-        this.left += e.movementX;
-        this.y = this.top;
-        this.x = this.left;
+        this.top += e.movementY
+        this.left += e.movementX
+        this.y = this.top
+        this.x = this.left
       }
     }
   }
-};
+}
 </script>
 
 <style lang="less">
@@ -100,6 +111,7 @@ export default {
     cursor: grab;
   }
   img {
+    object-fit: contain;
     user-select: none;
     -webkit-user-drag: none;
   }

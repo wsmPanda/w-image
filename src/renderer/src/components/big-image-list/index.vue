@@ -13,7 +13,7 @@ export default {
         <div
           ref="listWrapper"
           class="image-bigtable-list-wrapper"
-          style={{ height: this.height + "px" }}
+          style={{ height: this.height - 30 + "px" }}
           onScroll={(e) => this.onScroll(e)}
         >
           <div
@@ -168,8 +168,11 @@ export default {
     }
   },
   watch: {
-    imageSetting() {
-      this.updateHeightList()
+    imageSetting: {
+      deep: true,
+      handler() {
+        this.updateHeightList()
+      }
     }
   },
   methods: {

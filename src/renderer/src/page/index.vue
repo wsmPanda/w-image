@@ -396,7 +396,6 @@ export default {
       })
     },
     async afterInit() {
-      console.log("init")
       if (this.storage.activeTree) {
         await this.waitNextTick()
         await this.updateListData(this.storage.activeTree)

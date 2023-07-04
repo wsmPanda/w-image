@@ -90,7 +90,6 @@ export default {
     toNext() {
       const item = this.node[this.active]
       if (item.$parent && item.$parent.subData[item.index + 1]) {
-        console.log(item.$parent.subData[item.index + 1])
         this.onItemClick(item.$parent.subData[item.index + 1])
       }
     },

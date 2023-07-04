@@ -114,7 +114,6 @@ export default {
       }
       this.progressCount = 0
       this.executing = false
-      console.log(this.$refs.table && this.$refs.table.getSelected())
       let result = await this.$connect.task(
         "taskExecute",
         {

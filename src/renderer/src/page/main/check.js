@@ -14,7 +14,6 @@ export default {
       if (!index && index !== 0) {
         index = this.storage.checkIndex
       }
-      console.warn(index)
       let list = this.checkList[index]
       if (!list) {
         list = []
@@ -32,7 +31,9 @@ export default {
       this.setCheckData()
     },
     cleanCheck() {
-      this.$set(this.checkList, this.storage.checkIndex || [], [])
+      this.$set(this.checkList, this.storage.checkIndex || 0, [])
+      this.checkList[this.storage.checkIndex] = []
+
       this.setCheckData()
     },
     getIndex(index) {

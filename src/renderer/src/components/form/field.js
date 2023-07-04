@@ -19,7 +19,6 @@ export default {
   },
   methods: {
     input(v) {
-      console.log("input", v)
       this.$form.$set(this.$form.value, this.code, v)
     }
   }

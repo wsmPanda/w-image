@@ -82,7 +82,6 @@ export default {
           );
         }
       });
-      console.log();
       return {
         path,
         iteratorId: iterator.id,

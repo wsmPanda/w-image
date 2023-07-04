@@ -7,6 +7,11 @@
       <template #video>
         <DataForm v-if="data.video" v-model:value="data.video" :model="model.video"></DataForm
       ></template>
+      <template #common>
+        <div>
+          存储位置：<a @click="toDB">{{ storePath }}</a>
+        </div>
+      </template>
     </Tabs>
   </div>
 </template>
@@ -25,6 +30,7 @@ export default {
   data() {
     return {
       active: "image",
+      storePath: "",
       show: false,
       tabs: [
         {
@@ -116,9 +122,15 @@ export default {
     }
   },
   methods: {
+    toDB() {
+      shell.openPath(this.storePath)
+    },
     onSubmit() {
       this.$emit("change", this.data)
     }
+  },
+  async mounted() {
+    this.storePath = await Connect.run("getStorePath")
   }
 }
 </script>

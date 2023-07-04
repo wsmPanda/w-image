@@ -1,16 +1,17 @@
-import { app } from 'electron'
-import fs from 'fs'
+import { app } from "electron"
+import fs from "fs"
 export function path(p) {
-  return `${app.getPath('appData')}/${p}`
+  // process.dbPath || process.appPath
+  return `${app.getPath("appData")}/${p}`
 }
 export function readJson(name) {
-  let data = fs.readFileSync(path(name) + '.json')
+  let data = fs.readFileSync(path(name) + ".json")
   return JSON.parse(data.toString())
 }
 export function writeJson(name, data) {
   fs.writeFileSync(
-    path(name) + '.json',
-    typeof data === 'object' ? JSON.stringify(data, null, 2) : data
+    path(name) + ".json",
+    typeof data === "object" ? JSON.stringify(data, null, 2) : data
   )
 }
 export function tablePath(name) {
@@ -28,12 +29,12 @@ export function readTable(name) {
 }
 export function writeTable(name, data) {
   try {
-    let dataString = typeof data === 'object' ? JSON.stringify(data, null, 2) : data.toString()
+    let dataString = typeof data === "object" ? JSON.stringify(data, null, 2) : data.toString()
     fs.writeFile(tablePath(name), dataString, () => {})
   } catch (ex) {
-    console.error('data stringify error:')
+    console.error("data stringify error:")
     console.error(data)
-    console.error('ex')
+    console.error("ex")
   }
 }
 

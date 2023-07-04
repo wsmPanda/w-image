@@ -1,6 +1,7 @@
 import primise from "./promise"
 import task from "./task"
 import ConnectStream from "./connect-stream"
+import { toRawData } from "./raw"
 
 const Connect = {
   run(event, payload = {}) {
@@ -12,19 +13,19 @@ const Connect = {
   addData(table, data) {
     return primise("addData", {
       table,
-      data
+      data: toRawData(data)
     })
   },
   setData(table, data) {
     return primise("setData", {
       table,
-      data
+      data: toRawData(data)
     })
   },
   editData(table, data) {
     return primise("editData", {
       table,
-      data
+      data: toRawData(data)
     })
   },
   getData(table) {
@@ -33,7 +34,7 @@ const Connect = {
   deleteData(table, data) {
     return primise("deleteData", {
       table,
-      data
+      data: toRawData(data)
     })
   },
   stream(code, data) {

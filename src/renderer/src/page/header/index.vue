@@ -42,7 +42,8 @@
         <template v-slot:list>
           <DropdownMenu>
             <CheckList
-              v-model="$main.storage.checkIndex"
+              :value="$main.storage.checkIndex"
+              @input="$main.storage.checkIndex = $event"
               :data="$main.checkList"
             ></CheckList> </DropdownMenu
         ></template>
