@@ -14,7 +14,8 @@
           <!-- <Button @click="$main.cartAdd(data)">
           <Icon type="ios-add"/><Icon type="md-cart"
         /></Button> -->
-          <span v-if="info">{{ sizeText }}</span>
+          <span v-if="info"> {{ sizeText }} </span>
+          <span v-if="width"> {{ width }}*{{ height }} </span>
         </div>
         <Button @click.native="onDeleteClick" size="small">
           <Icon type="md-trash"></Icon>
@@ -40,6 +41,7 @@
       :full="fullScreen"
       class="image-viewer-img"
       :data="data"
+      @load="onLoad"
       @fullClose="fullScreen = false"
     />
     <template v-else-if="isVideo">
@@ -62,7 +64,7 @@ export default {
     data: {}
   },
   data() {
-    return { info: null, fullScreen: false }
+    return { info: null, fullScreen: false, width: 0, height: 0 }
   },
   computed: {
     videoViewerType() {
@@ -95,6 +97,11 @@ export default {
     }
   },
   methods: {
+    onLoad(e) {
+      this.$emit("load", e)
+      this.width = e.target.naturalWidth
+      this.height = e.target.naturalHeight
+    },
     onFullScreen() {
       this.fullScreen = true
     },
@@ -131,6 +138,9 @@ export default {
   margin-bottom: 8px;
   .file-state {
     flex: 1;
+    span {
+      margin-right: 8px;
+    }
   }
   .file-expand {
     margin-right: 8px;

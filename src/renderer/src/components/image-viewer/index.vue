@@ -52,6 +52,9 @@ export default {
     }
   },
   methods: {
+    onLoad(e) {
+      this.$emit("load", e)
+    },
     onScroll(e) {
       if (this.full) {
         this.scale -= e.deltaY * 0.0008
