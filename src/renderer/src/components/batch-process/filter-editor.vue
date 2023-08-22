@@ -28,23 +28,25 @@
     </div>
 
     <div class="selector-editor-add">
-      <div
-        v-for="item of selectors"
-        :key="item.code"
-        @click="addSelector(item)"
-        class="selector-editor-add-item"
+      <template v-for="item of selectors">
+        <div
+          v-if="item.show"
+          :key="item.code"
+          @click="addSelector(item)"
+          class="selector-editor-add-item"
+        >
+          <Icon v-if="item.icon" :type="item.icon"></Icon>{{ item.name }}
+        </div></template
       >
-        <Icon v-if="item.icon" :type="item.icon"></Icon>{{ item.name }}
-      </div>
     </div>
   </div>
 </template>
 
 <script>
-import Form from '../form/index.vue'
+import Form from "../form/index.vue"
 export default {
   components: { Form },
-  inject: ['$main'],
+  inject: ["$main"],
   props: {
     value: {
       type: Array,
@@ -57,24 +59,25 @@ export default {
     return {
       selectors: [
         {
-          name: '格式匹配',
-          code: 'format',
-          icon: 'ios-archive',
+          name: "格式匹配",
+          code: "format",
+          icon: "ios-archive",
+          show: true,
           form: {
             fields: [
               {
-                key: 'type',
-                type: 'select',
+                key: "type",
+                type: "select",
                 data: [
                   {
-                    name: '视频',
-                    value: 'video',
-                    icon: 'md-videocam'
+                    name: "视频",
+                    value: "video",
+                    icon: "md-videocam"
                   },
                   {
-                    name: '图片',
-                    value: 'image',
-                    icon: 'md-image'
+                    name: "图片",
+                    value: "image",
+                    icon: "md-image"
                   }
                 ]
               }
@@ -82,50 +85,64 @@ export default {
           }
         },
         {
-          name: '正则匹配',
-          code: 'regexp',
-          icon: 'md-pricetags',
+          name: "正则匹配",
+          code: "regexp",
+          icon: "md-pricetags",
           form: {
             fields: [
               {
-                key: 'tag',
-                type: 'select'
+                key: "tag",
+                type: "select"
               }
             ]
           }
         },
         {
-          name: '名称匹配',
-          code: 'name',
-          icon: 'md-folder',
+          name: "后缀匹配",
+          code: "suffix",
+          icon: "md-folder",
+          show: true,
           form: {
             fields: [
               {
-                key: 'path',
-                type: 'file'
+                key: "suffix",
+                type: "input"
               }
             ]
           }
         },
         {
-          name: '大小匹配',
-          code: 'size',
-          icon: 'md-folder',
+          name: "名称匹配",
+          code: "name",
+          icon: "md-folder",
+          form: {
+            fields: [
+              {
+                key: "path",
+                type: "file"
+              }
+            ]
+          }
+        },
+        {
+          name: "大小匹配",
+          code: "size",
+          icon: "md-folder",
           form: {
             column: 2,
             fields: [
               {
-                key: 'min',
-                type: 'number',
+                key: "min",
+                type: "number",
                 attr: {
-                  placeholder: '最小值'
+                  placeholder: "最小值"
                 }
               },
               {
-                key: 'max',
-                type: 'number',
+                key: "max",
+                type: "number",
                 attr: {
-                  placeholder: '最大值'
+                  placeholder: "最大值"
                 }
               }
             ]

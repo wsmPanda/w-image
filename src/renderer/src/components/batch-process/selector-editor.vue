@@ -40,10 +40,11 @@
 </template>
 
 <script>
-import Form from '../form/index.vue'
+import Form from "../form/index.vue"
+import Icon from "render/components/icon.vue"
 export default {
-  components: { Form },
-  inject: ['$main'],
+  components: { Form, Icon },
+  inject: ["$main"],
   props: {
     value: {
       type: Array,
@@ -56,60 +57,60 @@ export default {
     return {
       selectors: [
         {
-          name: '目录',
-          code: 'dictory',
-          icon: 'md-folder',
+          name: "目录",
+          code: "dictory",
+          icon: "md-folder",
           form: {
             fields: [
               {
-                key: 'path',
-                type: 'file'
+                key: "path",
+                type: "file"
               },
               {
-                key: 'deep',
-                type: 'number',
+                key: "deep",
+                type: "number",
                 attr: {
-                  placeholder: '层级'
+                  placeholder: "层级"
                 }
               }
             ]
           }
         },
         {
-          name: '文件',
-          code: 'file',
-          icon: 'md-file',
+          name: "文件",
+          code: "file",
+          icon: "ri-file-fill",
           form: {
             fields: [
               {
-                key: 'path',
-                type: 'file'
+                key: "path",
+                type: "file"
               }
             ]
           }
         },
         {
-          name: '收藏夹',
-          code: 'collection',
-          icon: 'ios-archive',
+          name: "收藏夹",
+          code: "collection",
+          icon: "ios-archive",
           form: {
             fields: [
               {
-                key: 'collection',
-                type: 'select'
+                key: "collection",
+                type: "select"
               }
             ]
           }
         },
         {
-          name: '标签',
-          code: 'tag',
-          icon: 'md-pricetags',
+          name: "标签",
+          code: "tag",
+          icon: "md-pricetags",
           form: {
             fields: [
               {
-                key: 'tag',
-                type: 'select'
+                key: "tag",
+                type: "select"
               }
             ]
           }

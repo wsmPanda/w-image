@@ -13,25 +13,17 @@
         <Icon
           class="icon-fold"
           :type="
-            data.type === 'dictory'
-              ? data.open
-                ? 'ios-folder-open'
-                : 'md-folder'
-              : 'md-document'
+            data.type === 'dictory' ? (data.open ? 'ios-folder-open' : 'md-folder') : 'md-document'
           "
         />
         {{ (data.path || data).split(/\/|\\/).pop() }}
-        <div
-          v-if="data.action"
-          class="tree-action"
-          :class="{ error: data.action.error }"
-        >
-          {{ data.action.params && data.action.params.newName }}
+        <div v-if="data.action" class="tree-action" :class="{ error: data.action.error }">
+          {{ (data.action.params && data.action.params.newName) || data.action.message }}
           <template
             v-if="
               data.action.params &&
-                data.action.params.current &&
-                data.path !== data.action.params.current
+              data.action.params.current &&
+              data.path !== data.action.params.current
             "
           >
             <a
@@ -59,7 +51,7 @@
 </template>
 
 <script>
-import CommonTree from "render/components/tree/index.vue";
+import CommonTree from "render/components/tree/index.vue"
 export default {
   components: { CommonTree },
   inject: ["$main"],
@@ -88,20 +80,20 @@ export default {
           color: "#2d8cf0"
         }
       ]
-    };
+    }
   },
   methods: {
     resetSelect() {
-      this.selected = [];
+      this.selected = []
     },
     getSelected() {
-      return this.selected;
+      return this.selected
     }
   },
   async beforeMount() {
-    this.numberMap = await this.$connect.getData("number_map");
+    this.numberMap = await this.$connect.getData("number_map")
   }
-};
+}
 </script>
 
 <style lang="less">
@@ -119,12 +111,17 @@ export default {
         color: rgb(196, 209, 252);
       }
     }
+    .name-container {
+      width: 100%;
+    }
   }
 }
 .tree-action {
   font-size: 11px;
   margin-left: 8px;
   color: rgb(89, 103, 255);
+  flex: 1;
+  text-align: right;
   &.error {
     color: rgb(255, 82, 94);
   }

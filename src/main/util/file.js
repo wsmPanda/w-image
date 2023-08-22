@@ -1,4 +1,4 @@
-const IMAGE_REGEXP = /\.(jpeg|jpg|gif|png|svg|webp|jfif|bmp|dpg)/i;
+const IMAGE_REGEXP = /\.(jpeg|jpg|gif|png|svg|webp|jfif|bmp|dpg)$/i;
 const videoSuffix = [
   "mp4",
   "flv",

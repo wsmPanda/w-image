@@ -72,7 +72,10 @@ export default {
     }
     res = getFileObject(fileList[0])
     let numberMap = await selectTable("number_map").get()
-    let actionsRuner = actions.map((action) => Action[action.type](action.options, numberMap))
+    let actionsRuner = actions.map((action) => {
+      console.log("action", action)
+      return Action[action.type](action.options, numberMap)
+    })
     walkFiles(res, (data) => {
       actionsRuner.forEach((action) => {
         data.action = action(data)
