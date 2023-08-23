@@ -69,6 +69,7 @@
           <Input v-model="formatTo" />
         </div>
         <Checkbox v-model="addMode">添加后缀</Checkbox>
+        <Checkbox v-model="replaceMode">统一后缀</Checkbox>
       </div>
       <div>
         <Button
@@ -112,6 +113,7 @@ export default {
       formatFrom: "",
       formatTo: "",
       addMode: false,
+      replaceMode: false,
       foldMenu: [
         {
           name: "在系统中打开",
@@ -185,6 +187,7 @@ export default {
         from: this.formatFrom,
         to: this.formatTo,
         add: this.addMode,
+        replace: this.replaceMode,
         path: this.$main.storage.activeTree && this.$main.storage.activeTree.path
       })
     },
