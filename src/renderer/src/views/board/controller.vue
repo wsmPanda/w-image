@@ -65,7 +65,7 @@
 import { inject, ref, watch, computed, onMounted, onUnmounted } from "vue"
 import { useBoard } from "./useBoard.ts"
 
-const { activeItem } = useBoard()
+const { activeItem, boardSetting } = useBoard()
 const bottomEl = ref()
 const ControllerStyle = computed(() => {
   const data = activeItem.value || {}
@@ -179,6 +179,24 @@ const onControllerSizeMove = (e) => {
     } else {
       activeItem.value.height += e.movementY
     }
+
+    if (boardSetting.value.lockRatio) {
+      if (
+        activeItem.value.width / activeItem.value.originWidth >
+        activeItem.value.height / activeItem.value.originHeight
+      ) {
+        activeItem.value.width =
+          activeItem.value.height * (activeItem.value.originWidth / activeItem.value.originHeight)
+      } else {
+        activeItem.value.height =
+          activeItem.value.width * (activeItem.value.originHeight / activeItem.value.originWidth)
+      }
+    }
+
+    if (activeItem.value.width < 10) {
+      activeItem.value.width = 10
+    }
+
     activeItem.value.clipTop = (activeItem.value.height / height) * activeItem.value.clipTop
     activeItem.value.clipLeft = (activeItem.value.width / width) * activeItem.value.clipLeft
     activeItem.value.clipWidth = (activeItem.value.width / width) * activeItem.value.clipWidth

@@ -41,6 +41,7 @@
           </DropdownItem>
         </template>
       </Dropdown>
+      <i-button size="small" @click="resetItem"> <i class="ri-arrow-go-back-line"></i> </i-button>
     </div>
     <div>
       <i-button size="small" @click="boardSetting.fullscreen = !boardSetting.fullscreen"
@@ -53,7 +54,7 @@
 <script setup>
 import { useBoard } from "./useBoard.ts"
 
-const { activeItem, boardData, boardSetting, setActive, clearItems } = useBoard()
+const { activeItem, boardData, boardSetting, setActive, clearItems, resetItem } = useBoard()
 </script>
 <style lang="less">
 .borad-header {

@@ -33,7 +33,7 @@ const controller = ref()
 if (!$main.storage?.boardData) {
   $main.storage.boardData = { items: [] }
 }
-const { activeItem, boardData, setActive } = useBoard()
+const { activeItem, boardData, setActive, boardSetting } = useBoard()
 boardData.value = $main.storage.boardData
 
 watch(
@@ -45,7 +45,7 @@ watch(
       let { width, height } = await getImgWidthHeight(v)
       const originWidth = width
       const originHeight = height
-      let maxWidth = content.value?.offsetWidth * 0.5
+      let maxWidth = boardSetting.value.maxWidth || content.value?.offsetWidth * 0.5
       if (width > maxWidth) {
         height = (maxWidth / width) * height
         width = maxWidth
