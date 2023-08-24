@@ -72,7 +72,7 @@ export default {
   },
   computed: {
     finish() {
-      return this.progressTotal && this.progressTotal === this.progressCount
+      return this.progressTotal && this.progressTotal >= this.progressCount
     }
   },
   methods: {
@@ -80,7 +80,7 @@ export default {
       Object.assign(this.$data, this.$options.data())
       if (this.$main.storage.activeTree.path) {
         this.selectors.push({
-          type: "dictory",
+          type: "file",
           options: {
             path: this.$main.storage.activeTree.path,
             deep: 2

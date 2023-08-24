@@ -3,7 +3,6 @@ import { ipcRenderer } from "electron"
 import { toRawData } from "./raw"
 export default function (event, payload = {}) {
   let connectId = core.getConnectId()
-  console.log(toRawData(payload))
   ipcRenderer.send(
     "promiseConnectRespnose",
     Object.assign({}, toRawData(payload), { id: connectId, type: event })

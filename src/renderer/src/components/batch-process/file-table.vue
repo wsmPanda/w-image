@@ -17,9 +17,13 @@
           "
         />
         {{ (data.path || data).split(/\/|\\/).pop() }}
-        <div v-if="data.action" class="tree-action" :class="{ error: data.action.error }">
-          {{ (data.action.params && data.action.params.newName) || data.action.message }}
-          <template
+        <div
+          v-if="data.action"
+          class="tree-action"
+          :class="{ error: data.action.error || data.status === -1, success: data.status === 1 }"
+        >
+          {{ data.error || data.action.error || data.action.message }}
+          <!-- <template
             v-if="
               data.action.params &&
               data.action.params.current &&
@@ -43,7 +47,7 @@
               "
               >{{ data.path }}</a
             >
-          </template>
+          </template> -->
         </div>
       </template>
     </CommonTree>
@@ -124,6 +128,9 @@ export default {
   text-align: right;
   &.error {
     color: rgb(255, 82, 94);
+  }
+  &.success {
+    color: rgb(48, 210, 19);
   }
 }
 </style>

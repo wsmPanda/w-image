@@ -34,8 +34,9 @@
             size="small"
           />
           <Button size="small">
-            <span>{{ Number($main.storage.checkIndex || 0) + 1 }}</span>
+            <span class="check-number">{{ Number($main.storage.checkIndex || 0) + 1 }}</span>
             <Icon class="icon-checktool" type="md-images"></Icon>
+            <span>x{{ $main.checkList[$main.storage.checkIndex]?.length }} </span>
             <Icon type="md-arrow-dropdown" />
           </Button>
         </ButtonGroup>
@@ -100,6 +101,7 @@
     <RadioGroup v-model="$main.storage.viewType" type="button" size="small">
       <Radio label="book"> <Icon type="md-book" /> </Radio>
       <Radio label="grid"><Icon type="md-grid" /></Radio>
+      <Radio label="board"> <i class="ri-palette-line"></i></Radio>
       <Radio label="scroll"><Icon type="md-more" /></Radio>
     </RadioGroup>
   </div>

@@ -1,0 +1,64 @@
+.board-view-content {
+  position: relative;
+}
+.board-item {
+  position: absolute;
+}
+.board-item-controller {
+  position: absolute;
+  @controller-size: 6px;
+  cursor: move;
+  .controller-size {
+    position: absolute;
+    width: @controller-size*2;
+    height: @controller-size*2;
+    border: 1px solid #000;
+    background: #fff;
+  }
+  .controller-rotate {
+    @controller-size: 30px;
+    position: absolute;
+    width: @controller-size;
+    height: @controller-size;
+    &.controller-top-left {
+      top: -@controller-size;
+      left: -@controller-size;
+      cursor: nwse-resize;
+    }
+    &.controller-top-right {
+      top: -@controller-size;
+      right: -@controller-size;
+      cursor: nesw-resize;
+    }
+    &.controller-bottom-left {
+      bottom: -@controller-size;
+      left: -@controller-size;
+      cursor: nesw-resize;
+    }
+    &.controller-bottom-right {
+      bottom: -@controller-size;
+      right: -@controller-size;
+      cursor: nwse-resize;
+    }
+  }
+  .controller-top-left {
+    top: -@controller-size;
+    left: -@controller-size;
+    cursor: nwse-resize;
+  }
+  .controller-top-right {
+    top: -@controller-size;
+    right: -@controller-size;
+    cursor: nesw-resize;
+  }
+  .controller-bottom-left {
+    bottom: -@controller-size;
+    left: -@controller-size;
+    cursor: nesw-resize;
+  }
+  .controller-bottom-right {
+    bottom: -@controller-size;
+    right: -@controller-size;
+    cursor: nwse-resize;
+  }
+}

@@ -44,6 +44,16 @@ async function walkFiles(data, func) {
     })
   }
 }
+async function walkDictory(data, func) {
+  if (data.sub) {
+    data.sub.forEach((item) => {
+      if (item.type === "dictory") {
+        walkFiles(item, func)
+        func(item)
+      }
+    })
+  }
+}
 async function walkSyncFiles(data, func) {
   if (data.sub) {
     for (let item of data.sub) {
@@ -67,25 +77,38 @@ export default {
         return () => true
       }
     })
+    // todo 多目录处理
     for (let selector of selectors) {
       fileList.push(await Selector[selector.type](selector.options, fliterList))
     }
+    let isDictory = selectors[0] && selectors[0].type === "dictory"
     res = getFileObject(fileList[0])
+
     let numberMap = await selectTable("number_map").get()
     let actionsRuner = actions.map((action) => {
-      console.log("action", action)
       return Action[action.type](action.options, numberMap)
     })
-    walkFiles(res, (data) => {
-      actionsRuner.forEach((action) => {
-        data.action = action(data)
+    let actionRunnerList = []
+    if (isDictory) {
+      walkDictory(res, (data) => {
+        actionsRuner.forEach(async (action) => {
+          actionRunnerList.push((data.action = await action(data)))
+        })
       })
-    })
+    } else {
+      walkFiles(res, async (data) => {
+        actionsRuner.forEach(async (action) => {
+          actionRunnerList.push((data.action = await action(data)))
+        })
+      })
+    }
+    if (actionRunnerList.length) {
+      await Promise.all(actionRunnerList)
+    }
     if (res.sub) {
       const sub = res.sub
       res.sub = []
       sub.forEach((item) => {
-        console.log(item)
         if (item.action && item.action.operate === "batch") {
           item.action.data.forEach((d) =>
             res.sub.push({
@@ -99,11 +122,9 @@ export default {
         }
       })
     }
-    console.log(res)
     return res
   },
   async taskExecute({ data, track, selected }, event, callback) {
-    console.log("taskExecute", data)
     let promiseList = []
     let result = {
       data: data,
@@ -112,6 +133,7 @@ export default {
       done: 0,
       error: 0
     }
+    // 并行数量
     track = track || 5
     let trackCount = 0
     let finishCallback
@@ -125,11 +147,13 @@ export default {
       }
     }
     callback(result)
+    result.data = data
     walkFiles(data, (item) => {
       if (item.action && item.action.operate && (!selected || selected.indexOf(item.path) >= 0)) {
         result.total++
       }
     })
+    console.log(1, result)
     let aNumberMap = {}
     await walkSyncFiles(data, async (item) => {
       await executeTrack()
@@ -142,6 +166,12 @@ export default {
                 if (res.action && res.action.error) {
                   result.errorList.push(item)
                   result.error++
+                  item.result = "error"
+                  item.error = res.action.error
+                  item.status = -1
+                } else {
+                  item.result = "success"
+                  item.status = 1
                 }
                 if (item.action && item.action.extra && item.action.operate === "rename") {
                   if (item.action.extra === "aNumber") {
@@ -158,6 +188,9 @@ export default {
                 result.done++
               })
               .catch((ex) => {
+                item.result = "error"
+                item.error = ex
+                item.status = -1
                 result.errorList.push(ex)
                 result.done++
                 result.error++

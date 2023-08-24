@@ -63,13 +63,16 @@
         ></component>
       </template>
       <template v-slot:right>
-        <FileViewer
-          :key="storage.active"
-          v-if="storage.active"
-          class="main-image-viewer"
-          :data="storage.active"
-        ></FileViewer>
-        <div v-else>空</div>
+        <component v-if="rightComponent" :is="rightComponent"></component>
+        <template v-else>
+          <FileViewer
+            :key="storage.active"
+            v-if="storage.active"
+            class="main-image-viewer"
+            :data="storage.active"
+          ></FileViewer>
+          <div v-else>空</div></template
+        >
       </template>
     </Layout>
   </div>
@@ -85,6 +88,7 @@ import Layout from "render/layout/index.vue"
 import FileViewer from "render/components/file-viewer/index.vue"
 import BookmarkList from "render/components/bookmark-list/index.vue"
 import Tabs from "render/components/tabs/index.vue"
+import BoardView from "render/views/board/index.vue"
 
 import CheckMixins from "./main/check"
 import KeyListener from "./main/key-listener"
@@ -176,7 +180,14 @@ export default {
   },
   computed: {
     viewComponent() {
-      return ViewType[this.storage.viewType || "grid"]
+      return ViewType["grid"]
+    },
+    rightComponent() {
+      if (this.storage.viewType === "board") {
+        return BoardView
+      } else {
+        return null
+      }
     },
     tagMap() {
       return this.tags.reduce((res, item) => {

@@ -9,6 +9,7 @@ export default {
     return function ({ path }) {
       return {
         operate: "unlink",
+        message: "delete",
         params: {
           path
         }
@@ -49,7 +50,6 @@ export default {
   },
   uniformSuffix(options) {
     return function ({ path }) {
-      console.log(options)
       let pathList = path.split(/\\|\//)
       let name = pathList.pop()
       let nameList = name.split(".")
@@ -121,7 +121,9 @@ export default {
         }
         return {
           operate: "rename",
-          message: match,
+          message: aNumberMap[newName]
+            ? "x" + aNumberMap[newName] + " ->" + newName
+            : "->" + newName,
           params: {
             current: aNumberMap[newName],
             path,

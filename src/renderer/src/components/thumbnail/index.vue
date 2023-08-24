@@ -7,7 +7,8 @@
       :src="'image://' + src"
     />
     <div class="thumbnail-icon" v-else>
-      <FileIcon :type="suffix"></FileIcon>
+      <icon v-if="suffix" type="md-folder"></icon>
+      <FileIcon v-else :type="suffix"></FileIcon>
     </div>
     <!-- <video
       v-else
@@ -150,6 +151,9 @@ export default {
     height: 100%;
     width: 100%;
     margin-bottom: 30px;
+    .ivu-icon {
+      color: #fbc776;
+    }
   }
   .thumbnail-tags {
     position: absolute;
