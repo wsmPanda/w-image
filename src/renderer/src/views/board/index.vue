@@ -1,186 +1,120 @@
 <template>
   <div class="board-view">
-    {{ moving }}
-    {{ activeItem?.left }}
-    <div ref="content" class="board-view-content">
+    <BoardHeader></BoardHeader>
+    <div ref="content" class="board-view-content" @mousedown="onMousedown">
       <BoardItem
-        v-for="(item, index) of boardItems"
+        v-for="(item, index) of boardData.items"
         :key="index"
-        @click="onItemClick(item)"
+        @click.stop="setActive(item)"
         :data="item"
         class="board-item"
+        :class="{
+          active: activeItem === item
+        }"
       >
       </BoardItem>
-      <div
-        v-show="activeItem"
-        ref="controller"
-        class="board-item-controller"
-        :style="ControllerStyle"
-        @mousedown="onControllerMouseDown"
-      >
-        <div
-          class="controller-size controller-top-left"
-          @mousedown.stop="onControllerSizeDown(1, 1)"
-        ></div>
-        <div
-          class="controller-size controller-top-right"
-          @mousedown.stop="onControllerSizeDown(-1, 1)"
-        ></div>
-        <div
-          class="controller-size controller-bottom-left"
-          @mousedown.stop="onControllerSizeDown(1, -1)"
-        ></div>
-        <div
-          class="controller-size controller-bottom-right"
-          @mousedown.stop="onControllerSizeDown(-1, -1)"
-        ></div>
-
-        <div
-          class="controller-rotate controller-top-left"
-          @mousedown.stop="onControllerRotatDown(1, 1)"
-        ></div>
-        <div
-          class="controller-rotate controller-top-right"
-          @mousedown.stop="onControllerRotatDown(-1, 1)"
-        ></div>
-        <div
-          class="controller-rotate controller-bottom-left"
-          @mousedown.stop="onControllerRotatDown(1, -1)"
-        ></div>
-        <div
-          class="controller-rotate controller-bottom-right"
-          @mousedown.stop="onControllerRotatDown(-1, -1)"
-        ></div>
-      </div>
+      <BoardController ref="controller"></BoardController>
     </div>
   </div>
 </template>
 <script setup>
-import { inject, ref, watch, computed } from "vue"
+import { inject, ref, watch, computed, onMounted, onUnmounted } from "vue"
+import { getImgWidthHeight } from "render/util/image"
 import BoardItem from "./item.vue"
+import BoardHeader from "./header.vue"
+import BoardController from "./controller.vue"
+import { useBoard } from "./useBoard.ts"
+
 import "./style.less"
+
 const $main = inject("$main")
 const content = ref()
 const controller = ref()
 if (!$main.storage?.boardData) {
   $main.storage.boardData = { items: [] }
 }
-const boardData = $main.storage?.boardData
-const boardItems = ref(boardData.items || [])
+const { activeItem, boardData, setActive } = useBoard()
+boardData.value = $main.storage.boardData
 
-const activeItem = ref(null)
-const onItemClick = (item) => {
-  activeItem.value = item
-}
 watch(
   () => {
     return $main.storage.active
   },
-  (v) => {
+  async (v) => {
     if (v) {
-      boardItems.value = []
-      console.log("???", v)
-      boardItems.value.push({
+      let { width, height } = await getImgWidthHeight(v)
+      const originWidth = width
+      const originHeight = height
+      let maxWidth = content.value?.offsetWidth * 0.5
+      if (width > maxWidth) {
+        height = (maxWidth / width) * height
+        width = maxWidth
+      }
+      boardData.value.items = boardData.value.items || []
+      boardData.value.items.push({
         top: 0,
         left: 0,
-        width: 100,
-        height: 100,
+        originWidth,
+        originHeight,
+        width: width,
+        height: height,
         zIndex: 0,
         clip: false,
         clipTop: 0,
-        clipleft: 0,
-        clipWidth: 0,
-        clipHeight: 0,
+        clipLeft: 0,
+        clipWidth: width,
+        clipHeight: height,
+        name: v.split(/\\|\//).pop(),
         src: v,
-        rotate: 0
+        rotate: 0,
+        ...getAutoLayout({ width, height })
       })
-      $main.storage.boardData.items = boardItems.value
+      $main.storage.boardData.items = boardData.value.items
+      setActive(boardData.value.items[boardData.value.items.length - 1])
     }
   }
 )
-const ControllerStyle = computed(() => {
-  const data = activeItem.value || {}
-  const style = {
-    width: data.width + "px",
-    height: data.height + "px",
-    top: data.top + "px",
-    left: data.left + "px",
-    zIndex: data.zIndex || 0,
-    transfrom: `rotate(${data.rotate || 0}deg)`
+
+const getAutoLayout = ({ width, height }) => {
+  let rightList = boardData.value.items.sort((a, b) => b.left + b.width - a.left - a.width)
+  let bottomList = boardData.value.items.sort((a, b) => b.top + b.height - a.top - a.height)
+  let rightMax = rightList[0] ? rightList[0].left + rightList[0].width : 0
+  let bottomMax = bottomList[0] ? bottomList[0].top + bottomList[0].height : 0
+
+  console.log(bottomList.map((b) => b.top + b.height))
+  return {
+    left: 0,
+    top: bottomMax
   }
-  return style
+}
+
+const onBoardKeydown = (e) => {
+  if (e.code === "Delete" || e.code === "Backspace") {
+    if (activeItem.value) {
+      const index = boardData.value.items.indexOf(activeItem.value)
+      if (index >= 0) {
+        boardData.value.items.splice(index, 1)
+        activeItem.value = null
+      }
+    }
+  }
+}
+
+const onMousedown = (e) => {
+  console.log(e)
+  if (e.target === content.value) {
+    activeItem.value = null
+  }
+}
+
+onUnmounted(() => {
+  window.removeEventListener("keydown", onBoardKeydown)
 })
-const moving = ref(false)
-const sizing = ref(false)
-const sizingX = ref(0)
-const sizingY = ref(0)
-const onControllerMouseDown = (e) => {
-  moving.value = true
+onMounted(() => {
+  window.addEventListener("keydown", onBoardKeydown)
+})
 
-  window.addEventListener("mousemove", onControllerMouseMove)
-  window.addEventListener("mouseup", onControllerMouseUp)
-}
-const onControllerSizeDown = (x, y) => {
-  sizing.value = true
-  sizingX.value = x
-  sizingY.value = y
-  window.addEventListener("mousemove", onControllerSizeMove)
-  window.addEventListener("mouseup", onControllerMouseUp)
-}
-const onControllerSizeMove = (e) => {
-  sizing.value = true
-  if (activeItem.value) {
-    if (sizingX.value > 0) {
-      activeItem.value.left += e.movementX
-      activeItem.value.width -= e.movementX
-    } else {
-      activeItem.value.width += e.movementX
-    }
-    if (sizingY.value > 0) {
-      activeItem.value.top += e.movementY
-      activeItem.value.height -= e.movementY
-    } else {
-      activeItem.value.height += e.movementY
-    }
-  }
-}
-const onControllerRotatDown = (e) => {
-  sizing.value = true
-  if (activeItem.value) {
-    if (sizingX.value > 0) {
-      activeItem.value.left += e.movementX
-      activeItem.value.width -= e.movementX
-    } else {
-      activeItem.value.width += e.movementX
-    }
-    if (sizingY.value > 0) {
-      activeItem.value.top += e.movementY
-      activeItem.value.height -= e.movementY
-    } else {
-      activeItem.value.height += e.movementY
-    }
-  }
-}
-
-const onControllerMouseMove = (e) => {
-  if (activeItem.value) {
-    if (activeItem.value.left + e.movementX > 0) {
-      activeItem.value.left += e.movementX
-    }
-    if (activeItem.value.top + e.movementY > 0) {
-      activeItem.value.top += e.movementY
-    }
-  }
-}
-
-const onControllerMouseUp = (e) => {
-  moving.value = false
-  sizing.value = false
-  window.removeEventListener("mousemove", onControllerMouseMove)
-  window.removeEventListener("mousemove", onControllerSizeMove)
-  window.removeEventListener("mouseup", onControllerMouseUp)
-}
-// const itemClipStyle = watch(boardItems, (v) => {
+// const itemClipStyle = watch(boardData.items, (v) => {
 //   console.log("?????")
 //   $main.storage.boardData = $main.storage.boardData || {}
 //   $main.storage.boardData.items = v

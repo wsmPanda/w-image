@@ -1,8 +1,47 @@
+.board-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
 .board-view-content {
   position: relative;
+  flex: 1;
+  overflow: auto;
 }
 .board-item {
   position: absolute;
+  &.active {
+    .board-item-background {
+      opacity: 0.4;
+    }
+  }
+}
+.board-item-controller-clip {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-repeat: no-repeat;
+}
+.board-item-clip {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-repeat: no-repeat;
+}
+
+.board-item-background {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  opacity: 0;
 }
 .board-item-controller {
   position: absolute;
@@ -14,31 +53,66 @@
     height: @controller-size*2;
     border: 1px solid #000;
     background: #fff;
+    z-index: 999;
   }
   .controller-rotate {
     @controller-size: 30px;
     position: absolute;
     width: @controller-size;
     height: @controller-size;
+    z-index: 998;
     &.controller-top-left {
       top: -@controller-size;
       left: -@controller-size;
-      cursor: nwse-resize;
+      cursor: alias;
     }
     &.controller-top-right {
       top: -@controller-size;
       right: -@controller-size;
-      cursor: nesw-resize;
+      cursor: alias;
     }
     &.controller-bottom-left {
       bottom: -@controller-size;
       left: -@controller-size;
-      cursor: nesw-resize;
+      cursor: alias;
     }
     &.controller-bottom-right {
       bottom: -@controller-size;
       right: -@controller-size;
-      cursor: nwse-resize;
+      cursor: alias;
+    }
+  }
+  .controller-clip {
+    position: absolute;
+    width: @controller-size*2;
+    height: @controller-size*2;
+    border: 1px solid #000;
+    background: #eeeeee;
+    z-index: 999;
+    transform: rotate(45deg);
+    &.controller-left {
+      top: 50%;
+      left: -@controller-size;
+      margin-top: -@controller-size;
+      cursor: ew-resize;
+    }
+    &.controller-right {
+      top: 50%;
+      right: -@controller-size;
+      margin-top: -@controller-size;
+      cursor: ew-resize;
+    }
+    &.controller-top {
+      left: 50%;
+      top: -@controller-size;
+      margin-left: -@controller-size;
+      cursor: ns-resize;
+    }
+    &.controller-bottom {
+      left: 50%;
+      bottom: -@controller-size;
+      margin-left: -@controller-size;
+      cursor: ns-resize;
     }
   }
   .controller-top-left {
