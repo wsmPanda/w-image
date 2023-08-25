@@ -9,6 +9,7 @@ const boardSetting = ref({
   maxWidth: 300
 })
 const boardData = ref({
+  name: "",
   items: []
 })
 const activeItem = ref(null as any)

@@ -22,18 +22,18 @@
         </Button>
       </div>
     </div>
-    <div class="file-check">
-      <!-- <Checkbox
+    <div class="file-check" v-if="$main.showCheck">
+      <Checkbox
         v-for="(item, index) of $main.checkList"
         :key="index"
-        :value="$main.isCheck(data, index)"
+        :modelValue="$main.isCheck(data, index)"
         @click.native.prevent="$main.check(data, index)"
       ></Checkbox>
       <Checkbox
         :key="$main.checkList.length"
-        :value="$main.isCheck(data, $main.checkList.length)"
+        :modelValue="$main.isCheck(data, $main.checkList.length)"
         @click.native.prevent="$main.check(data, $main.checkList.length)"
-      ></Checkbox> -->
+      ></Checkbox>
     </div>
     <PdfViewer v-if="isPdf" :src="data" />
     <ImageViewer
@@ -127,6 +127,9 @@ export default {
 <style lang="less">
 .image-viewer {
   padding: 8px;
+  .file-check {
+    margin-bottom: 8px;
+  }
 }
 .image-viewer-img {
   width: 100%;

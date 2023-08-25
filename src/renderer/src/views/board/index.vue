@@ -1,11 +1,16 @@
 <template>
-  <div class="board-view">
+  <div
+    class="board-view"
+    :class="{
+      fullscreen: boardSetting.fullscreen
+    }"
+  >
     <BoardHeader></BoardHeader>
     <div ref="content" class="board-view-content" @mousedown="onMousedown">
       <BoardItem
         v-for="(item, index) of boardData.items"
         :key="index"
-        @click.stop="setActive(item)"
+        @mousedown.stop="setActive(item)"
         :data="item"
         class="board-item"
         :class="{
