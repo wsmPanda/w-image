@@ -10,7 +10,7 @@
       <BoardItem
         v-for="(item, index) of boardData.items"
         :key="index"
-        @mousedown.stop="setActive(item)"
+        @mousedown.stop="onItemMouseDown($event, item)"
         :data="item"
         class="board-item"
         :class="{
@@ -35,11 +35,16 @@ import "./style.less"
 const $main = inject("$main")
 const content = ref()
 const controller = ref()
-if (!$main.storage?.boardData) {
-  $main.storage.boardData = { items: [] }
+
+const { activeItem, boardData, setActive, boardSetting, currentBoard } = useBoard()
+if (!$main.storage?.currentBoard) {
+  $main.storage.currentBoard = 0
+} else {
+  currentBoard.value = $main.storage.currentBoard
 }
-const { activeItem, boardData, setActive, boardSetting } = useBoard()
-boardData.value = $main.storage.boardData
+watch(currentBoard, (v) => {
+  $main.storage.currentBoard = v
+})
 
 watch(
   () => {
@@ -79,6 +84,12 @@ watch(
     }
   }
 )
+
+const onItemMouseDown = (e, item) => {
+  setActive(item)
+  controller.value?.onControllerMouseDown(e)
+  controller.value?.onControllerDown(e)
+}
 
 const getAutoLayout = ({ width, height }) => {
   let rightList = boardData.value.items.sort((a, b) => b.left + b.width - a.left - a.width)

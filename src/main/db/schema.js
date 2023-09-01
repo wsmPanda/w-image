@@ -54,6 +54,11 @@ export default [
   {
     name: "dictory_tree",
     type: "array"
+  }, 
+  // 参考画板
+  {
+    name: "board",
+    type: "array"
   },
   // 状态缓存
   {

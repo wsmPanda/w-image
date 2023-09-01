@@ -244,4 +244,8 @@ watch(activeItem, (v) => {
     bottomEl.value.scrollIntoViewIfNeeded()
   }
 })
+defineExpose({
+  onControllerMouseDown,
+  onControllerDown
+})
 </script>

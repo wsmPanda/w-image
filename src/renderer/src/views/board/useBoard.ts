@@ -1,4 +1,5 @@
-import { ref } from "vue"
+import { computed, ref, watch } from "vue"
+import { functionDebounce } from "render/util"
 
 const boardSetting = ref({
   lockRatio: true,
@@ -8,18 +9,54 @@ const boardSetting = ref({
   fullscreen: false,
   maxWidth: 300
 })
-const boardData = ref({
-  name: "",
-  items: []
-})
+const boards = ref<any[]>([])
 const activeItem = ref(null as any)
+window.Connect.getData("board").then((res) => {
+  boards.value = res
+})
+const currentBoard = ref(0)
+
+const saveBoards = () => {
+  window.Connect.setData("board", boards.value)
+}
+watch(
+  boards,
+  functionDebounce(() => {
+    saveBoards()
+  }),
+  {
+    deep: true
+  }
+)
 export const useBoard = () => {
+  const openBoard = (i) => {
+    currentBoard.value = i
+  }
+  const newBoard = () => {
+    boards.value.push({
+      name: "board",
+      id: +new Date(),
+      items: []
+    })
+    currentBoard.value = boards.value.length - 1
+    activeItem.value = null
+  }
+  const removeBoard = (i) => {
+    if (i === currentBoard.value) {
+      currentBoard.value = 0
+    }
+    boards.value.splice(i, 1)
+    if (!boards.value?.length) {
+      newBoard()
+    }
+  }
+
   const setActive = (item) => {
     activeItem.value = item
     setZindex(activeItem.value)
   }
   const setZindex = (target) => {
-    let z = target.zIndex
+    let z = target.zIndex + 1
     boardData.value.items.forEach((item: any) => {
       if (item.zIndex > z) {
         z = item.zIndex + 1
@@ -51,6 +88,12 @@ export const useBoard = () => {
       })
     }
   }
+  const boardData = computed(() => {
+    return boards.value[currentBoard.value || 0] || { items: [] }
+  })
+  if (!boards.value.length) {
+    newBoard()
+  }
   return {
     boardSetting,
     boardData,
@@ -58,6 +101,11 @@ export const useBoard = () => {
     setActive,
     setZindex,
     clearItems,
-    resetItem
+    resetItem,
+    newBoard,
+    openBoard,
+    currentBoard,
+    boards,
+    removeBoard
   }
 }

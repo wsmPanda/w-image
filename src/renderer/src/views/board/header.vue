@@ -22,7 +22,6 @@
       <i-button size="small"><i class="ri-zoom-out-line"></i> </i-button>
 
       <i-button size="small" @click="clearItems"> <i class="ri-delete-bin-line"></i> </i-button>
-
       <Dropdown trigger="click" transfer>
         <i-button size="small">
           <i class="ri-stack-line"></i>{{ boardData?.items?.length || ""
@@ -37,7 +36,8 @@
             :class="{
               active: activeItem === item
             }"
-            >{{ item.name }}
+          >
+            <div class="board-list-item-left">{{ item.name }}</div>
           </DropdownItem>
         </template>
       </Dropdown>
@@ -50,17 +50,22 @@
         </i-button>
         <template v-slot:list>
           <DropdownItem
-            v-for="(item, index) of boardData.items"
+            v-for="(item, index) of boards"
             :key="index"
-            @click.stop="setActive(item)"
+            @click.stop="openBoard(index)"
             class="board-list-item"
             :class="{
-              active: activeItem === item
+              active: currentBoard === index
             }"
-            >{{ item.name }}
+          >
+            <div class="board-list-item-left">{{ item.name }}</div>
+            <div @click.stop="removeBoard(index)"><i class="ri-close-line"></i></div>
           </DropdownItem>
         </template>
       </Dropdown>
+      <i-button size="small" @click="newBoard">
+        <i class="ri-file-add-line"></i>
+      </i-button>
       <i-input size="small" v-model="boardData.name" :style="{ width: '100px' }"></i-input>
 
       <i-button size="small" @click="boardSetting.fullscreen = !boardSetting.fullscreen"
@@ -73,7 +78,19 @@
 <script setup>
 import { useBoard } from "./useBoard.ts"
 
-const { activeItem, boardData, boardSetting, setActive, clearItems, resetItem } = useBoard()
+const {
+  activeItem,
+  boardData,
+  boardSetting,
+  setActive,
+  clearItems,
+  resetItem,
+  boards,
+  openBoard,
+  newBoard,
+  currentBoard,
+  removeBoard
+} = useBoard()
 </script>
 <style lang="less">
 .borad-header {

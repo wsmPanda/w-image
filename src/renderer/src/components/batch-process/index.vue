@@ -86,18 +86,6 @@ export default {
             deep: 2
           }
         })
-        this.actions.push({
-          type: "move",
-          options: {
-            path: "//Users/rongcloud/Desktop"
-          }
-        })
-        this.filters.push({
-          type: "suffix",
-          options: {
-            suffix: "jpg"
-          }
-        })
       }
     },
     async onPreview() {
