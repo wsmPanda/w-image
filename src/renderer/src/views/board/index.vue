@@ -6,7 +6,7 @@
     }"
   >
     <BoardHeader></BoardHeader>
-    <div ref="content" class="board-view-content" @mousedown="onMousedown">
+    <div ref="content" class="board-view-content" @mousedown="onMousedown" :style="contentStyle">
       <BoardItem
         v-for="(item, index) of boardData.items"
         :key="index"
@@ -24,6 +24,7 @@
 </template>
 <script setup>
 import { inject, ref, watch, computed, onMounted, onUnmounted } from "vue"
+import { isImage } from "render/util"
 import { getImgWidthHeight } from "render/util/image"
 import BoardItem from "./item.vue"
 import BoardHeader from "./header.vue"
@@ -42,6 +43,11 @@ if (!$main.storage?.currentBoard) {
 } else {
   currentBoard.value = $main.storage.currentBoard
 }
+const contentStyle = () => {
+  return {
+    transform: `scale(${boardSetting.value.scale})`
+  }
+}
 watch(currentBoard, (v) => {
   $main.storage.currentBoard = v
 })
@@ -51,7 +57,7 @@ watch(
     return $main.storage.active
   },
   async (v) => {
-    if (v) {
+    if (v && isImage(v)) {
       let { width, height } = await getImgWidthHeight(v)
       const originWidth = width
       const originHeight = height
@@ -96,8 +102,6 @@ const getAutoLayout = ({ width, height }) => {
   let bottomList = boardData.value.items.sort((a, b) => b.top + b.height - a.top - a.height)
   let rightMax = rightList[0] ? rightList[0].left + rightList[0].width : 0
   let bottomMax = bottomList[0] ? bottomList[0].top + bottomList[0].height : 0
-
-  console.log(bottomList.map((b) => b.top + b.height))
   return {
     left: 0,
     top: bottomMax
@@ -117,7 +121,6 @@ const onBoardKeydown = (e) => {
 }
 
 const onMousedown = (e) => {
-  console.log(e)
   if (e.target === content.value) {
     activeItem.value = null
   }

@@ -7,7 +7,7 @@
       :src="'image://' + src"
     />
     <div class="thumbnail-icon" v-else>
-      <icon v-if="suffix" type="md-folder"></icon>
+      <icon v-if="!suffix" type="md-folder"></icon>
       <FileIcon v-else :type="suffix"></FileIcon>
     </div>
     <!-- <video

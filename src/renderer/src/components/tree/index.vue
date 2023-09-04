@@ -89,8 +89,12 @@ export default {
     },
     toNext() {
       const item = this.node[this.active]
-      if (item.$parent && item.$parent.subData[item.index + 1]) {
-        this.onItemClick(item.$parent.subData[item.index + 1])
+      if (item && item.$parent) {
+        if (item.$parent.subData[item.index + 1]) {
+          this.onItemClick(item.$parent.subData[item.index + 1])
+        } else if (item.$parent.$parent && item.$parent.$parent.subData[item.$parent.index + 1]) {
+          this.onItemClick(item.$parent.$parent.subData[item.$parent.index + 1])
+        }
       }
     },
     onItemCheck(data) {

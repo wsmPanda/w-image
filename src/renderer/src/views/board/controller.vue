@@ -239,7 +239,6 @@ const onControllerMouseUp = (e) => {
 }
 
 watch(activeItem, (v) => {
-  console.log(v)
   if (v) {
     bottomEl.value.scrollIntoViewIfNeeded()
   }

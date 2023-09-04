@@ -455,28 +455,29 @@ export default {
   mounted() {
     this.onResize()
     window.addEventListener("keyup", (e) => {
-      if (this.storage.active && this.tags[e.key - 1]) {
-        let tag = this.tags[e.key - 1]
-        let info = this.fileInfo && this.fileInfo[this.storage.active]
-        let tags = (info && info.tags) || []
-        let index = tags.indexOf(tag.name)
-        if (index >= 0) {
-          tags.splice(index, 1)
-        } else {
-          tags.push(tag.name)
-        }
-        if (!info) {
-          this.fileInfo = this.fileInfo || {}
-          this.$set(this.fileInfo, this.storage.active, {
-            tags: tags
-          })
-        }
-        window.ConnectRun("setInfo", {
-          path: this.storage.active,
-          value: tags,
-          code: "tags"
-        })
-      }
+      // tag标记 功能待完善
+      // if (this.storage.active && this.tags[e.key - 1]) {
+      //   let tag = this.tags[e.key - 1]
+      //   let info = this.fileInfo && this.fileInfo[this.storage.active]
+      //   let tags = (info && info.tags) || []
+      //   let index = tags.indexOf(tag.name)
+      //   if (index >= 0) {
+      //     tags.splice(index, 1)
+      //   } else {
+      //     tags.push(tag.name)
+      //   }
+      //   if (!info) {
+      //     this.fileInfo = this.fileInfo || {}
+      //     this.$set(this.fileInfo, this.storage.active, {
+      //       tags: tags
+      //     })
+      //   }
+      //   window.ConnectRun("setInfo", {
+      //     path: this.storage.active,
+      //     value: tags,
+      //     code: "tags"
+      //   })
+      // }
     })
   },
   beforeMount() {

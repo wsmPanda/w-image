@@ -21,7 +21,7 @@
 
       <i-button size="small"><i class="ri-zoom-out-line"></i> </i-button>
 
-      <i-button size="small" @click="clearItems"> <i class="ri-delete-bin-line"></i> </i-button>
+      <i-button size="small" @click="clearItems"> <i class="ri-brush-3-line"></i> </i-button>
       <Dropdown trigger="click" transfer>
         <i-button size="small">
           <i class="ri-stack-line"></i>{{ boardData?.items?.length || ""
