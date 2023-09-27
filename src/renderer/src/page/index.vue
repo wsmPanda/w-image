@@ -3,7 +3,7 @@
     <Header></Header>
     <Layout class="page-content" ref="layout" :config="config.mainLayout || {}">
       <template v-slot:left>
-        <div class="main-left">
+        <div class="main-left focus-clean" ref="leftPanel" tabindex="1" @keydown="onLeftKeydone">
           <Tabs v-model:value="storage.leftTab" :items="tabItems">
             <template v-slot:folder>
               <TreePanel
@@ -50,10 +50,11 @@
         <component
           :is="viewComponent"
           ref="imageList"
-          class="main-image-list"
+          class="main-image-list focus-clean"
           :height="listHeight"
           :loadFinish="listLoadFinish"
           :loadingMore="imageLoadingMore"
+          tabindex="2"
           @scroll="onListScroll"
           @dictoryChange="onDictoryChange"
           @activeImageChange="onActiveImageChange"
@@ -63,8 +64,8 @@
         ></component>
       </template>
       <template v-slot:right>
-        <component v-if="rightComponent" :is="rightComponent"></component>
-        <template v-else>
+        <component v-if="rightComponent"  :is="rightComponent" tabindex="3"></component>
+        <template v-else tabindex="3">
           <FileViewer
             :key="storage.active"
             v-if="storage.active"
@@ -454,6 +455,12 @@ export default {
   },
   mounted() {
     this.onResize()
+    setTimeout(() => {
+      console.log(this.$refs, this.$el)
+      this.$refs.leftPanel.addEventListener("keyup", (e) => {
+        console.log("??????", e)
+      })
+    }, 300)
     window.addEventListener("keyup", (e) => {
       // tag标记 功能待完善
       // if (this.storage.active && this.tags[e.key - 1]) {
