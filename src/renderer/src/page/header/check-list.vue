@@ -118,10 +118,13 @@ export default {
       this.cleanCheck()
     },
     onMove() {
-      window.ConnectRun("moveToDictory", {
-        data: this.getPathList(this.activeData)
-      })
-      // this.cleanCheck();
+      window
+        .ConnectRun("moveToDictory", {
+          data: this.getPathList(this.activeData)
+        })
+        .then(() => {
+          this.cleanCheck()
+        })
     },
     onClear() {
       this.cleanCheck()

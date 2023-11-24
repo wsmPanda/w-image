@@ -43,7 +43,8 @@ export default {
                     <div
                       class={{
                         "dictory-list-item": true,
-                        "dictory-list-item-root": isRoot
+                        "dictory-list-item-root": isRoot,
+                        "dictory-list-item-frist-root": rowIndex === 0
                         // start: index === 0,
                         // current: index + this.startIndex === this.currentIndex,
                         // end: index === this.viewData.length - 1
