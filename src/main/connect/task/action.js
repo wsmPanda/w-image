@@ -119,19 +119,26 @@ export default {
         } else {
           nameMap[newPath] = 1
         }
-        return {
-          operate: "rename",
-          message: aNumberMap[newName]
-            ? "x" + aNumberMap[newName] + " ->" + newName
-            : "->" + newName,
-          params: {
-            current: aNumberMap[newName],
-            path,
-            code,
-            newPath: newPath,
-            newName
-          },
-          extra: "aNumber"
+        if (aNumberMap[newName] === path) {
+          return {
+            error: true,
+            message: "重复处理"
+          }
+        } else {
+          return {
+            operate: "rename",
+            message: aNumberMap[newName]
+              ? "x " + aNumberMap[newName] + " ->" + newName
+              : "->" + newName,
+            params: {
+              current: aNumberMap[newName],
+              path,
+              code,
+              newPath: newPath,
+              newName
+            },
+            extra: "aNumber"
+          }
         }
       } else {
         return {

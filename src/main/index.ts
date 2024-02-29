@@ -14,7 +14,7 @@ function createWindow(): void {
   mainWindow.on("ready-to-show", () => {
     mainWindow.show()
   })
-  
+
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: "deny" }
@@ -31,7 +31,6 @@ function createWindow(): void {
     mainWindow.webContents.openDevTools()
   }
 }
-
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -41,8 +40,21 @@ app.whenReady().then(() => {
 
   app.whenReady().then(() => {
     protocol.registerFileProtocol("image", (request, callback) => {
-      const filePath = url.fileURLToPath("file://" + request.url.slice("image://".length))
-      callback(filePath)
+      try {
+        const filePath = url.fileURLToPath(
+          "file://" +
+            request.url
+              .slice("image://".length)
+              .split(/\\|\//)
+              .map((item, index) => {
+                return index ? encodeURIComponent(decodeURI(item)) : item
+              })
+              .join("\\")
+        )
+        callback(filePath)
+      } catch (ex) {
+        callback("file://" + request.url.slice("image://".length))
+      }
     })
   })
 

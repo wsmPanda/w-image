@@ -13,7 +13,7 @@ export default {
     if (options.suffix) {
       let suffix = options.suffix.split(",")
       return (path) => {
-        return suffix.includes(getSuffix(path))
+        return getSuffix(path) && suffix.includes(getSuffix(path))
       }
     } else {
       return () => true

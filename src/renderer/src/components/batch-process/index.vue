@@ -87,6 +87,15 @@ export default {
           }
         })
       }
+      this.actions.push({
+        type: "aNumber"
+      })
+      this.filters.push({
+        type: "format",
+        options: {
+          type: "video"
+        }
+      })
     },
     async onPreview() {
       this.hasPreview = true

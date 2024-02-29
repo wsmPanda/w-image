@@ -22,32 +22,32 @@
           class="tree-action"
           :class="{ error: data.action.error || data.status === -1, success: data.status === 1 }"
         >
-          {{ data.error || data.action.error || data.action.message }}
-          <!-- <template
-            v-if="
-              data.action.params &&
-              data.action.params.current &&
-              data.path !== data.action.params.current
-            "
-          >
+          <template v-if="currentPath(data) && data.path !== currentPath(data)">
             <a
               @click="
                 $connect.run('openDictory', {
-                  path: data.action.params.current
+                  path: currentPath(data)
                 })
               "
-              >{{ data.action.params.current }}</a
+              >{{ currentPath(data) }}</a
             >
-            -
+            ->
             <a
               @click="
                 $connect.run('openDictory', {
                   path: data.path
                 })
               "
-              >{{ data.path }}</a
+              >{{ data.action.params.newName }}</a
             >
-          </template> -->
+          </template>
+          <template v-else>
+            {{
+              data.action.error
+                ? data?.action?.message || "error"
+                : data.action.error || data.action.message
+            }}</template
+          >
         </div>
       </template>
     </CommonTree>
@@ -86,7 +86,11 @@ export default {
       ]
     }
   },
+  computed: {},
   methods: {
+    currentPath(data) {
+      return data?.action?.params?.current
+    },
     resetSelect() {
       this.selected = []
     },
