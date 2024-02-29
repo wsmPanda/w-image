@@ -58,6 +58,34 @@ async function shellFiles(data) {
   })
 }
 
+async function getShellFolderActions(data) {
+  if (!data) {
+    return data
+  }
+  let pathList = data.path.split(/\/|\\/)
+  let parentName = pathList.pop()
+  let parentPath = pathList.join("/")
+  let sub = []
+  let files = []
+  if (data.sub?.length) {
+    sub = data.sub.map((item) => {
+      return getShellFolderActions(item)
+    })
+  }
+  if (data.files?.length) {
+    if (data.files.length === 1) {
+      const name = data.path + "\\" + data.files[0]
+      let newName = parentPath + "\\" + data.files[0]
+      if (fs.existsSync(name)) {
+        newName = parentPath + "\\" + parentName + "-" + data.files[0]
+      }
+      fs.renameSync(name, newName)
+    } else {
+    }
+  }
+  return { ...data, sub, files }
+}
+
 function getFileList(data) {
   let res = []
   if (data.files) {
@@ -149,6 +177,13 @@ export default {
     })
     let data = await iterator.run()
     shellFiles(data)
+  },
+  async shellFolder({ path }) {
+    let iterator = new Iterator(path, {
+      file: true
+    })
+    let data = await iterator.run()
+    let actions = getShellFolderActions(data)
   },
   async MoveFiles() {},
   async deleteFiles({ data }) {

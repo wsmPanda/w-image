@@ -88,6 +88,14 @@
           "
           >文件退壳</Button
         >
+        <Button
+          @click="
+            $connect.run('shellFolder', {
+              path: $main.storage.activeTree && $main.storage.activeTree.path
+            })
+          "
+          >目录退壳</Button
+        >
       </div>
     </Modal>
   </div>
