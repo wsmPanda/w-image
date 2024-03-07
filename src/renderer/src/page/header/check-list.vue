@@ -1,6 +1,6 @@
 <template>
   <div class="checklist" @click.stop>
-    <Tabs type="card" :model-value="value" @update:model-value="$emit('input', $event)">
+    <Tabs type="card" :model-value="value" @update:model-value="$emit('input', $event)" :animated>
       <TabPane
         v-for="(tab, tabIndex) of data"
         :key="tabIndex"
@@ -146,12 +146,19 @@ export default {
   max-height: 80vh;
   display: flex;
   flex-direction: column;
+  .ivu-tabs {
+    display: flex;
+    flex-direction: column;
+  }
+  .ivu-tabs-content {
+    flex: 1;
+    overflow: auto;
+  }
 }
 .checklist-box {
   display: flex;
   width: 100%;
   flex-wrap: wrap;
-  overflow: auto;
 }
 .checklist-tool {
   padding: 8px 8px 4px;
