@@ -54,7 +54,7 @@ export default [
   {
     name: "dictory_tree",
     type: "array"
-  }, 
+  },
   // 参考画板
   {
     name: "board",
@@ -110,5 +110,7 @@ export default [
   {
     name: "number_map",
     type: "object"
-  }
+  },
+  // 截图目录编号
+  { name: "video_screenshot_map", type: "object" }
 ]

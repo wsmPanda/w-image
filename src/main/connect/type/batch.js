@@ -2,6 +2,7 @@ import Iterator from "../../util/iterator"
 import fs from "fs"
 import path from "path"
 import { exec } from "child_process" // 输出当前目录（不一定是代码所在的目录）下的文件和文件夹
+import { generateVideoShoot, getVideoShootsList } from "../../video/shoot"
 
 var fse = require("fs-extra")
 
@@ -135,6 +136,12 @@ async function clearEmpty(dir) {
   return count
 }
 export default {
+  getShoot({ path }) {
+    generateVideoShoot(path)
+  },
+  getVideoShootsList({ path }) {
+    return getVideoShootsList(path)
+  },
   async processBatch({ process, from, to, path, add, id, type, replace }) {
     let iterator = new Iterator(path, {
       file: true,
