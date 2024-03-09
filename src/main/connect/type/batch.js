@@ -3,7 +3,8 @@ import fs from "fs"
 import path from "path"
 import { exec } from "child_process" // 输出当前目录（不一定是代码所在的目录）下的文件和文件夹
 import { generateVideoShoot, getVideoShootsList } from "../../video/shoot"
-
+import { walkFiles } from "../../connect/task/index.js"
+import { isVideo } from "../../util"
 var fse = require("fs-extra")
 
 var rimraf = require("rimraf")
@@ -141,6 +142,25 @@ export default {
   },
   getVideoShootsList({ path }) {
     return getVideoShootsList(path)
+  },
+  async getFilesShoot(params) {
+    let iterator = new Iterator(params.path, {
+      file: true,
+      list: true,
+      filter(name) {
+        return isVideo(name)
+      }
+    })
+    await iterator.run()
+    const list = iterator.dataList.filter((item) => typeof item === "string")
+    for (let item of list) {
+      try {
+        console.log(`(${list.indexOf(item)}/${list.length})${item}`)
+        await getVideoShootsList(item)
+      } catch (ex) {
+        console.error(ex)
+      }
+    }
   },
   async processBatch({ process, from, to, path, add, id, type, replace }) {
     let iterator = new Iterator(path, {

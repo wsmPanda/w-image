@@ -11,7 +11,6 @@
       <source :src="'file://' + data" type="video/mp4" />
     </video>
     <Button @click="snap">截图(F3)</Button>
-    <Button @click="test">test</Button>
     <div v-if="shootsList.length" class="video-shoot-box">
       <div
         class="video-shoot-item"
@@ -76,7 +75,9 @@ export default {
       this.$set(this.$main.storage, "videoMuted", this.$refs.video.muted)
     },
     onShootClick(index) {
-      this.$refs.video.currentTime = (this.$refs.video.duration * index) / this.shootsList.length
+      this.$refs.video.currentTime =
+        (this.$refs.video.duration / this.shootsList.length) * (index + 1)
+      console.log(this.$refs.video.currentTime)
     }
   },
   beforeDestroy() {
@@ -92,7 +93,7 @@ export default {
     window.addEventListener("keyup", this.onSnap)
   },
   async created() {
-    this.shootsList = await window.ConnectRun("getVideoShootsList", { path: this.data })
+    // this.shootsList = await window.ConnectRun("getVideoShootsList", { path: this.data })
   }
 }
 </script>

@@ -127,7 +127,14 @@ export default {
           name: "在系统中打开",
           icon: "md-open",
           action({ path }) {
-            shell.openPath(path)
+            shell.openPath(path.replace(/\//g, "\\"))
+          }
+        },
+        {
+          name: "生成切片",
+          icon: "md-open",
+          action({ path }) {
+            window.ConnectRun("getFilesShoot", { path })
           }
         },
         {

@@ -32,7 +32,7 @@ function getFileObject(data) {
   return res
 }
 
-async function walkFiles(data, func) {
+export async function walkFiles(data, func) {
   if (data.sub) {
     data.sub.forEach((item) => {
       if (item.type === "dictory") {
