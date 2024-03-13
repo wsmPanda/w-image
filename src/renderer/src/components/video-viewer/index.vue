@@ -93,7 +93,7 @@ export default {
     window.addEventListener("keyup", this.onSnap)
   },
   async created() {
-    // this.shootsList = await window.ConnectRun("getVideoShootsList", { path: this.data })
+    this.shootsList = await window.ConnectRun("getVideoShootsList", { path: this.data })
   }
 }
 </script>
