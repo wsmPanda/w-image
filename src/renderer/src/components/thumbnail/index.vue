@@ -6,6 +6,10 @@
       class="thumbnail-img"
       :src="'image://' + src"
     />
+    <template v-else-if="videoShootPath">
+      <img @error="loaded = false" class="thumbnail-img" :src="'image://' + videoShootPath" />
+      <FileIcon class="video-thumbnail-icon" :type="suffix"></FileIcon>
+    </template>
     <div class="thumbnail-icon" v-else>
       <icon v-if="!suffix" type="md-folder"></icon>
       <FileIcon v-else :type="suffix"></FileIcon>
@@ -52,7 +56,7 @@
 </template>
 
 <script>
-import { isImage, getSuffix } from "render/util"
+import { isImage, getSuffix, isVideo } from "render/util"
 import FileIcon from "../file-icon/index.vue"
 export default {
   inject: ["$main"],
@@ -69,7 +73,8 @@ export default {
   data() {
     return {
       v: false,
-      loaded: true
+      loaded: true,
+      videoShootPath: null
     }
   },
   watch: {
@@ -87,6 +92,9 @@ export default {
     },
     isImage() {
       return isImage(this.src)
+    },
+    isVideo() {
+      return isVideo(this.src)
     },
     suffix() {
       return getSuffix(this.src)
@@ -131,6 +139,11 @@ export default {
     },
     onDelete() {
       this.$emit("delete", this.data)
+    }
+  },
+  async created() {
+    if (this.isVideo) {
+      this.videoShootPath = await window.ConnectRun("getShoot", { path: this.src })
     }
   }
 }
@@ -233,5 +246,13 @@ export default {
   text-overflow: ellipsis;
   direction: ltr;
   text-align: center;
+}
+.video-thumbnail-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  height: 20px;
+  width: 20px;
+  opacity: 0.8;
 }
 </style>

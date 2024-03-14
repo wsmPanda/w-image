@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="video-viewer-box">
     <video
       ref="video"
       class="video"
@@ -10,7 +10,7 @@
     >
       <source :src="'file://' + data" type="video/mp4" />
     </video>
-    <Button @click="snap">截图(F3)</Button>
+    <!-- <Button @click="snap">截图(F3)</Button> -->
     <div v-if="shootsList.length" class="video-shoot-box">
       <div
         class="video-shoot-item"
@@ -76,7 +76,7 @@ export default {
     },
     onShootClick(index) {
       this.$refs.video.currentTime =
-        (this.$refs.video.duration / this.shootsList.length) * (index + 1)
+        (this.$refs.video.duration / (this.shootsList.length - 1)) * index
       console.log(this.$refs.video.currentTime)
     }
   },
@@ -106,6 +106,8 @@ export default {
 .video-shoot-box {
   display: flex;
   flex-wrap: wrap;
+  overflow: auto;
+  margin-top: 8px;
 }
 .video-shoot-item {
   width: 50%;
@@ -114,5 +116,11 @@ export default {
     max-width: 100%;
     object-fit: contain;
   }
+}
+.video-viewer-box {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 </style>

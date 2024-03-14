@@ -1,5 +1,5 @@
 import { walkFilesAsync, isImage, isVideo, isWindows } from "../../util"
-import { selectTable, selectFilesTable } from "../../db"
+import { JsonDataTable } from "../../db"
 import { dialog, shell } from "electron"
 import fs from "fs"
 import util from "util"
@@ -15,7 +15,7 @@ function fileListToTree(list) {
 }
 
 Iterator.onFinish = function (iterator) {
-  let table = selectFilesTable("files_cache")
+  let table = new JsonDataTable("files_cache")
   if (iterator.options.file && !iterator.options.deep) {
     table.save(iterator.path.replace(/\//g, "==").replace(/\:/g, "++"), {
       path: iterator.path,
@@ -99,10 +99,10 @@ export default {
       })
   },
   addDictory({ path }) {
-    return selectTable("dictory").add({ path, name: path.split("/").pop() })
+    return new JsonDataTable("dictory").add({ path, name: path.split("/").pop() })
   },
   deleteDictory({ path }) {
-    return selectTable("dictory").delete((item) => item.path === path)
+    return new JsonDataTable("dictory").delete((item) => item.path === path)
   },
   openDictory({ path }) {
     shell.openItem
@@ -131,7 +131,7 @@ export default {
     return info
   },
   getDictory() {
-    return selectTable("dictory").get()
+    return new JsonDataTable("dictory").get()
   },
   selectFile({ path }) {
     let list = []

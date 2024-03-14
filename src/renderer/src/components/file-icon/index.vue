@@ -17,6 +17,7 @@ const FileIconMap = {
   wmv: "video",
   flv: "video",
   avi: "video",
+  mkv: "video",
   rmvb: "video",
   mp3: "music",
   xlsx: "excel_office",

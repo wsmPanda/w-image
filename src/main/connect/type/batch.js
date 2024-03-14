@@ -1,10 +1,11 @@
 import Iterator from "../../util/iterator"
 import fs from "fs"
 import path from "path"
+import { path as appPath } from "../../db/util"
 import { exec } from "child_process" // 输出当前目录（不一定是代码所在的目录）下的文件和文件夹
-import { generateVideoShoot, getVideoShootsList } from "../../video/shoot"
-import { walkFiles } from "../../connect/task/index.js"
+import {  getVideoShootsList, getFilesVideoShoots } from "../../video/shoot"
 import { isVideo } from "../../util"
+import { JsonDataTable } from "../../db"
 var fse = require("fs-extra")
 
 var rimraf = require("rimraf")
@@ -137,12 +138,18 @@ async function clearEmpty(dir) {
   return count
 }
 export default {
-  getShoot({ path }) {
-    generateVideoShoot(path)
+  async getShoot(e) {
+    let data = await new JsonDataTable("video_screenshot_map").get()
+    if (data?.[e.path]) {
+      return path.join(appPath("screenshots"), `${data[e.path]}_2.jpg`)
+    } else {
+      return null
+    }
   },
   getVideoShootsList({ path }) {
     return getVideoShootsList(path)
   },
+
   async getFilesShoot(params) {
     let iterator = new Iterator(params.path, {
       file: true,
@@ -153,14 +160,7 @@ export default {
     })
     await iterator.run()
     const list = iterator.dataList.filter((item) => typeof item === "string")
-    for (let item of list) {
-      try {
-        console.log(`(${list.indexOf(item)}/${list.length})${item}`)
-        await getVideoShootsList(item)
-      } catch (ex) {
-        console.error(ex)
-      }
-    }
+    return getFilesVideoShoots(list)
   },
   async processBatch({ process, from, to, path, add, id, type, replace }) {
     let iterator = new Iterator(path, {

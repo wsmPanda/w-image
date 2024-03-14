@@ -27,6 +27,23 @@ export function readTable(name) {
     return null
   }
 }
+export async function readTableSync(name) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(tablePath(name), (err, data) => {
+      if (err) {
+        console.error(err)
+        resolve(null)
+      }
+      try {
+        let res = JSON.parse(data.toString())
+        resolve(res)
+      } catch (ex) {
+        console.error(ex)
+        resolve(null)
+      }
+    })
+  })
+}
 export function writeTable(name, data) {
   try {
     let dataString = typeof data === "object" ? JSON.stringify(data, null, 2) : data.toString()
