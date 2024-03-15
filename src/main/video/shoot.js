@@ -9,7 +9,10 @@ const ffmpeg = require("fluent-ffmpeg")
 ffmpeg.setFfmpegPath(ffmpegPath)
 ffmpeg.setFfprobePath(ffprobePath)
 import { v4 } from "uuid"
-export const screenshotCount = 10
+// 截图输出数量
+export const screenshotCount = 16
+// 截图最大宽度
+export const shootSize = 480
 
 const generateVideoMap = new Map()
 const screenshotTable = new JsonDataTable("video_screenshot_map")
@@ -146,7 +149,7 @@ export function getOneShoot(videoPath, shootPath, duration, i) {
     if (time < 0) {
       time = 0
     }
-    let command = `"${ffmpegPath}" -ss ${time} -i "${videoPath}" -f image2 -vframes 1 -y "${shootPath}_${
+    let command = `"${ffmpegPath}" -ss ${time} -i "${videoPath}" -f image2 -filter:v scale=${shootSize}:-1 -vframes 1 -y "${shootPath}_${
       i + 1
     }.jpg"`
     exec(command, (error, stdout, stderr) => {
