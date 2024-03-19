@@ -85,27 +85,27 @@ export default {
     window.addEventListener("keyup", this.onSnap)
   },
   beforeMount() {
-    // this.$connect
-    //   .run("video", {
-    //     path: this.data
-    //   })
-    //   .then((message) => {
-    //     if (!message) {
-    //       return
-    //     }
-    //     this.videoSource = message.videoSource
-    //     this.playerOptions = {
-    //       techOrder: ["StreamPlay"],
-    //       StreamPlay: { duration: message.duration },
-    //       sources: [
-    //         {
-    //           type: "video/mp4",
-    //           src: message.videoSource
-    //         }
-    //       ]
-    //     }
-    //     this.videoReady = true
-    //   })
+    this.$connect
+      .run("video", {
+        path: this.data
+      })
+      .then((message) => {
+        if (!message) {
+          return
+        }
+        this.videoSource = message.videoSource
+        this.playerOptions = {
+          techOrder: ["StreamPlay"],
+          StreamPlay: { duration: message.duration },
+          sources: [
+            {
+              type: "video/mp4",
+              src: message.videoSource
+            }
+          ]
+        }
+        this.videoReady = true
+      })
   }
 }
 </script>

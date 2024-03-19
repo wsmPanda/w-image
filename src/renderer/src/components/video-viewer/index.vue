@@ -1,5 +1,6 @@
 <template>
   <div class="video-viewer-box">
+    <!-- <VideoPlayer :src="data"></VideoPlayer> -->
     <video
       ref="video"
       class="video"
@@ -7,6 +8,7 @@
       :muted="$main.storage.videoMuted"
       :autoplay="$main.config.video.autoPlay"
       @volumechange="onVolumechange"
+      @wheel="onWheel"
     >
       <source :src="'file://' + data" type="video/mp4" />
     </video>
@@ -25,8 +27,10 @@
   </div>
 </template>
 <script>
+import VideoPlayer from "./player/index.vue"
 export default {
   inject: ["$main"],
+  components: { VideoPlayer },
   props: {
     data: {}
   },
@@ -44,6 +48,13 @@ export default {
     }
   },
   methods: {
+    onWheel(e) {
+      if (this.$main.config?.video?.wheelScroll) {
+        this.$refs.video.currentTime += e.deltaY * 0.00015 * this.$refs.video.duration
+        e.preventDefault()
+        e.stopPropagation()
+      }
+    },
     snap() {
       let canvas = this.$refs.canvas
       let video = this.$refs.video
@@ -93,7 +104,9 @@ export default {
     window.addEventListener("keyup", this.onSnap)
   },
   async created() {
-    this.shootsList = await window.ConnectRun("getVideoShootsList", { path: this.data })
+    if (this.$main.config?.video?.autoShoot) {
+      this.shootsList = await window.ConnectRun("getVideoShootsList", { path: this.data })
+    }
   }
 }
 </script>

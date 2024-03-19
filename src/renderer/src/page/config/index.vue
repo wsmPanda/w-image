@@ -85,6 +85,11 @@ export default {
               label: "目录翻页高度",
               key: "turnHeight",
               type: "number"
+            },
+            {
+              label: "文件拖拽",
+              key: "fileDrag",
+              component: Switch
             }
           ]
         },
@@ -103,6 +108,28 @@ export default {
               label: "自动播放",
               key: "autoPlay",
               component: Switch
+            },
+            {
+              label: "滚轮控制进度",
+              key: "wheelScroll",
+              component: Switch
+            },
+            {
+              label: "自动生成截图",
+              key: "autoShoot",
+              component: Switch
+            },
+            {
+              label: "截图数量",
+              key: "shootCount",
+              type: "number",
+              disabled: true
+            },
+            {
+              label: "截图最大宽度",
+              key: "shootSize",
+              type: "number",
+              disabled: true
             }
           ]
         }

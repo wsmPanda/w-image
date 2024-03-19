@@ -1,5 +1,5 @@
 <template>
-  <i-input size="small" :modelValue="value" @update:modelValue="input">
+  <i-input size="small" :modelValue="value" @update:modelValue="input" :disabled="field.disabled">
     <template #append>
       <i-Button @click="onSelect" size="small" icon="md-folder"></i-Button>
     </template>

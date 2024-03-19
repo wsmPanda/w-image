@@ -105,6 +105,9 @@ export default {
   },
   methods: {
     onMousedown() {
+      if (!this.$main?.config?.image.fileDrag) {
+        return
+      }
       let dragWatcher = () => {
         this.onDragstart()
         window.removeEventListener("mousemove", dragWatcher)

@@ -6,18 +6,21 @@
       :label="field.label"
       v-for="field of model.fields"
       :key="field.key"
+      :disabled="field.disabled"
       :style="fieldStyle(field)"
     >
       <component
         v-if="Fields[field.type]"
         :is="Fields[field.type]"
         :code="field.key"
+        :disabled="field.disabled"
         :field="field"
       ></component>
       <Input
         v-else-if="!field.component"
         :modelValue="(value[field.key] || '').toString()"
         :type="field.type"
+        :disabled="field.disabled"
         size="small"
         @update:modelValue="$set(value, field.key, $event)"
         v-bind="field.attr"
@@ -29,6 +32,7 @@
         :modelValue="value[field.key]"
         size="small"
         :type="field.type"
+        :disabled="field.disabled"
         @update:modelValue="$set(value, field.key, $event)"
         v-bind="field.attr"
         v-on="field.on || {}"

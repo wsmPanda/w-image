@@ -3,6 +3,7 @@
     :modelValue="value || []"
     size="small"
     @update:modelValue="input"
+    :disabled="field.disabled"
     :v-bind="field.attr"
     :v-on="field.on"
   >
@@ -13,10 +14,10 @@
 </template>
 
 <script>
-import Base from "./field";
+import Base from "./field"
 export default {
   extends: Base
-};
+}
 </script>
 
 <style></style>

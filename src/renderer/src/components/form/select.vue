@@ -6,6 +6,7 @@
     :v-bind="field.attr"
     :v-on="field.on"
     :size="size"
+    :disabled="field.disabled"
   >
     <Option
       v-for="item of field.data || []"

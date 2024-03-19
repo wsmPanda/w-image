@@ -2,6 +2,7 @@
   <RadioGroup
     :modelValue="value"
     size="small"
+    :disabled="field.disabled"
     @update:modelValue="input"
     :v-bind="field.attr"
     :v-on="field.on"

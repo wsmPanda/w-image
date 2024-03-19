@@ -46,8 +46,7 @@
       @fullClose="fullScreen = false"
     />
     <template v-else-if="isVideo">
-      <VideoViewer v-if="videoViewerType !== 'ff'" :key="data" :data="data"></VideoViewer>
-      <VideoFFViewer v-else :key="data" :data="data"></VideoFFViewer
+      <VideoViewer :key="data" :data="data"></VideoViewer>
     ></template>
   </div>
 </template>
@@ -55,12 +54,11 @@
 <script>
 import { isImage, isPdf, isVideo } from "render/util"
 import VideoViewer from "../video-viewer/index.vue"
-import VideoFFViewer from "../video-viewer/ff.vue"
 import PdfViewer from "../pdf-viewer/index.vue"
 import ImageViewer from "../image-viewer/index.vue"
 export default {
   inject: ["$main"],
-  components: { VideoViewer, ImageViewer, VideoFFViewer, PdfViewer },
+  components: { VideoViewer, ImageViewer, PdfViewer },
   props: {
     data: {}
   },

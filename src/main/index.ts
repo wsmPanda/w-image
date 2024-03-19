@@ -5,7 +5,7 @@ import url from "url"
 import ProcessCreate from "./create"
 import ProcessReady from "./ready"
 import WindowConfig from "./window"
-import "./video/service"
+
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow(WindowConfig)
