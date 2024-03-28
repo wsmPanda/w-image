@@ -28,26 +28,18 @@
       </span>
     </div>
     <div v-if="data && subData && subData.length" v-show="open" class="tree-item-sub">
-      <TreeItem
-        ref="items"
-        v-for="(item, index) of subData"
-        :data="item"
-        :key="index"
-        :index="index"
-        :deep="deep + 1"
-        @remove="removeChildren(index)"
-        ><template v-slot:name="{ data, deep, open }">
-          <slot name="name" :data="data" :deep="deep" :open="open"></slot></template
+      <TreeItem ref="items" v-for="(item, index) of subData" :data="item" :key="index" :index="index" :deep="deep + 1" @remove="removeChildren(index)"
+        ><template v-slot:name="{ data, deep, open }"> <slot name="name" :data="data" :deep="deep" :open="open"></slot></template
       ></TreeItem>
     </div>
   </div>
 </template>
 
 <script>
-import { Icon } from "view-ui-plus"
+import { Icon } from 'view-ui-plus'
 export default {
-  name: "TreeItem",
-  inject: ["$treeRoot"],
+  name: 'TreeItem',
+  inject: ['$treeRoot'],
   components: { Icon },
   props: {
     data: {},
@@ -86,25 +78,25 @@ export default {
   },
   methods: {
     onClick() {
-      this.$emit("on-click")
+      this.$emit('on-click')
       this.$treeRoot.onItemClick(this.data)
     },
     async onRefresh() {
       let open = this.data.open
-      this.$set(this.data, "hasRead", false)
+      this.$set(this.data, 'hasRead', false)
       await this.getSubData()
       this.data.open = open
       if (this.dataKey === this.$treeRoot.active) {
-        this.$treeRoot.$emit("on-fresh", this.data)
+        this.$treeRoot.$emit('on-fresh', this.data)
       }
     },
     async onOpen() {
       if (!this.hasRead && this.$treeRoot.subGetter) {
         await this.getSubData()
-        this.$set(this.data, "open", true)
+        this.$set(this.data, 'open', true)
         this.open = true
       } else {
-        this.$set(this.data, "open", !this.data.open)
+        this.$set(this.data, 'open', !this.data.open)
         this.open = this.data.open
       }
     },
@@ -130,7 +122,7 @@ export default {
         let data = await this.$treeRoot.subGetter(this.data)
         this.currentSubData = data || []
         if (data.error) {
-          this.$set(this.data, "error", true)
+          this.$set(this.data, 'error', true)
         } else {
           data.error = false
         }
@@ -141,7 +133,7 @@ export default {
       }
     },
     removeNode() {
-      this.$emit("remove", { index: this.index, data: this.data })
+      this.$emit('remove', { index: this.index, data: this.data })
     },
     removeChildren(index) {
       this.data[this.subKey] && this.data[this.subKey].splice(index, 1)
@@ -168,6 +160,7 @@ export default {
     width: 100%;
     padding-right: 8px;
     white-space: normal;
+    word-break: break-all;
   }
 }
 .tree-common {
@@ -198,7 +191,7 @@ export default {
       padding-left: 12px;
       position: relative;
       &::before {
-        content: "";
+        content: '';
         position: absolute;
         border-left: 1px solid #eee;
         top: 0;
@@ -206,7 +199,7 @@ export default {
         bottom: 8px;
       }
       &::after {
-        content: "";
+        content: '';
         position: absolute;
         border-bottom: 1px solid #eee;
         left: 10px;

@@ -47,15 +47,16 @@
     />
     <template v-else-if="isVideo">
       <VideoViewer :key="data" :data="data"></VideoViewer>
-    ></template>
+      >
+    </template>
   </div>
 </template>
 
 <script>
 import { isImage, isPdf, isVideo } from "render/util"
-import VideoViewer from "../video-viewer/index.vue"
-import PdfViewer from "../pdf-viewer/index.vue"
-import ImageViewer from "../image-viewer/index.vue"
+import VideoViewer from "./video-viewer/index.vue"
+import PdfViewer from "./pdf-viewer/index.vue"
+import ImageViewer from "./image-viewer/index.vue"
 export default {
   inject: ["$main"],
   components: { VideoViewer, ImageViewer, PdfViewer },

@@ -40,7 +40,7 @@ const itemClipStyle = computed(() => {
     top: data.clipTop + "px",
     left: data.clipLeft + "px",
     zIndex: (data.zIndex || 0) + 1,
-    backgroundImage: `url(image://${data.src})`,
+    backgroundImage: `url("image://${data.src}")`,
     backgroundRepeat: "no-repeat",
     backgroundPosition: `${-data.clipLeft}px ${-data.clipTop}px`,
     backgroundSize: `${data.width}px ${data.height}px`

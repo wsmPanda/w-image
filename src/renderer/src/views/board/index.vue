@@ -23,17 +23,17 @@
   </div>
 </template>
 <script setup>
-import { inject, ref, watch, computed, onMounted, onUnmounted } from "vue"
-import { isImage } from "render/util"
-import { getImgWidthHeight } from "render/util/image"
-import BoardItem from "./item.vue"
-import BoardHeader from "./header.vue"
-import BoardController from "./controller.vue"
-import { useBoard } from "./useBoard.ts"
+import { inject, ref, watch, computed, onMounted, onUnmounted } from 'vue'
+import { isImage } from 'render/util'
+import { getImgWidthHeight } from 'render/util/image'
+import BoardItem from './item.vue'
+import BoardHeader from './header.vue'
+import BoardController from './controller.vue'
+import { useBoard } from './useBoard.ts'
 
-import "./style.less"
+import './style.less'
 
-const $main = inject("$main")
+const $main = inject('$main')
 const content = ref()
 const controller = ref()
 
@@ -102,6 +102,7 @@ const getAutoLayout = ({ width, height }) => {
   let bottomList = boardData.value.items.sort((a, b) => b.top + b.height - a.top - a.height)
   let rightMax = rightList[0] ? rightList[0].left + rightList[0].width : 0
   let bottomMax = bottomList[0] ? bottomList[0].top + bottomList[0].height : 0
+
   return {
     left: 0,
     top: bottomMax
@@ -109,7 +110,7 @@ const getAutoLayout = ({ width, height }) => {
 }
 
 const onBoardKeydown = (e) => {
-  if (e.code === "Delete" || e.code === "Backspace") {
+  if (e.code === 'Delete' || e.code === 'Backspace') {
     if (activeItem.value) {
       const index = boardData.value.items.indexOf(activeItem.value)
       if (index >= 0) {
@@ -127,10 +128,10 @@ const onMousedown = (e) => {
 }
 
 onUnmounted(() => {
-  window.removeEventListener("keydown", onBoardKeydown)
+  window.removeEventListener('keydown', onBoardKeydown)
 })
 onMounted(() => {
-  window.addEventListener("keydown", onBoardKeydown)
+  window.addEventListener('keydown', onBoardKeydown)
 })
 
 // const itemClipStyle = watch(boardData.items, (v) => {

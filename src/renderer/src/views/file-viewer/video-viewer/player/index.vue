@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, inject, onUnmounted, computed } from "vue"
+import { onMounted, ref, inject, computed } from "vue"
 import Progress from "./progress.vue"
 
 const $main = inject("$main") as any

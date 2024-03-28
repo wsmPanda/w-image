@@ -5,20 +5,10 @@
       <template v-slot:left>
         <div class="main-left focus-clean" ref="leftPanel" tabindex="1" @keydown="onLeftKeydone">
           <Tabs v-model:value="storage.leftTab" :items="tabItems">
-            <template v-slot:folder>
-              <TreePanel
-                ref="tree"
-                @on-active="onTreeActive"
-                :active="storage.activeTree"
-              ></TreePanel
-            ></template>
-            <template v-slot:bookmark
-              ><BookmarkList ref="bookmarks" @bookmarksClick="toBookmark"></BookmarkList
-            ></template>
+            <template v-slot:folder> <TreePanel ref="tree" @on-active="onTreeActive" :active="storage.activeTree"></TreePanel></template>
+            <template v-slot:bookmark><BookmarkList ref="bookmarks" @bookmarksClick="toBookmark"></BookmarkList></template>
 
-            <template v-slot:collect>
-              <CollectList ref="collect" @collectClick="collectOpen"></CollectList
-            ></template>
+            <template v-slot:collect> <CollectList ref="collect" @collectClick="collectOpen"></CollectList></template>
             <template #tags><TagList ref="tag"></TagList></template>
           </Tabs>
         </div>
@@ -64,14 +54,9 @@
         ></component>
       </template>
       <template v-slot:right>
-        <component v-if="rightComponent"  :is="rightComponent" tabindex="3"></component>
+        <component v-if="rightComponent" :is="rightComponent" tabindex="3"></component>
         <template v-else tabindex="3">
-          <FileViewer
-            :key="storage.active"
-            v-if="storage.active"
-            class="main-image-viewer"
-            :data="storage.active"
-          ></FileViewer>
+          <FileViewer :key="storage.active" v-if="storage.active" class="main-image-viewer" :data="storage.active"></FileViewer>
           <div v-else>空</div></template
         >
       </template>
@@ -79,17 +64,17 @@
   </div>
 </template>
 
-<script>
+<script lang="js">
 import { Dropdown, DropdownMenu, Button, Icon } from "view-ui-plus"
 
 import ImageList from "render/components/big-image-list/index.vue"
 import ImageScroll from "render/components/big-image-list/scroll.vue"
 import PageViewer from "render/components/page-viewer/index.vue"
 import Layout from "render/layout/index.vue"
-import FileViewer from "render/components/file-viewer/index.vue"
 import BookmarkList from "render/components/bookmark-list/index.vue"
 import Tabs from "render/components/tabs/index.vue"
 import BoardView from "render/views/board/index.vue"
+import FileViewer from "render/views/file-viewer/index.vue"
 
 import CheckMixins from "./main/check"
 import KeyListener from "./main/key-listener"
